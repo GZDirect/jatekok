@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fejes Géza játékai</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Egyoszlopos játékválasztó, kártyák rácsban, telefonon egymás alatt */
+:root{--paper:#f3eee2;--ink:#3b2a26;--soft:#6d5d52;--card:#fffaf0;--leaf:#7fae4a;
+  --display:'Fredoka','Nunito',system-ui,sans-serif;--ui:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;color-scheme:light;}
+@media (prefers-color-scheme:dark){:root{--paper:#141a2c;--ink:#efe6d6;--soft:#a8aec4;--card:#1f2740;color-scheme:dark;}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ui);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(env(safe-area-inset-top,0px) + 32px) calc(env(safe-area-inset-bottom,0px) + 32px);}
+main{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:24px;}
+h1{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(32px,7vw,48px);line-height:1.05;text-wrap:balance;}
+.lead{margin:0;font-size:16px;line-height:1.55;color:var(--soft);max-width:60ch;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;}
+a.card{display:flex;flex-direction:column;gap:6px;padding:18px;border-radius:18px;border:2px solid var(--ink);background:var(--card);color:var(--ink);text-decoration:none;box-shadow:0 3px 0 var(--ink);transition:transform .12s;}
+a.card:hover{transform:translateY(-2px);}
+a.card:focus-visible{outline:3px solid var(--leaf);outline-offset:3px;}
+.card b{font-family:var(--display);font-size:22px;font-weight:600;}
+.card span{font-size:14px;line-height:1.5;color:var(--soft);}
+.tag{align-self:flex-start;font-size:12px;font-weight:800;letter-spacing:.4px;padding:3px 9px;border-radius:999px;border:2px solid var(--ink);}
+footer{font-size:13px;color:var(--soft);}
+@media (prefers-reduced-motion:reduce){a.card{transition:none;}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Játékok</h1>
+  <p class="lead">Saját szórakozásra készült kis játékok. Mind a böngészőben fut, telepítés nélkül, a legtöbb telefonra készült.</p>
+  <div class="grid">
+    <a class="card" href="pihe/"><span class="tag">Telefon</span><b>Pihe odúja</b><span>Tamagocsi négy forgatható 3D diorámában: őszi erdő, havas tó, dzsungel és sziget. Kert, horgászat, bújócska, szavak tanítása.</span></a>
+    <a class="card" href="pip-terrarium/"><span class="tag">Telefon</span><b>Pip terráriuma</b><span>Gondozós 3D játék egy pici ugrópókkal: nevet adsz neki, nő, vedlik, és fotóalbum készül az életéről.</span></a>
+    <a class="card" href="arnyekerdo/"><span class="tag">Telefon · prototípus</span><b>Árnyékerdő</b><span>Belső nézetes lopakodó túlélés egy éjszakai erdőben, egy ismeretlen ellenféllel.</span></a>
+  </div>
+  <footer>© 2026 Fejes Géza</footer>
+</main>
+</body>
+</html>
