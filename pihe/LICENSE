@@ -1,0 +1,47 @@
+Pihe odúja
+Copyright © 2026 Fejes Géza. Minden jog fenntartva.
+
+MAGYARUL
+
+Ez a mappa és tartalma – a játék kódja, a lény és a dioráma-helyszínek kialakítása, a grafika, a szövegek, a hangok és a játékmenet – Fejes Géza szellemi tulajdona.
+
+A játék a https://gzdirect.github.io/jatekok/pihe/ címen szabadon
+kipróbálható és a link megosztható.
+
+A szerző előzetes, írásos engedélye nélkül tilos a tartalmat vagy annak
+bármely részét másolni, terjeszteni, módosítani, saját alkotásként
+feltüntetni, más weboldalon vagy alkalmazásban közzétenni, illetve
+értékesíteni vagy bármilyen más módon üzletileg hasznosítani.
+
+A tároló GitHubon való megtekinthetősége nem jelent felhasználási
+engedélyt; kizárólag a GitHub felhasználási feltételeiben (Terms of
+Service) meghatározott, a GitHubon belüli megtekintést és elágaztatást
+(fork) teszi lehetővé.
+
+Engedélykérés: a GitHub-fiókon (GZDirect) keresztül.
+
+IN ENGLISH
+
+Copyright © 2026 Fejes Géza. All rights reserved.
+
+This folder and its contents – the game code, the creature and the diorama locations, graphics, texts, sounds and gameplay – are the intellectual property
+of Fejes Géza.
+
+You may play the game at https://gzdirect.github.io/jatekok/pihe/ and
+share the link.
+
+Without the author's prior written permission you may not copy,
+distribute, modify, present as your own, republish on another website
+or app, sell or otherwise commercially exploit the content or any part
+of it.
+
+The public visibility of this repository on GitHub does not grant any
+licence beyond viewing and forking within GitHub as set out in GitHub's
+Terms of Service.
+
+Permission requests: via the GitHub account GZDirect.
+
+THIRD-PARTY COMPONENTS (not covered by the above)
+
+- three.js (https://threejs.org) – MIT License, loaded from a public CDN.
+- Fredoka and Nunito fonts – SIL Open Font License, loaded from Google Fonts.

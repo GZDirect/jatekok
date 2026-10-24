@@ -3,9 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="author" content="Fejes Géza">
+<meta name="copyright" content="© 2026 Fejes Géza. Minden jog fenntartva.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
+<!-- Pihe odúja. © 2026 Fejes Géza. Minden jog fenntartva / All rights reserved. Engedély nélküli másolás, terjesztés, módosítás vagy értékesítés tilos. -->
 <title>Pihe odúja</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@500;700;800&display=swap">
@@ -61,7 +64,8 @@ header{display:flex;flex-direction:column;gap:7px;}
 #cover{position:absolute;inset:0;background:rgba(12,14,24,0.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#efe6d6;text-align:center;padding:16px;}
 #coverTxt{font-family:var(--display);font-size:72px;font-weight:600;line-height:1;}
 #coverSub{font-size:15px;font-weight:800;color:#c9c2b0;}
-footer{display:flex;justify-content:center;align-items:center;padding-bottom:4px;min-height:70px;}
+footer{position:relative;display:flex;justify-content:center;align-items:center;padding-bottom:4px;min-height:70px;}
+footer .copyx{position:absolute;right:0;bottom:6px;}
 #mainBtn{width:66px;height:66px;border-radius:50%;border:2px solid var(--ink);background:var(--card);color:var(--ink);box-shadow:0 3px 0 var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;cursor:pointer;touch-action:none;font-family:var(--ui);font-size:11px;font-weight:800;padding:0;}
 #mainBtn svg{width:28px;height:28px;}
 #mainBtn.open{background:var(--ink);color:var(--card);}
@@ -115,6 +119,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--leaf);outline-o
 .bcard[aria-pressed="true"]{box-shadow:0 0 0 3px var(--leaf);border-color:var(--leaf);}
 .charnote{padding:10px 12px;border-radius:14px;border:2px dashed color-mix(in srgb,var(--ink) 35%,transparent);font-size:13px;font-weight:700;color:var(--soft);}
 #nameIn{font-family:var(--display);font-size:22px;padding:10px 12px;border-radius:12px;border:2px solid var(--ink);background:var(--card);color:var(--ink);width:100%;box-sizing:border-box;}
+.legal{font-size:12px;font-weight:700;color:var(--soft);text-align:center;margin:0;}
+.copyx{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 8px);font-size:11px;font-weight:700;color:var(--soft);}
 #go{height:52px;border-radius:14px;border:2px solid var(--ink);background:var(--leaf);color:#22300f;font-family:var(--ui);font-size:17px;font-weight:800;box-shadow:0 3px 0 var(--ink);cursor:pointer;}
 @media (prefers-reduced-motion:reduce){body,#toast,#hint,.ritem{transition:none;animation:none;}.ring.low{animation:none;}.ring .rv{transition:none;}}
 </style>
@@ -141,6 +147,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--leaf);outline-o
   </div>
   <footer>
     <button id="mainBtn" type="button" aria-label="Menü: nyomd le és húzd a kívánt művelet felé" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="15.5" rx="4.6" ry="3.8"></ellipse><circle cx="6" cy="10" r="2.1"></circle><circle cx="9.6" cy="6.4" r="2.1"></circle><circle cx="14.4" cy="6.4" r="2.1"></circle><circle cx="18" cy="10" r="2.1"></circle></svg>Menü</button>
+    <span class="copyx">© 2026 Fejes Géza</span>
   </footer>
 </div>
 
@@ -165,6 +172,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--leaf);outline-o
     <label for="nameIn">3. Mi legyen a neve?</label>
     <input id="nameIn" maxlength="16" value="Pihe" autocomplete="off">
     <button id="go" type="submit">Beköltözünk</button>
+    <p class="legal">© 2026 Fejes Géza. Minden jog fenntartva.</p>
   </form>
 </div>
 

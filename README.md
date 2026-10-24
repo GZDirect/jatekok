@@ -14,4 +14,4 @@ Minden játék a saját mappájában van, egyetlen `index.html` fájlként.
 
 ---
 
-© 2026 Fejes Géza. A Pip terráriuma saját licence: [pip-terrarium/LICENSE](pip-terrarium/LICENSE).
+© 2026 Fejes Géza. Minden jog fenntartva. A játékok engedély nélkül nem másolhatók, nem terjeszthetők és nem értékesíthetők. Minden játék mappájában külön licenc található: [Pihe](pihe/LICENSE), [Pip](pip-terrarium/LICENSE), [Árnyékerdő](arnyekerdo/LICENSE).
