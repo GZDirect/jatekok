@@ -47,7 +47,7 @@ header{display:flex;flex-direction:column;gap:7px;}
 #stage{position:relative;flex:1;min-height:0;border-radius:18px;overflow:hidden;}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;}
 #toast{position:absolute;left:50%;top:8px;transform:translateX(-50%);width:min(92%,380px);background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:10px 14px;font-size:14px;font-weight:700;line-height:1.4;text-align:center;box-shadow:0 3px 0 var(--ink);transition:opacity .4s;pointer-events:none;box-sizing:border-box;}
-#hint{position:absolute;left:50%;bottom:60px;transform:translateX(-50%);font-size:12px;font-weight:700;color:var(--soft);pointer-events:none;transition:opacity 1s;white-space:nowrap;}
+#hint{position:absolute;left:50%;bottom:60px;transform:translateX(-50%);font-size:12px;font-weight:700;color:var(--soft);pointer-events:none;transition:opacity 1s;width:max-content;max-width:88%;text-align:center;line-height:1.35;}
 .float{position:absolute;pointer-events:none;transform:translate(-50%,-100%);}
 #bubble{width:38px;height:32px;border-radius:50%;background:#fffaf0;border:2px solid #3b2a26;display:flex;align-items:center;justify-content:center;}
 #bubble svg{width:20px;height:20px;}
@@ -183,8 +183,8 @@ body[data-device="phone"][data-orient="land"] header{flex-direction:row;align-it
     <div id="bubble" class="float" hidden></div>
     <div id="zzz" class="float" hidden>z z z</div>
     <div id="toast" style="opacity:0"></div>
-    <div id="hint">Húzd el a forgatáshoz, csípd össze a nagyításhoz</div>
-    <form id="talk" autocomplete="off"><input id="talkIn" maxlength="24" placeholder="Szólj hozzá…" aria-label="Mondj neki valamit"><button type="submit" aria-label="Mondd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M4 12 L20 4 L14 20 L11 13 Z"></path></svg></button></form>
+    <div id="hint">Húzással forgatsz, két ujjal tolsz és nagyítasz, dupla koppintás: teljes nézet</div>
+    <form id="talk" autocomplete="off"><input id="talkIn" maxlength="24" placeholder="Szólj hozzá… (ügyes, tilos)" aria-label="Mondj neki valamit"><button type="submit" aria-label="Mondd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M4 12 L20 4 L14 20 L11 13 Z"></path></svg></button></form>
     <div id="fishWrap" hidden><canvas id="fcv" aria-label="Horgászat"></canvas><div id="fishTop"><span id="fishMsg"></span><button id="fishClose" type="button">Kész</button></div></div>
     <div id="cover" hidden><div id="coverTxt">3</div><div id="coverSub">Csukd be a szemed!</div></div>
   </div>
@@ -228,7 +228,7 @@ function detectDevice(){const coarse=window.matchMedia&&matchMedia('(pointer:coa
   const w=window.innerWidth,h=window.innerHeight,short=Math.min(w,h),long=Math.max(w,h);
   let t;if(fine&&!coarse&&w>=900)t='desktop';else if(short>=600||(long>=1000&&short>=500))t='tablet';else t='phone';
   DEV.type=t;DEV.k=t==='tablet'?1.3:t==='desktop'?1.1:1;document.body.dataset.device=t;document.body.dataset.orient=w>h?'land':'port';}
-detectDevice();window.addEventListener('resize',detectDevice);window.addEventListener('orientationchange',()=>setTimeout(detectDevice,200));
+detectDevice();{const h=document.getElementById('hint');if(h&&DEV.type==='desktop')h.textContent='Húzással forgatsz, jobb gombbal tolsz, görgővel nagyítasz, dupla kattintás: teljes nézet';}window.addEventListener('resize',detectDevice);window.addEventListener('orientationchange',()=>setTimeout(detectDevice,200));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const rand=(a,b)=>a+Math.random()*(b-a);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -349,7 +349,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.75));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(38,1,0.1,400);
-const CAM0={theta:-0.6,phi:0.52};
+const CAM0={theta:-0.6,phi:0.52,target:new THREE.Vector3(0,-0.6,0)};
 const cam={theta:CAM0.theta,phi:CAM0.phi,dist:32,fit:32,target:new THREE.Vector3(0,-0.6,0),fitted:false};
 function placeCam(){const c=Math.cos(cam.phi);camera.position.set(cam.target.x+cam.dist*c*Math.sin(cam.theta),cam.target.y+cam.dist*Math.sin(cam.phi),cam.target.z+cam.dist*c*Math.cos(cam.theta));camera.lookAt(cam.target);}
 function resize(){const r=stage.getBoundingClientRect();if(r.width<2)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();
@@ -1332,7 +1332,7 @@ let frames=0,ftime=0,quality='hi';
 function loop(now){
   const t=now/1000;if(last===null)last=now;const raw=(now-last)/1000,dt=Math.min(0.05,raw);last=now;
   if(quality==='hi'&&t>3&&t<14){frames++;ftime+=raw;if(frames>=150){if(ftime/frames>0.034){quality='lo';renderer.setPixelRatio(1);renderer.shadowMap.autoUpdate=false;setInterval(()=>{renderer.shadowMap.needsUpdate=true;},200);resize();}frames=-1e9;}}
-  if(eye&&S)placeEye();else placeCam();
+  if(eye&&S)placeEye();else{camStep(dt);placeCam();}
   if(S&&$('hatch').hidden){step(dt);render(t,dt);if(F.on){fishStep(dt);fishDraw(t);}hudT-=dt;if(hudT<=0){hudT=0.25;hud();}}else renderer.render(scene,camera);
   if(toastT>0){toastT-=dt;if(toastT<=0)$('toast').style.opacity=0;}
   requestAnimationFrame(loop);
@@ -1366,8 +1366,8 @@ function openSheet(mode){sheetMode=mode;$('sheetWrap').hidden=false;const tabs=$
   tabs.innerHTML=['naplo','jellem','kincsek'].map(k=>'<button class="tab'+(k===mode?' on':'')+'" type="button" data-tab="'+k+'">'+{naplo:'Napló',jellem:'Jellem',kincsek:'Kincsek'}[k]+'</button>').join('');
   if(mode==='naplo'){body.innerHTML=S.log.length?S.log.map(e=>'<div class="entry"><time>'+new Date(e.t).toLocaleString('hu-HU',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+'</time><span>'+esc(e.text)+'</span></div>').join(''):'<p class="muted">Még üres a napló.</p>';}
   else if(mode==='jellem'){const nw=v=>(v-0.3)/1.9;const ws=Object.keys(S.words).slice(-30);
-    body.innerHTML='<div class="trait">Szavak</div>'+(ws.length?'<div class="chips">'+ws.map(w=>{const k=wordBest(S.words[w]);return '<span class="chip">„'+esc(w)+'” '+(k?'= '+MEAN[k]:'?')+'</span>';}).join('')+'</div>':'')+'<p class="muted" style="margin:0">Írj neki a „Szólj hozzá” mezőbe, aztán rögtön tedd azt, amit a szó jelent: adj bogyót, dobj tobozt, vagy dicsérd meg, ha odanézett. Háromszori ismétlés után megérti. A saját nevét magától megtanulja.</p><div class="trait">Jellem</div>'+'<div class="chips">'+traits().map(t=>'<span class="chip">'+t+'</span>').join('')+'</div>'+bar('Falánkság',nw(S.w.eat),'var(--hunger)')+bar('Játékosság',nw(S.w.play),'var(--fun)')+bar('Kalandvágy',nw(S.w.wander),'var(--leaf)')+bar('Pihenés szeretete',nw(S.w.sleep),'var(--energy)')+bar('Bátorság',S.bravery/100,'var(--trust)')+
-      '<p class="muted" style="margin:0">A jellemét te alakítod: amit megdicsérsz, azt szívesebben csinálja. A bátorsága a látogatókkal és az úszással nő.</p>';}
+    body.innerHTML='<div class="trait">Szavak</div>'+(ws.length?'<div class="chips">'+ws.map(w=>{const k=wordBest(S.words[w]);return '<span class="chip">„'+esc(w)+'” '+(k?'= '+MEAN[k]:'?')+'</span>';}).join('')+'</div>':'')+'<p class="muted" style="margin:0">Írj neki a „Szólj hozzá” mezőbe, aztán rögtön tedd azt, amit a szó jelent: adj bogyót, dobj tobozt, vagy írd be, hogy „ügyes”, ha odanézett. Háromszori ismétlés után megérti. A saját nevét magától megtanulja.</p><div class="trait">Jellem</div>'+'<div class="chips">'+traits().map(t=>'<span class="chip">'+t+'</span>').join('')+'</div>'+bar('Falánkság',nw(S.w.eat),'var(--hunger)')+bar('Játékosság',nw(S.w.play),'var(--fun)')+bar('Kalandvágy',nw(S.w.wander),'var(--leaf)')+bar('Pihenés szeretete',nw(S.w.sleep),'var(--energy)')+bar('Bátorság',S.bravery/100,'var(--trust)')+
+      '<p class="muted" style="margin:0">A jellemét te alakítod a „Szólj hozzá” mezőben: ha dicsérő szót írsz (ügyes, jól van, szép volt), szívesebben csinálja azt, amit előtte tett; ha tiltót (nem szabad, tilos, rossz), ritkábban. A bátorsága a látogatókkal és az úszással nő.</p>';}
   else{const cnt={};S.treasures.forEach(n=>cnt[n]=(cnt[n]||0)+1);const keys=Object.keys(cnt);
     body.innerHTML=keys.length?'<div class="grid2">'+keys.map(k=>'<div class="item" style="cursor:default"><b>'+esc(k)+'</b><span>'+cnt[k]+' db</span></div>').join('')+'</div><p class="muted" style="margin:0">A kincsek otthon, a fekhelye körül sorakoznak.</p>':'<p class="muted">Még nem talált semmit. Séta közben néha felvesz valamit.</p>';
     const fl=Object.keys(S.fishLog);body.innerHTML+='<div class="trait">Halnapló</div>'+(fl.length?'<div class="grid2">'+fl.map(k=>'<div class="item" style="cursor:default"><b>'+esc(k)+'</b><span>'+S.fishLog[k].n+' db · legnagyobb '+S.fishLog[k].best+' cm</span></div>').join('')+'</div>':'<p class="muted" style="margin:0">Még nem horgásztatok.</p>');}}
@@ -1385,7 +1385,7 @@ $('sheetWrap').addEventListener('click',e=>{if(e.target.id==='sheetWrap'){closeS
   const sn=e.target.closest('[data-snd]');if(sn){toggleSound();openSheet('beallit');return;}
   const rs=e.target.closest('[data-reset]');if(rs){if(!resetArm){resetArm=true;moveArm=null;openSheet('beallit');return;}resetAll();return;}
   const rm=e.target.closest('[data-remove]');if(rm){S.decor.splice(+rm.dataset.remove,1);rebuildDecor();save();openSheet('berendez');}});
-function resetView(){exitEye();cam.userZoom=false;cam.theta=CAM0.theta;cam.phi=CAM0.phi;cam.dist=cam.fit;}
+function resetView(){exitEye();cam.userZoom=false;CAMV.th=CAMV.ph=0;const d=Math.atan2(Math.sin(CAM0.theta-cam.theta),Math.cos(CAM0.theta-cam.theta));cam.anim={theta:cam.theta+d,phi:CAM0.phi,dist:cam.fit,target:CAM0.target.clone()};}
 function toggleSound(){audioInit();A.on=!A.on;try{localStorage.setItem(PREF,A.on?'on':'off');}catch(e){}if(A.ctx){A.ctx.resume();A.master.gain.setTargetAtTime(A.on?A.vol:0,A.ctx.currentTime,0.2);}if(sheetMode==='beallit')openSheet('beallit');}
 function setVol(v){A.vol=clamp(v,0,1);try{localStorage.setItem(PREF+'-vol',String(A.vol));}catch(e){}if(A.vol>0&&!A.on){toggleSound();return;}if(A.ctx)A.master.gain.setTargetAtTime(A.on?A.vol:0,A.ctx.currentTime,0.1);}
 async function resetAll(){closeSheet();const old=S;S=null;try{localStorage.removeItem(KEY);}catch(e){}
@@ -1395,16 +1395,39 @@ function moveTo2(id){closeSheet();const old=BIO.name;S.biome=id;S.decor=[];S.pla
   toast('Költözés…',2);const go=()=>location.reload();syncPush().then(go,go);}
 
 /* ---------- Érintés: forgatás, nagyítás, simogatás, lerakás ---------- */
-const ptrs=new Map();let pinch0=0,dist0=0,down=null;
+const ptrs=new Map();let pinch0=0,dist0=0,down=null,mid0=null,lastTap=null,panMode=false;
+const CAMV={th:0,ph:0},PHI0=0.02,PHI1=1.35,_cr=new THREE.Vector3(),_cu=new THREE.Vector3();
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+function midOf(){const q=[...ptrs.values()];return{x:(q[0].x+q[1].x)/2,y:(q[0].y+q[1].y)/2,d:Math.hypot(q[0].x-q[1].x,q[0].y-q[1].y)};}
+function panBy(dx,dy){const h=stage.getBoundingClientRect().height||1,k=2*cam.dist*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))/h;
+  _cr.setFromMatrixColumn(camera.matrix,0);_cu.setFromMatrixColumn(camera.matrix,1);cam.target.addScaledVector(_cr,-dx*k).addScaledVector(_cu,dy*k);
+  cam.target.x=clamp(cam.target.x,-9,9);cam.target.y=clamp(cam.target.y,-5,4);cam.target.z=clamp(cam.target.z,-7,7);cam.userZoom=true;cam.anim=null;}
+function zoomTo(d,sx,sy){d=clamp(d,2.2,70);const f=d/cam.dist;
+  if(f<1&&sx!=null&&!eye){const r=cv.getBoundingClientRect();ndc.set(((sx-r.left)/r.width)*2-1,-((sy-r.top)/r.height)*2+1);ray.setFromCamera(ndc,camera);const h=ray.intersectObjects([terrain,slabGroup,pet.root],true);if(h.length)cam.target.lerp(h[0].point,(1-f)*0.9);}
+  cam.dist=d;cam.userZoom=true;cam.anim=null;if(cam.dist>=cam.fit*1.1)cam.target.lerp(CAM0.target,0.2);}
+function camStep(dt){
+  if(cam.anim){const g=cam.anim,k=1-Math.pow(0.002,dt);cam.theta+=(g.theta-cam.theta)*k;cam.phi+=(g.phi-cam.phi)*k;cam.dist+=(g.dist-cam.dist)*k;cam.target.lerp(g.target,k);
+    if(Math.abs(g.theta-cam.theta)<0.002&&Math.abs(g.dist-cam.dist)<0.02&&cam.target.distanceTo(g.target)<0.01)cam.anim=null;return;}
+  if(!down&&(CAMV.th||CAMV.ph)){cam.theta+=CAMV.th;cam.phi=clamp(cam.phi+CAMV.ph,PHI0,PHI1);const f=Math.pow(0.9,dt*60);CAMV.th*=f;CAMV.ph*=f;if(Math.abs(CAMV.th)+Math.abs(CAMV.ph)<0.0002)CAMV.th=CAMV.ph=0;}}
 cv.addEventListener('pointerdown',e=>{if(A.on)audioInit();if(A.ctx)A.ctx.resume();ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});try{cv.setPointerCapture(e.pointerId);}catch(_){}
-  if(ptrs.size===1)down={x:e.clientX,y:e.clientY,t:performance.now(),moved:false};
-  if(ptrs.size===2){const p=[...ptrs.values()];pinch0=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);dist0=cam.dist;if(down)down.moved=true;}});
+  cam.anim=null;CAMV.th=CAMV.ph=0;
+  if(ptrs.size===1){down={x:e.clientX,y:e.clientY,t:performance.now(),moved:false,lt:performance.now()};panMode=e.button===1||e.button===2||e.shiftKey;}
+  if(ptrs.size===2){const m=midOf();pinch0=m.d;dist0=cam.dist;mid0=m;if(down)down.moved=true;}});
 cv.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
-  if(ptrs.size===1){if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)>8){down.moved=true;$('hint').style.opacity=0;}if(down&&down.moved){if(eye){eyeYaw=clamp(eyeYaw-dx*0.006,-1.5,1.5);eyePitch=clamp(eyePitch-dy*0.004,-0.6,0.5);}else{cam.theta-=dx*0.008;cam.phi=clamp(cam.phi+dy*0.006,-0.12,1.3);}}}
-  else if(ptrs.size===2){const q=[...ptrs.values()];const d=Math.hypot(q[0].x-q[1].x,q[0].y-q[1].y);if(pinch0>0&&!eye){cam.dist=clamp(dist0*pinch0/d,10,70);cam.userZoom=true;}}});
-function up(e){if(ptrs.has(e.pointerId)){ptrs.delete(e.pointerId);if(ptrs.size===0&&down&&!down.moved&&performance.now()-down.t<450)tap(e);if(ptrs.size===0)down=null;}}
-cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',e=>{ptrs.delete(e.pointerId);down=null;});
-cv.addEventListener('wheel',e=>{e.preventDefault();cam.userZoom=true;cam.dist=clamp(cam.dist*(1+Math.sign(e.deltaY)*0.08),10,70);},{passive:false});
+  if(ptrs.size===1){if(!down)return;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>8){down.moved=true;$('hint').style.opacity=0;}
+    if(down.moved){if(eye){eyeYaw=clamp(eyeYaw-dx*0.006,-1.5,1.5);eyePitch=clamp(eyePitch-dy*0.004,-0.6,0.5);}
+      else if(panMode)panBy(dx,dy);
+      else{const vt=-dx*0.008,vp=dy*0.006,now=performance.now(),ms=Math.max(8,now-down.lt);down.lt=now;cam.theta+=vt;cam.phi=clamp(cam.phi+vp,PHI0,PHI1);CAMV.th=vt*16/ms;CAMV.ph=vp*16/ms;}}}
+  else if(ptrs.size===2&&!eye){const m=midOf();if(pinch0>0&&m.d>0)zoomTo(dist0*pinch0/m.d,m.x,m.y);if(mid0)panBy(m.x-mid0.x,m.y-mid0.y);mid0=m;$('hint').style.opacity=0;}});
+function up(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);
+  if(ptrs.size===0){const now=performance.now();
+    if(down&&!down.moved&&now-down.t<450){if(lastTap&&now-lastTap.t<330&&Math.hypot(e.clientX-lastTap.x,e.clientY-lastTap.y)<40){lastTap=null;if(!eye&&!placing&&!G.on)resetView();}
+      else{lastTap={t:now,x:e.clientX,y:e.clientY};tap(e);}}
+    else if(down&&down.moved&&(panMode||now-down.lt>90)){CAMV.th=CAMV.ph=0;}
+    down=null;mid0=null;}
+  else{down=null;mid0=null;CAMV.th=CAMV.ph=0;}}
+cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',e=>{ptrs.delete(e.pointerId);down=null;mid0=null;});
+cv.addEventListener('wheel',e=>{e.preventDefault();zoomTo(cam.dist*(1+Math.sign(e.deltaY)*0.09),e.clientX,e.clientY);},{passive:false});
 const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),groundPlane=new THREE.Plane(new THREE.Vector3(0,1,0),-TOP),hit=new THREE.Vector3();
 function placeOK(p){const B=BIO.B;if(p.x<B.x0||p.x>B.x1||p.z<B.z0||p.z>B.z1-0.2)return false;if(BIO.id==='sziget'&&islE(p.x,p.z)>0.84)return false;
   if(HOME.type==='odu'){if(Math.abs(p.x-HOME.entry.x)<1&&p.z>SZ-1)return false;}else if(Math.hypot(p.x-HOME.center.x,p.z-HOME.center.z)<HOME.center.r+0.9)return false;return true;}
@@ -1461,8 +1484,8 @@ const RI={berry:'<circle cx="9" cy="15" r="5"></circle><circle cx="16" cy="13" r
   view:'<path d="M4 12 A8 8 0 1 0 7 6"></path><path d="M3 4 V9 H8"></path>',
   settings:'<circle cx="12" cy="12" r="3"></circle><path d="M12 2.5 V5 M12 19 V21.5 M2.5 12 H5 M19 12 H21.5 M5.3 5.3 L7 7 M17 17 L18.7 18.7 M5.3 18.7 L7 17 M17 7 L18.7 5.3"></path><circle cx="12" cy="12" r="7"></circle>',
   sound:'<path d="M4 9 H8 L13 5 V19 L8 15 H4 Z"></path><path d="M16 9 C17.5 10.5 17.5 13.5 16 15 M18.5 6.5 C21.5 9.5 21.5 14.5 18.5 17.5"></path>'};
-const RITEMS=[{id:'berry',ring:0,label:'Bogyó',run:()=>giveBerry()},{id:'toy',ring:0,label:'Toboz',run:()=>giveToy()},{id:'praise',ring:0,label:'Dicsér',run:()=>teach(true)},{id:'game',ring:0,label:'Játék',run:()=>openSheet('jatek')},
-  {id:'garden',ring:1,label:'Kert',run:()=>openSheet('berendez')},{id:'log',ring:1,label:'Napló',run:()=>openSheet('naplo')},{id:'eye',ring:1,label:'Szemével',run:()=>toggleEye()},{id:'view',ring:1,label:'Nézet',run:()=>resetView()},{id:'settings',ring:1,label:'Beállítás',run:()=>openSheet('beallit')}];
+const RITEMS=[{id:'berry',ring:0,label:'Bogyó',run:()=>giveBerry()},{id:'toy',ring:0,label:'Toboz',run:()=>giveToy()},{id:'game',ring:0,label:'Játék',run:()=>openSheet('jatek')},
+  {id:'garden',ring:1,label:'Kert',run:()=>openSheet('berendez')},{id:'log',ring:1,label:'Napló',run:()=>openSheet('naplo')},{id:'eye',ring:1,label:'Szemével',run:()=>toggleEye()},{id:'settings',ring:1,label:'Beállítás',run:()=>openSheet('beallit')}];
 const RAD={open:false,sticky:false,hot:null,cx:0,cy:0,pid:null,moved:false,sx:0,sy:0};
 function radOpen(){const r=$('mainBtn').getBoundingClientRect();RAD.cx=r.left+r.width/2;RAD.cy=r.top+r.height/2;const vw=window.innerWidth,K=DEV.k,r0=88*K,r1=Math.min(158*K,vw/2-32*K);RAD.k=K;
   const box=$('radial');box.innerHTML='';
@@ -1512,7 +1535,11 @@ function respond(k){if(C.mode!=='surface')return;
   else if(k==='eat'){const f=S.foods.find(f=>f.landed);if(f)startAct({type:'eat',id:f.id,phase:'go',timer:0});else{C.bubble='berry';C.bubbleT=2.5;startAct({type:'idle',timer:2});setAnim('jump',0.8);turnToCamera();}}
   else if(k==='play'){if(S.toy)startAct({type:'play',kicks:0,pause:0});else{setAnim('jump',0.8);startAct({type:'idle',timer:2});turnToCamera();}}
   else if(k==='sleep'){if(S.energy<85||isNight())startAct({type:'sleep',phase:'go'});else{setAnim('yawn',1.3);SFX.yawn();startAct({type:'idle',timer:2});}}}
+const PRAISE=['ügyes','ügyes vagy','ügyi','okos','jó','jó vagy','nagyon jó','szép volt','szép','szeretlek','brávó','bravó','jól van','szuper','jó fiú','jó kislány','jó kisfiú'];
+const SCOLD=['nem','ne','rossz','rossz vagy','ejnye','hagyd','fúj','nem szabad','tilos','nem jó'];
+function phraseHit(w,list){const t=' '+w+' ';return list.some(p=>t.includes(' '+p+' '));}
 function say(raw){if(!S)return;const w=normWord(raw);if(!w)return;
+  if(phraseHit(w,SCOLD)){teach(false);return;}if(phraseHit(w,PRAISE)){teach(true);return;}
   if(!S.words[w])S.words[w]={eat:0,play:0,come:0,sleep:0,n:0};const e=S.words[w];e.n++;
   if(w===normWord(S.name))teachWord(w,'come',1);
   heard={w,at:performance.now(),resp:null};
