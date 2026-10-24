@@ -34,7 +34,10 @@ header{display:flex;flex-direction:column;gap:7px;}
 #meta{font-size:12px;font-weight:700;color:var(--soft);text-align:right;}
 .statrow{display:flex;align-items:center;gap:12px;}
 .rings{display:flex;gap:5px;flex-shrink:0;}
-.ring{position:relative;width:36px;height:36px;}
+.ring{position:relative;width:36px;height:36px;cursor:pointer;}
+#ringTip{position:fixed;z-index:25;max-width:250px;background:var(--card);color:var(--ink);border:2px solid var(--ink);border-radius:12px;padding:8px 11px;font-size:13px;font-weight:700;line-height:1.4;box-shadow:0 3px 0 var(--ink);pointer-events:none;transition:opacity .25s;}
+#ringTip b{font-family:var(--display);font-size:15px;font-weight:600;}
+#ringTip span{color:var(--soft);}
 .ring svg{position:absolute;}
 .ring>svg:first-child{inset:0;width:36px;height:36px;transform:rotate(-90deg);}
 .ring .rt{fill:none;stroke:color-mix(in srgb,var(--ink) 14%,transparent);stroke-width:4;}
@@ -172,10 +175,10 @@ body[data-device="phone"][data-orient="land"] header{flex-direction:row;align-it
   <header>
     <div class="top"><div id="name">Pihe</div><div id="meta">1. nap</div></div>
     <div class="statrow"><div class="rings">
-      <div class="ring" id="gH" role="img" aria-label="Jóllakottság"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt" cx="18" cy="18" r="15"></circle><circle class="rv" id="rH" cx="18" cy="18" r="15" style="stroke:var(--hunger)"></circle></svg><svg class="ri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="14" r="6"></circle><path d="M12 8 C12 5 14 4 16 4"></path></svg></div>
-      <div class="ring" id="gE" role="img" aria-label="Energia"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt" cx="18" cy="18" r="15"></circle><circle class="rv" id="rE" cx="18" cy="18" r="15" style="stroke:var(--energy)"></circle></svg><svg class="ri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 L6 14 H12 L11 21 L18 10 H12 Z"></path></svg></div>
-      <div class="ring" id="gF" role="img" aria-label="Kedv"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt" cx="18" cy="18" r="15"></circle><circle class="rv" id="rF" cx="18" cy="18" r="15" style="stroke:var(--fun)"></circle></svg><svg class="ri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 L14.5 9 L21 9.5 L16 13.5 L17.5 20 L12 16.5 L6.5 20 L8 13.5 L3 9.5 L9.5 9 Z"></path></svg></div>
-      <div class="ring" id="gT" role="img" aria-label="Bizalom"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt" cx="18" cy="18" r="15"></circle><circle class="rv" id="rT" cx="18" cy="18" r="15" style="stroke:var(--trust)"></circle></svg><svg class="ri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20 C4 14 3 9 6 6.5 C8.5 4.5 11 6 12 8 C13 6 15.5 4.5 18 6.5 C21 9 20 14 12 20 Z"></path></svg></div>
+      <div class="ring" id="gH" role="button" tabindex="0" aria-label="Jóllakottság"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt" cx="18" cy="18" r="15"></circle><circle class="rv" id="rH" cx="18" cy="18" r="15" style="stroke:var(--hunger)"></circle></svg><svg class="ri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="14" r="6"></circle><path d="M12 8 C12 5 14 4 16 4"></path></svg></div>
+      <div class="ring" id="gE" role="button" tabindex="0" aria-label="Energia"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt" cx="18" cy="18" r="15"></circle><circle class="rv" id="rE" cx="18" cy="18" r="15" style="stroke:var(--energy)"></circle></svg><svg class="ri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 L6 14 H12 L11 21 L18 10 H12 Z"></path></svg></div>
+      <div class="ring" id="gF" role="button" tabindex="0" aria-label="Kedv"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt" cx="18" cy="18" r="15"></circle><circle class="rv" id="rF" cx="18" cy="18" r="15" style="stroke:var(--fun)"></circle></svg><svg class="ri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 L14.5 9 L21 9.5 L16 13.5 L17.5 20 L12 16.5 L6.5 20 L8 13.5 L3 9.5 L9.5 9 Z"></path></svg></div>
+      <div class="ring" id="gT" role="button" tabindex="0" aria-label="Bizalom"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt" cx="18" cy="18" r="15"></circle><circle class="rv" id="rT" cx="18" cy="18" r="15" style="stroke:var(--trust)"></circle></svg><svg class="ri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20 C4 14 3 9 6 6.5 C8.5 4.5 11 6 12 8 C13 6 15.5 4.5 18 6.5 C21 9 20 14 12 20 Z"></path></svg></div>
     </div><div id="doing" aria-live="polite">Szaglászik</div></div>
   </header>
   <div id="stage">
@@ -195,6 +198,7 @@ body[data-device="phone"][data-orient="land"] header{flex-direction:row;align-it
 </div>
 
 <div id="radial" hidden></div>
+<div id="ringTip" style="opacity:0" aria-live="polite"></div>
 
 <div id="sheetWrap" hidden>
   <div id="sheet" role="dialog" aria-modal="true" aria-labelledby="sTitle">
@@ -234,7 +238,191 @@ const rand=(a,b)=>a+Math.random()*(b-a);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function hashRand(n){let a=(n*2654435761)>>>0;a^=a>>>15;a=Math.imul(a,2246822519)>>>0;a^=a>>>13;a=Math.imul(a,3266489917)>>>0;a^=a>>>16;return (a>>>0)/4294967296;}
 function sstep(a,b,x){const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);}
+/* ================= Nyelv / Language =================
+   A játék magyarul íródott; angolul a kiírt szövegeket egy szótár fordítja le, mielőtt megjelennek. */
+let LANG='hu';try{LANG=localStorage.getItem('pihe-lang')==='en'?'en':'hu';}catch(e){}
+const LOC=()=>LANG==='en'?'en-GB':'hu-HU';
+const EN_X={
+/* felület */
+'Menü':'Menu','Bezárás':'Close','Mondd':'Say','Kész':'Done','Mondj neki valamit':'Say something to them','Szólj hozzá… (ügyes, tilos)':'Talk to them… (good, no)',
+'Forgatható dioráma, benne a kis lény':'Rotatable diorama with the little creature','Horgászat':'Fishing',
+'Menü: nyomd le és húzd a kívánt művelet felé':'Menu: press and drag towards the action you want',
+'Húzással forgatsz, két ujjal tolsz és nagyítasz, dupla koppintás: teljes nézet':'Drag to rotate, two fingers to move and zoom, double-tap: whole view',
+'Húzással forgatsz, jobb gombbal tolsz, görgővel nagyítasz, dupla kattintás: teljes nézet':'Drag to rotate, right-drag to move, scroll to zoom, double-click: whole view',
+'Jóllakottság':'Fullness','Energia':'Energy','Kedv':'Mood','Bizalom':'Trust',
+'Bogyó':'Berry','Toboz':'Cone','Játék':'Games','Kert':'Garden','Napló':'Diary','Szemével':'Their eyes','Beállítás':'Settings',
+'Csukd be a szemed!':'Close your eyes!',
+/* kezdőképernyő */
+'Ki költözzön be, és hova?':'Who moves in, and where?',
+'Válassz egy helyszínt és egy kis lakót. Minden helyszínnek saját otthona, élővilága, időjárása és horgászvize van.':'Pick a place and a little resident. Every place has its own home, wildlife, weather and fishing water.',
+'1. Helyszín':'1. Place','2. Karakter':'2. Character','3. Mi legyen a neve?':'3. What should their name be?','Beköltözünk':'Move in',
+'© 2026 Fejes Géza. Minden jog fenntartva.':'© 2026 Fejes Géza. All rights reserved.','Pihe odúja':'Pihe’s Burrow',
+'Mohakő':'Mossy','Sárkányka':'Little dragon','Őszi erdő':'Autumn forest','Havas tó':'Snowy lake','Dzsungel':'Jungle','Sziget':'Island',
+'Dombos őszi erdő tóval. Föld alatti odú, ami kamrákkal bővül, avar és gombák.':'Hilly autumn forest with a pond. An underground burrow that grows new rooms, fallen leaves and mushrooms.',
+'Hegycsúcsok, jégtáblás tó és iglu. Éjjel sarki fény, hóbagoly és sarki róka.':'Mountain peaks, a lake with ice floes and an igloo. Northern lights, a snowy owl and an arctic fox at night.',
+'Buja dzsungel patakkal és vízeséssel. Faodú, trópusi zápor, papagájok, éjjel világító gombák.':'Lush jungle with a stream and a waterfall. A tree hollow, tropical showers, parrots, glowing mushrooms at night.',
+'Pálmás sziget a tenger közepén. Barlang, korallok és halrajok, homokvár, rákok és palackposta.':'A palm island in the middle of the sea. A cave, corals and fish shoals, a sandcastle, crabs and messages in bottles.',
+'Pihe-puha gombóc. A fején hajtás nő, ami idővel virágot hoz.':'A fluffy little ball. A sprout grows on their head and blooms in time.',
+'Mohával benőtt kis erdei szellem kőálarcban. Nyugodt, a hátán levelek sarjadnak.':'A small moss-covered forest spirit with a stone mask. Calm, with leaves sprouting on their back.',
+'Óriás fülű, bolyhos kis éjszakai lény. Mindent meghall, a farka kunkorodik.':'A fluffy little night creature with huge ears. Hears everything, with a curly tail.',
+'Gömbölyű kis sárkányfióka apró szárnyakkal és szarvakkal. Durcás, de nagyon hűséges.':'A round baby dragon with tiny wings and horns. Grumpy, but very loyal.',
+/* időjárás, hold */
+'derült':'clear','felhős':'cloudy','eső':'rain','köd':'fog','szeles':'windy','havazás':'snow',
+'újhold':'new moon','növő sarló':'waxing crescent','első negyed':'first quarter','növő hold':'waxing gibbous','telihold':'full moon','fogyó hold':'waning gibbous','utolsó negyed':'last quarter','fogyó sarló':'waning crescent',
+/* mit csinál */
+'Szaglászik':'Sniffing around','Felfedez':'Exploring','A halakat nézi a tóparton':'Watching the fish by the pond','Bogyót eszik':'Eating a berry','A bokorról csemegézik':'Snacking from the bush',
+'A tobozt kergeti':'Chasing the cone','Az odúba megy aludni':'Going to the burrow to sleep','Alszik az odúban':'Sleeping in the burrow','Kijön az odúból':'Coming out of the burrow',
+'Örül a simogatásnak':'Enjoying the cuddles','Az eső elől a fa alá bújt':'Sheltering under the tree from the rain','Úszik a tóban':'Swimming in the pond','Üldögél a padon':'Sitting on the bench',
+'Virágot szagol':'Smelling flowers','Ismerkedik':'Making friends','Elbújt':'Hiding','Hempereg a hóban':'Rolling in the snow','Kiült a stégre':'Sitting on the pier','Odajön hozzád':'Coming to you',
+'A teliholdat nézi a dombról':'Watching the full moon from the hill','A kerti bokorról eszik':'Eating from the garden bush','Bújócskázik':'Playing hide and seek','Horgászik':'Fishing',
+'A vízpartra sétál':'Walking to the shore','Úszni indul':'Going for a swim','Szomorúan üldögél':'Sitting sadly','Hempereg a homokban':'Rolling in the sand','Hempereg a fűben':'Rolling in the grass',
+'Elbújik…':'Hiding…','Elbújt valahol':'Hidden somewhere','Duzzog':'Sulking','Úszik a tengerben':'Swimming in the sea','Úszik a vízben':'Swimming in the water',
+'Az eső elől hazabújt':'Went home to hide from the rain','Az eső elől az óriáslevél alá bújt':'Sheltering under the giant leaf from the rain','Az eső elől a nagy fa alá bújt':'Sheltering under the big tree from the rain',
+'A jégtáblákat nézi a tóparton':'Watching the ice floes by the lake','A patak vizét nézi':'Watching the stream','A hullámokat nézi a parton':'Watching the waves on the shore',
+'Az igluba megy aludni':'Going to the igloo to sleep','A faodúba megy aludni':'Going to the tree hollow to sleep','A barlangba megy aludni':'Going to the cave to sleep',
+'Alszik az igluban':'Sleeping in the igloo','Alszik a faodúban':'Sleeping in the tree hollow','Alszik a barlangban':'Sleeping in the cave',
+'Kijön az igluból':'Coming out of the igloo','Kijön a faodúból':'Coming out of the tree hollow','Kijön a barlangból':'Coming out of the cave',
+/* lapok */
+'Játékok':'Games','Bújócska':'Hide and seek','Elbújik valahol a diorámában, neked kell megtalálnod.':'They hide somewhere in the diorama, and you have to find them.',
+'Befagyott a tó.':'The lake is frozen.','A kifogott halakat visszaengedi, de mindet felírja a halnaplójába (Napló, Kincsek fül).':'They let the fish go, but write each one in their fish log (Diary, Treasures tab).',
+'Kert és berendezés':'Garden and furniture','Mag ültetése':'Plant a seed','locsolva 3 nap alatt bokor lesz':'watered, it becomes a bush in 3 days',
+'Koppints egy növényre a locsoláshoz. Eső után nem kell locsolni.':'Tap a plant to water it. No need to water after rain.','Berendezés':'Furniture',
+'Válassz egy tárgyat, aztán koppints a talajra, ahová tenni szeretnéd. A stég magától a víz partjára kerül.':'Pick an item, then tap the ground where you want it. The pier goes to the shore by itself.',
+'Lerakott tárgyak':'Placed items','Elpakol':'Put away','mag':'seed','hajtás':'sprout','kis bokor':'small bush','termő bokor':'fruiting bush','locsolva':'watered','szomjas':'thirsty',
+'Pad':'Bench','Leül rá pihenni':'Sits on it to rest','Lámpás':'Lantern','Este meleg fényt ad':'Gives warm light at night','Stég a vízre':'Pier on the water','Kiülhet a víz fölé, onnan ugrik úszni':'Can sit over the water and jump in for a swim',
+'Virágágyás':'Flower bed','Szagolgatja, pillangók jönnek':'They sniff it, butterflies come','Madáretető':'Bird feeder','Gyakrabban jönnek madarak':'Birds visit more often',
+'pad':'bench','lámpás':'lantern','stég a vízre':'pier','virágágyás':'flower bed','madáretető':'bird feeder',
+'Beállítások':'Settings','Hang':'Sound','Bekapcsolva':'On','Kikapcsolva':'Off','Kikapcsolom':'Turn off','Bekapcsolom':'Turn on','Hangerő':'Volume','Zene':'Music','Zene hangereje':'Music volume',
+'Nyelv':'Language','Mennyire van tele a pocakja. Bogyóval és a kerti bokorral eteted.':'How full their tummy is. Feed them berries and fruit from the garden bush.','Alvással töltődik. Este magától hazamegy aludni.':'Recharges by sleeping. In the evening they go home to sleep by themselves.','Játékkal, simogatással és bújócskával nő.':'Grows with games, cuddles and hide and seek.','Törődéssel és dicsérettel nő. Ha sokáig magára hagyod, csökken.':'Grows with care and praise. Drops if you leave them alone for long.','Költözés':'Moving','Újrakezdés':'Start over','Minden elölről kezdődik.':'Everything starts from scratch.','Ezt nem lehet visszavonni.':'This cannot be undone.',
+'Biztos? Koppints újra':'Sure? Tap again','Biztos? Koppints újra a törléshez':'Sure? Tap again to delete',
+'Jellem':'Personality','Kincsek':'Treasures','Szavak':'Words','Még üres a napló.':'The diary is still empty.','Halnapló':'Fish log','Még nem horgásztatok.':'You haven’t been fishing yet.',
+'A kincsek otthon, a fekhelye körül sorakoznak.':'The treasures are lined up at home around their bed.','Még nem talált semmit. Séta közben néha felvesz valamit.':'Hasn’t found anything yet. Sometimes they pick something up on walks.',
+'Írj neki a „Szólj hozzá” mezőbe, aztán rögtön tedd azt, amit a szó jelent: adj bogyót, dobj tobozt, vagy írd be, hogy „ügyes”, ha odanézett. Háromszori ismétlés után megérti. A saját nevét magától megtanulja.':'Type to them in the “Talk to them” field, then right away do what the word means: give a berry, throw a cone, or type “good” if they looked at you. After three repeats they understand. They learn their own name by themselves.',
+'A jellemét te alakítod a „Szólj hozzá” mezőben: ha dicsérő szót írsz (ügyes, jól van, szép volt), szívesebben csinálja azt, amit előtte tett; ha tiltót (nem szabad, tilos, rossz), ritkábban. A bátorsága a látogatókkal és az úszással nő.':'You shape their personality in the “Talk to them” field: write praise (good, well done, clever) and they will do what they just did more gladly; write a telling-off (no, not allowed, bad) and they will do it less. Their courage grows with visitors and swimming.',
+'Falánkság':'Greed','Játékosság':'Playfulness','Kalandvágy':'Adventurousness','Pihenés szeretete':'Love of rest','Bátorság':'Courage',
+'Falánk':'Greedy','Játékos':'Playful','Kalandvágyó':'Adventurous','Álomszuszék':'Sleepyhead','Bátor':'Brave','Félénk':'Shy','Gyűjtögető':'Collector','Ragaszkodó':'Clingy','Még alakul a jelleme':'Personality still forming',
+'falánk':'greedy','játékos':'playful','kalandvágyó':'adventurous','álomszuszék':'a sleepyhead','bátor':'brave','félénk':'shy','gyűjtögető':'a collector','ragaszkodó':'clingy',
+'bogyó':'berry','játék':'play','gyere ide':'come here','alvás':'sleep','enni':'eat','játszani':'play','felfedezni':'explore','pihenni':'rest',
+'bogyót kapok':'I get a berry','játszunk':'we play','odamegyek hozzád':'I come to you','aludni megyek':'I go to sleep',
+/* üzenetek */
+'Hang bekapcsolva.':'Sound on.','Hang kikapcsolva.':'Sound off.','Vissza a diorámához.':'Back to the diorama.','Költözés…':'Moving…',
+'Leraktad. Ha felébred, megtalálja.':'Placed. They will find it when they wake up.','Már van elég bogyó a fűben.':'There are enough berries in the grass already.',
+'Alszik, most nem hallja.':'Asleep, they can’t hear you now.','Örül, hogy figyelsz rá.':'Happy that you pay attention.','Nem érti, mit csinált rosszul.':'Doesn’t understand what they did wrong.',
+'Psszt, alszik. Hagyd pihenni.':'Shh, sleeping. Let them rest.','Koppints a fűre.':'Tap the grass.','Oda nem fér. Válassz egy szabad helyet a fűben.':'It doesn’t fit there. Pick a free spot in the grass.',
+'Koppints a fűre, ahová a magot ülteted.':'Tap the grass where you want to plant the seed.','Elültetted! Locsold meg néha, és pár nap alatt bokor lesz belőle.':'Planted! Water it now and then, and in a few days it becomes a bush.',
+'Elültettünk egy magot. Kíváncsi vagyok, mi lesz belőle.':'We planted a seed. I wonder what it will become.','Kész a stég a víz partján.':'The pier is ready on the shore.','Kaptam egy stéget!':'I got a pier!',
+'Meglocsoltad!':'Watered!','Már kapott vizet, de nem bánja.':'Already watered, but they don’t mind.','Csak most bújik a mag.':'The seed is just sprouting.','Kis hajtás.':'A small sprout.','Szépen bokrosodik.':'Growing into a nice bush.','Termő bokor.':'A fruiting bush.',
+'Keresd meg! Koppints oda, ahol szerinted bújik.':'Find them! Tap where you think they are hiding.','Nem itt…':'Not here…','Melegszik!':'Getting warmer!','Hidegebb…':'Colder…',
+'Befagyott a tó, most nem lehet horgászni.':'The lake is frozen, no fishing now.','Húzd fel-le a csalit, és várd a kapást!':'Move the bait up and down and wait for a bite!','Kapás! Koppints gyorsan!':'A bite! Tap quickly!',
+'Tartsd lenyomva: a zöld sáv emelkedik. Kövesd vele a halat!':'Hold down: the green bar rises. Follow the fish with it!','Elúszott… Próbáld újra!':'It swam away… Try again!',
+'Leszakadt a horogról. Majd legközelebb!':'It came off the hook. Next time!','Koppints, és mehet újra!':'Tap to go again!','Nem hal, de vicces!':'Not a fish, but funny!',
+'Betöltöttem a legfrissebb állapotot a másik eszközödről.':'Loaded the latest state from your other device.','Most nagyon éhes.':'Very hungry now.','Unatkozott nélküled.':'Got bored without you.','Most is alszik.':'Still sleeping.','Jól van.':'Doing fine.',
+'Sokáig nem jöttél. Kicsit duzzogok.':'You didn’t come for a long time. I’m sulking a bit.','Most alszik. Majd ha felébred!':'Asleep now. Later, when they wake up!',
+'Esni kezdett.':'It started raining.','Trópusi zápor kezdődött.':'A tropical shower started.','Havazik! Minden fehér lesz.':'It’s snowing! Everything turns white.','Köd ereszkedett le.':'Fog came down.',
+'Feltámadt a szél.':'The wind picked up.','Kisütött a nap.':'The sun came out.','Beborult az ég.':'The sky clouded over.','Elállt az eső.':'The rain stopped.',
+'Kaptam ma bogyót. Nagyon finom volt.':'I got a berry today. It was delicious.','Ettem a saját bokrunk bogyójából! Ez a legfinomabb.':'I ate berries from our own bush! The tastiest.',
+'Ma először ugrottam a vízbe! Hideg volt, de jó.':'Today I jumped into the water for the first time! Cold, but nice.','Ma először úsztam a tengerben! Sós volt, de jó.':'Today I swam in the sea for the first time! Salty, but nice.',
+'Telihold volt. Sokáig néztem a dombtetőről, olyan szép volt.':'There was a full moon. I watched it from the hilltop for a long time, it was so beautiful.',
+'A nagy fa alatt vártam ki, alig lettem vizes.':'I waited it out under the big tree, I barely got wet.','Az óriáslevél alatt vártam ki, kopogott rajta az eső.':'I waited it out under the giant leaf, the rain drummed on it.',
+'Bent vártam ki.':'I waited it out inside.','A barlang bejáratában vártam ki.':'I waited it out in the cave entrance.',
+'Kinőtt a harmadik levelem.':'My third leaf grew.','Egy hete élek itt. Egyre nagyobb vagyok.':'I’ve lived here for a week. I keep getting bigger.','Bimbó nőtt a fejemen!':'A bud grew on my head!','Kinyílt a virágom.':'My flower opened.','Már egészen nagy vagyok.':'I’m quite big now.',
+'Új hajtás sarjadt a hátamon.':'A new sprout grew on my back.','Egy hete élek itt. Egyre vastagabb a mohám.':'I’ve lived here for a week. My moss keeps getting thicker.','Apró virágok nyíltak a mohámban!':'Tiny flowers bloomed in my moss!','Már egészen virágos a hátam.':'My back is full of flowers now.','Nagy és erős lettem, mint egy öreg kő.':'I’ve grown big and strong, like an old stone.',
+'Már a legkisebb neszt is meghallom.':'I can hear the tiniest rustle now.','Egy hete élek itt. Nőtt egy bóbitám.':'I’ve lived here for a week. I grew a little crest.','Virágot tűztem a fülem mögé!':'I tucked a flower behind my ear!','Egészen bolyhos lettem.':'I’ve become really fluffy.',
+'Már ki tudom tárni a szárnyaimat.':'I can spread my wings now.','Egy hete élek itt. Nőttek a tüskéim.':'I’ve lived here for a week. My spikes grew.','Izzik a farkam hegye!':'The tip of my tail is glowing!','Egyre erősebbek a szárnyaim.':'My wings keep getting stronger.','Már egészen nagy sárkány vagyok.':'I’m quite a big dragon now.',
+'»Aki ezt megtalálja, legyen szép napja!«':'»Whoever finds this, have a lovely day!«','»Üdvözlet egy távoli szigetről!«':'»Greetings from a faraway island!«','»A legjobb kincs a barátság.«':'»Friendship is the best treasure.«','»Ne felejts el ma nevetni!«':'»Don’t forget to laugh today!«',
+/* kincsek, halak, látogatók */
+'fényes kavics':'shiny pebble','kék toll':'blue feather','makk':'acorn','csigaház':'snail shell','piros levél':'red leaf','kék kristály':'blue crystal','jégcsap':'icicle','fehér toll':'white feather','fenyőtoboz':'pine cone',
+'hópehely-kristály':'snowflake crystal','tarka toll':'colourful feather','dió':'nut','bogárpáncél':'beetle shell','virágszirom':'flower petal','zöld kristály':'green crystal','kagyló':'seashell','tengeri csillag':'starfish',
+'csiszolt üveg':'sea glass','korall-darab':'piece of coral','gyöngy':'pearl',
+'fényes kavicsot':'a shiny pebble','kék tollat':'a blue feather','makkot':'an acorn','csigaházat':'a snail shell','piros levelet':'a red leaf','kék kristályt':'a blue crystal','jégcsapot':'an icicle','fehér tollat':'a white feather','fenyőtobozt':'a pine cone',
+'hópehely-kristályt':'a snowflake crystal','tarka tollat':'a colourful feather','diót':'a nut','bogárpáncélt':'a beetle shell','virágszirmot':'a flower petal','zöld kristályt':'a green crystal','kagylót':'a seashell','tengeri csillagot':'a starfish',
+'csiszolt üveget':'a piece of sea glass','korall-darabot':'a piece of coral','gyöngyöt':'a pearl',
+'Aranyhal':'Goldfish','Arowana':'Arowana','Barrakuda':'Barracuda','Bohóchal':'Clownfish','Csuka':'Pike','Csíkos sügér':'Striped perch','Elveszett kesztyű':'Lost glove','Ezüstkárász':'Prussian carp','Harcsa':'Catfish',
+'Kék doktorhal':'Blue tang','Kókuszdió':'Coconut','Neonhal':'Neon fish','Palackposta':'Message in a bottle','Piranha':'Piranha','Pisztráng':'Trout','Polip':'Octopus','Sarki szajbling':'Arctic char','Szivárványos pisztráng':'Rainbow trout',
+'Vörösszárnyú keszeg':'Rudd','Öreg csizma':'Old boot',
+'aranyhalat':'a goldfish','arowanát':'an arowana','barrakudát':'a barracuda','bohóchalat':'a clownfish','csukát':'a pike','csíkos sügért':'a striped perch','elveszett kesztyűt':'a lost glove','ezüstkárászt':'a Prussian carp','harcsát':'a catfish',
+'kék doktorhalat':'a blue tang','kókuszdiót':'a coconut','neonhalat':'a neon fish','palackpostát':'a message in a bottle','piranhát':'a piranha','pisztrángot':'a trout','polipot':'an octopus','sarki szajblingot':'an arctic char','szivárványos pisztrángot':'a rainbow trout',
+'vörösszárnyú keszeget':'a rudd','öreg csizmát':'an old boot',
+'egy sün':'a hedgehog','egy sarki róka':'an arctic fox','egy teknős':'a turtle','egy rák':'a crab','egy madár':'a bird','egy hóbagoly':'a snowy owl','egy papagáj':'a parrot','egy sirály':'a seagull',
+'éléskamrát':'pantry','kincseskamrát':'treasure chamber','kristálybarlangot':'crystal cave',
+'a(z) odúban':'in the burrow','a(z) igluban':'in the igloo','a(z) faodúban':'in the tree hollow','a(z) barlangban':'in the cave',
+/* rejtekhelyek */
+'a bambusz mögött':'behind the bamboo','a bambusz tövében':'at the foot of the bamboo','a barlang mögött':'behind the cave','a barlangban':'in the cave','a bogyós bokor mögött':'behind the berry bush','a bokor mögött':'behind the bush',
+'a fa tövében':'at the foot of the tree','a faodú mögött':'behind the tree hollow','a faodúban':'in the tree hollow','a fenyő tövében':'at the foot of the pine','a homokvár mögött':'behind the sandcastle','a hóember mögött':'behind the snowman',
+'a kis bokor mögött':'behind the little bush','a kis fenyő mögött':'behind the little pine','a kis kő mögött':'behind the little stone','a kő mögött':'behind the stone','a nagy fa mögött':'behind the big tree','a nagy levelek között':'among the big leaves',
+'a napernyő mögött':'behind the parasol','a nádas mellett':'by the reeds','a patakparton':'on the stream bank','a pálma tövében':'at the foot of the palm','a pálmafa mögött':'behind the palm tree','a szikla mögött':'behind the rock',
+'a sziklák mögött':'behind the rocks','az iglu mögött':'behind the igloo','az igluban':'in the igloo','az odúban':'in the burrow','az áfonyabokor mögött':'behind the blueberry bush','az óriáslevél mögött':'behind the giant leaf'
+};
+const capF=s=>s?s.charAt(0).toUpperCase()+s.slice(1):s;
+function trx(k){if(EN_X[k]!=null)return EN_X[k];const lo=k.charAt(0).toLowerCase()+k.slice(1);if(lo!==k&&EN_X[lo]!=null)return capF(EN_X[lo]);const up=capF(k);if(up!==k&&EN_X[up]!=null){const v=EN_X[up];return v.charAt(0).toLowerCase()+v.slice(1);}return null;}
+const trg=x=>tr(x);
+const EN_P=[
+[/^(\d+)\. nap$/,m=>'Day '+m[1]],[/^(\d+)\. növény$/,m=>'Plant '+m[1]],[/^(\d+) db$/,m=>m[1]+'×'],[/^legnagyobb (.+)$/,m=>'biggest '+m[1]],[/^(\d+) mag$/,m=>m[1]+' seeds'],
+[/^(\d+) cm · visszaengedi$/,m=>m[1]+' cm · let go'],[/^Költözés: (.+)$/,m=>'Move to: '+trg(m[1])],
+[/^(.+) kíváncsian néz körül\. Adj neki egy bogyót!$/,m=>m[1]+' looks around curiously. Give them a berry!'],
+[/^Megtaláltad, (.+) bújt! (.+) kuncog\.$/,m=>'Found! '+m[2]+' was hiding '+trg(m[1])+' and giggles.'],
+[/^Bújócskáztunk\. Elbújtam (.+), de (\d+)\. próbára megtaláltál\.$/,m=>'We played hide and seek. I hid '+trg(m[1])+', but you found me on try '+m[2]+'.'],
+[/^Bújócskáztunk\. Elbújtam (.+), és nem találtál meg!$/,m=>'We played hide and seek. I hid '+trg(m[1])+' and you didn’t find me!'],
+[/^Itt vagyok! (.+) bújtam\.$/,m=>'Here I am! I was hiding '+trg(m[1])+'.'],
+[/^Csukd be a szemed, (.+) elbújik!$/,m=>'Close your eyes, '+m[1]+' is hiding!'],
+[/^„(.+)”: (.+) érti! \((.+)\)$/,m=>'“'+m[1]+'”: '+m[2]+' understands! ('+trg(m[3])+')'],
+[/^(.+) megtanulta: „(.+)” = (.+)\.$/,m=>m[1]+' learned: “'+m[2]+'” = '+trg(m[3])+'.'],
+[/^Megtanultam: ha azt mondod „(.+)”, akkor (.+)\.$/,m=>'I learned: when you say “'+m[1]+'”, '+trg(m[2])+'.'],
+[/^(.+) hegyezi a fülét\. Még nem tudja, mit jelent: „(.+)”\.$/,m=>m[1]+' pricks up their ears. They don’t know yet what “'+m[2]+'” means.'],
+[/^(.+) alszik, csak motyog egyet álmában\.$/,m=>m[1]+' is asleep and just mumbles in their sleep.'],
+[/^Talált valamit: (.+)! Hazaviszi, (.+) lesz a helye\.$/,m=>'Found something: '+trg(m[1])+'! Taking it home, it will live '+trg(m[2])+'.'],
+[/^Találtam egy (.+)\. Otthon a helye\.$/,m=>'I found '+trg(m[1])+'. It belongs at home.'],
+[/^(.+) kiásott egy új (.+) az odú mellé! Nézd meg oldalról\.$/,m=>m[1]+' dug a new '+trg(m[2])+' next to the burrow! Look at it from the side.'],
+[/^Kiástam egy (.+)\. Egyre nagyobb az otthonom\.$/,m=>'I dug a '+trg(m[1])+'. My home keeps getting bigger.'],
+[/^Kihúztunk egy (.+) a vízből\. Nagyon nevettem\.$/,m=>'We pulled '+trg(m[1])+' out of the water. I laughed so much.'],
+[/^Kifogtunk egy (.+)! (\d+) centis volt\. Visszaengedtem\.$/,m=>'We caught '+trg(m[1])+'! It was '+m[2]+' cm. I let it go.'],
+[/^Jött (.+)\. Odamentem és megismerkedtünk\.$/,m=>capF(trg(m[1]))+' came by. I went over and we made friends.'],
+[/^Jött (.+), és megijedtem tőle\. Messziről néztem\.$/,m=>capF(trg(m[1]))+' came by and I got scared. I watched from afar.'],
+[/^(.+) kimegy a (stégre|partra) a horgászbottal…$/,m=>m[1]+' goes out to the '+(m[2]==='stégre'?'pier':'shore')+' with the fishing rod…'],
+[/^Kiül a (stégre|partra), te segítesz kifogni a halat\.$/,m=>'They sit on the '+(m[1]==='stégre'?'pier':'shore')+', and you help catch the fish.'],
+[/^Palackposta! Benne: (.+)$/,m=>'Message in a bottle! It says: '+trg(m[1])],[/^Palackpostát fogtunk! Ez volt benne: (.+)$/,m=>'We caught a message in a bottle! It said: '+trg(m[1])],
+[/^Úgy érzem, kezdek (.+) lenni\.$/,m=>'I feel I’m becoming '+trg(m[1])+'.'],
+[/^Megértette\. Ritkábban fog (.+)\.$/,m=>'Understood. They will '+trg(m[1])+' less often.'],
+[/^Tetszett neki a dicséret\. Ezentúl szívesebben fog (.+)\.$/,m=>'They liked the praise. From now on they will '+trg(m[1])+' more gladly.'],
+[/^Koppints a fűre, ahová a\(z\) (.+) kerüljön\.$/,m=>'Tap the grass where the '+trg(m[1])+' should go.'],
+[/^Új (.+) került hozzánk\.$/,m=>'A new '+trg(m[1])+' arrived.'],[/^(.+) a helyén\.$/,m=>trg(m[1])+' is in place.'],
+[/^Most: (.+?)\. Költözéskor a kincsek, a jellem és a napló vele megy, a kert és a berendezés itt marad\.$/,m=>'Now: '+trg(m[1])+'. When moving, the treasures, personality and diary come along, the garden and furniture stay here.'],
+[/^Mindent töröl: (.+) eltűnik a naplóval, a kincsekkel és a kerttel együtt, minden eszközödről\. Utána új helyszínt és új karaktert választhatsz\.$/,m=>'Deletes everything: '+m[1]+' disappears together with the diary, treasures and garden, from all your devices. Then you can pick a new place and a new character.'],
+[/^Elköltöztünk innen: (.+)\. Új otthonunk: (.+)\.$/,m=>'We moved away from: '+trg(m[1])+'. Our new home: '+trg(m[2])+'.'],
+[/^Kikeltem! Ez lesz az otthonom: (.+)\.$/,m=>'I hatched! This will be my home: '+trg(m[1])+'.'],
+[/^Most (.+) szemével látod a világot\. Húzd el, hogy körülnézzen\.$/,m=>'Now you see the world through '+m[1]+'’s eyes. Drag to look around.'],
+[/^(.+) átjött a másik eszközödről!$/,m=>m[1]+' came over from your other device!'],
+[/^Amíg nem voltál itt: (.+)\.$/,m=>'While you were away: '+m[1].split(', ').map(p=>{let q;if((q=p.match(/^aludtam (\d+) órát$/)))return 'I slept '+q[1]+' hours';if((q=p.match(/^(\d+) bogyót ettem$/)))return 'I ate '+q[1]+' berries';if((q=p.match(/^találtam egy (.+)$/)))return 'I found '+trg(q[1]);return g(p);}).join(', ')+'.'],
+[/^(.+) jelleme$/,m=>m[1]]
+];
+const EN_R=[
+[/Távol voltál (\d+) órát\./g,(m,a)=>'You were away for '+a+' hours.'],[/Távol voltál (\d+) percet\./g,(m,a)=>'You were away for '+a+' minutes.'],
+[/Aludt (\d+) órát\./g,(m,a)=>'Slept '+a+' hours.'],[/(\d+) bogyót evett\./g,(m,a)=>'Ate '+a+' berries.'],
+[/Talált valamit: ([^.!]+)\./g,(m,a)=>'Found something: '+a.split(', ').map(trg).join(', ')+'.']];
+const EN_F=Object.keys(EN_X).filter(k=>k.length>=6).sort((a,b)=>b.length-a.length);
+const L_RE=/[A-Za-zÀ-ɏ]/;
+function fragRep(o,h,e){let i=0,out='';for(;;){const j=o.indexOf(h,i);if(j<0){out+=o.slice(i);return out;}const b=o.charAt(j-1),a=o.charAt(j+h.length);if((j>0&&L_RE.test(b))||L_RE.test(a)){out+=o.slice(i,j+1);i=j+1;continue;}out+=o.slice(i,j)+e;i=j+h.length;}}
+function tr(t){if(LANG!=='en'||t==null)return t;t=String(t);const k=t.trim();if(!k||!/[A-Za-zÀ-ɏ]/.test(k))return t;
+  const pre=t.slice(0,t.indexOf(k)),post=t.slice(t.indexOf(k)+k.length);const W=x=>pre+x+post;
+  const x=trx(k);if(x!=null)return W(x);
+  for(const [re,f] of EN_P){const m=k.match(re);if(m)return W(f(m));}
+  if(k.includes(' · '))return W(k.split(' · ').map(p=>tr(p)).join(' · '));
+  let o=k;for(const [re,f] of EN_R)o=o.replace(re,f);
+  if(/[áéíóöőúüűÁÉÍÓÖŐÚÜŰ]/.test(o)||o===k)for(const h of EN_F)if(o.indexOf(h)>=0)o=fragRep(o,h,EN_X[h]);
+  return W(o);}
+const TR_ATTR=['placeholder','aria-label'];
+function trNode(n){if(n.nodeType===3){const v=n.nodeValue,o=tr(v);if(o!==v)n.nodeValue=o;return;}
+  if(n.nodeType!==1||n.tagName==='SCRIPT'||n.tagName==='STYLE')return;
+  TR_ATTR.forEach(a=>{const v=n.getAttribute(a);if(v){const o=tr(v);if(o!==v)n.setAttribute(a,o);}});
+  if(n.tagName==='INPUT'&&n.id==='nameIn')return;for(let c=n.firstChild;c;c=c.nextSibling)trNode(c);}
+function i18nStart(){if(LANG!=='en')return;document.documentElement.lang='en';document.title=tr(document.title);trNode(document.body);
+  new MutationObserver(ms=>{ms.forEach(m=>{if(m.type==='characterData')trNode(m.target);else if(m.type==='attributes')trNode(m.target);else m.addedNodes.forEach(trNode);});})
+    .observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:TR_ATTR});
+  const ft=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(t,...a){return ft.call(this,tr(t),...a);};}
+function setLang(l){if(l===LANG)return;try{localStorage.setItem('pihe-lang',l);}catch(e){}if(S){S.px=C.x;S.pz=C.z;save();}location.reload();}
+
 const KEY='pihe-odu-v1',PREF='pihe-odu-pref';
+i18nStart();
 const X0=-9,X1=9,Z0=-7,Z1=7,TOP=0.18;
 
 /* ================= Idő ================= */
@@ -1070,11 +1258,58 @@ try{A.on=localStorage.getItem(PREF)==='on';const v=parseFloat(localStorage.getIt
 function audioInit(){if(A.ctx)return;try{const ctx=new (window.AudioContext||window.webkitAudioContext)();A.ctx=ctx;A.master=ctx.createGain();A.master.gain.value=A.on?A.vol:0;A.master.connect(ctx.destination);
   const buf=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),dd=buf.getChannelData(0);for(let i=0;i<dd.length;i++)dd[i]=Math.random()*2-1;A.buf=buf;
   const loop=(type,f,q)=>{const s=ctx.createBufferSource();s.buffer=buf;s.loop=true;const fl=ctx.createBiquadFilter();fl.type=type;fl.frequency.value=f;if(q)fl.Q.value=q;const g=ctx.createGain();g.gain.value=0;s.connect(fl);fl.connect(g);g.connect(A.master);s.start();return g;};
-  A.wind=loop('lowpass',380);A.water=loop('bandpass',1500,1.2);A.rain=loop('highpass',2200);A.birdT=3;A.crT=1;A.snT=2;}catch(e){A.ctx=null;}}
+  A.wind=loop('lowpass',380);A.water=loop('bandpass',1500,1.2);A.rain=loop('highpass',2200);A.birdT=3;A.crT=1;A.snT=2;musInit();}catch(e){A.ctx=null;}}
 function lvl(g,v){if(A.ctx&&g)g.gain.setTargetAtTime(v,A.ctx.currentTime,0.5);}
-function tone(f0,f1,dur,vol,type,delay){if(!A.ctx||!A.on)return;const c=A.ctx,t=c.currentTime+(delay||0),o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+dur);
+/* ================= Zene: halk, helyszínenként más hangulat =================
+   Saját buszon szól, mélyen a többi hang alatt; ha megszólal egy effekt, a zene egy pillanatra lehalkul. */
+const MUS={vol:0.5,next:0,step:0,timer:null,bus:null,duck:null,style:null};
+try{const v=parseFloat(localStorage.getItem(PREF+'-mus'));if(v>=0&&v<=1)MUS.vol=v;}catch(e){}
+const MSTYLE={
+  erdo:{bpm:68,root:62,scale:[0,2,4,7,9],prog:[[0,4,7],[-3,0,4],[5,9,12],[7,11,14]],lead:'pluck',lp:0.42,bass:'pluck',pad:0.5,perc:null},
+  havas:{bpm:56,root:57,scale:[0,3,5,7,10],prog:[[0,3,7],[-4,0,3],[3,7,10],[-2,2,5]],lead:'bell',lp:0.3,bass:'soft',pad:0.8,perc:null},
+  dzsungel:{bpm:88,root:55,scale:[0,2,4,7,9,10],prog:[[0,4,7],[-2,2,5],[5,9,12],[0,4,7]],lead:'marimba',lp:0.5,bass:'soft',pad:0.35,perc:'jungle'},
+  sziget:{bpm:76,root:60,scale:[0,2,4,7,9],prog:[[0,4,7],[5,9,12],[7,11,14],[5,9,12]],lead:'steel',lp:0.3,bass:'soft',pad:0.3,perc:'island',skank:true}};
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function musInit(){const c=A.ctx;if(!c||MUS.bus)return;
+  MUS.bus=c.createGain();MUS.bus.gain.value=MUS.vol*0.9;MUS.duck=c.createGain();MUS.duck.gain.value=1;
+  const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=3200;
+  const dl=c.createDelay(1.5);dl.delayTime.value=0.42;const fb=c.createGain();fb.gain.value=0.32;const dlf=c.createBiquadFilter();dlf.type='lowpass';dlf.frequency.value=1800;const wet=c.createGain();wet.gain.value=0.35;
+  MUS.bus.connect(lp);lp.connect(MUS.duck);lp.connect(dl);dl.connect(dlf);dlf.connect(fb);fb.connect(dl);dlf.connect(wet);wet.connect(MUS.duck);MUS.duck.connect(A.master);
+  MUS.style=MSTYLE[BIO.id]||MSTYLE.erdo;MUS.next=c.currentTime+0.4;MUS.step=0;MUS.rnd=1;
+  MUS.timer=setInterval(musTick,90);}
+function musLevel(){if(MUS.bus&&A.ctx)MUS.bus.gain.setTargetAtTime(MUS.vol*0.9,A.ctx.currentTime,0.3);}
+function musDuck(len){if(!MUS.duck||!A.ctx)return;const t=A.ctx.currentTime;MUS.duck.gain.cancelScheduledValues(t);MUS.duck.gain.setTargetAtTime(0.35,t,0.03);MUS.duck.gain.setTargetAtTime(1,t+(len||0.3),0.5);}
+function mrand(){MUS.rnd=(MUS.rnd*16807)%2147483647;return MUS.rnd/2147483647;}
+function mVoice(kind,f,t,dur,vol){const c=A.ctx,out=c.createGain();out.connect(MUS.bus);
+  const osc=(type,fr,v,dec)=>{const o=c.createOscillator(),gg=c.createGain();o.type=type;o.frequency.value=fr;gg.gain.setValueAtTime(0,t);gg.gain.linearRampToValueAtTime(v,t+(kind==='pad'?1.2:0.006));gg.gain.exponentialRampToValueAtTime(0.0001,t+dec);o.connect(gg);gg.connect(out);o.start(t);o.stop(t+dec+0.05);return o;};
+  if(kind==='pluck'){osc('triangle',f,vol,dur*1.6);osc('sine',f*2,vol*0.25,dur*0.6);}
+  else if(kind==='bell'){osc('sine',f,vol,2.6);osc('sine',f*2.76,vol*0.18,1.2);osc('sine',f*5.4,vol*0.06,0.6);}
+  else if(kind==='marimba'){osc('sine',f,vol,0.55);osc('sine',f*3.98,vol*0.12,0.12);}
+  else if(kind==='steel'){osc('sine',f,vol,0.9);osc('sine',f*2,vol*0.35,0.5);osc('sine',f*3.01,vol*0.12,0.3);}
+  else if(kind==='soft'){osc('sine',f,vol,dur*1.4);}
+  else if(kind==='pad'){const fl=c.createBiquadFilter();fl.type='lowpass';fl.frequency.value=700;fl.connect(out);
+    [-6,6].forEach(dt=>{const o=c.createOscillator(),gg=c.createGain();o.type='sawtooth';o.frequency.value=f;o.detune.value=dt;gg.gain.setValueAtTime(0,t);gg.gain.linearRampToValueAtTime(vol,t+1.4);gg.gain.setValueAtTime(vol,t+dur-0.8);gg.gain.linearRampToValueAtTime(0.0001,t+dur+1.2);o.connect(gg);gg.connect(fl);o.start(t);o.stop(t+dur+1.3);});}}
+function mPerc(kind,t,vol){const c=A.ctx;
+  if(kind==='drum'){const o=c.createOscillator(),gg=c.createGain();o.frequency.setValueAtTime(190,t);o.frequency.exponentialRampToValueAtTime(110,t+0.18);gg.gain.setValueAtTime(vol,t);gg.gain.exponentialRampToValueAtTime(0.0001,t+0.25);o.connect(gg);gg.connect(MUS.bus);o.start(t);o.stop(t+0.3);}
+  else{const s=c.createBufferSource();s.buffer=A.buf;const fl=c.createBiquadFilter();fl.type='bandpass';fl.frequency.value=kind==='shaker'?6500:3000;fl.Q.value=1.2;const gg=c.createGain();gg.gain.setValueAtTime(vol,t);gg.gain.exponentialRampToValueAtTime(0.0001,t+0.07);s.connect(fl);fl.connect(gg);gg.connect(MUS.bus);s.start(t,Math.random()*1.5,0.1);}}
+function musTick(){const c=A.ctx;if(!c||!MUS.bus)return;if(document.hidden){MUS.next=Math.max(MUS.next,c.currentTime+0.2);return;}
+  if(!A.on||MUS.vol<=0){MUS.next=c.currentTime+0.2;return;}
+  if(MUS.next<c.currentTime)MUS.next=c.currentTime+0.05;
+  const st=MUS.style,night=nightFactor(new Date())>0.6,eighth=60/(st.bpm*(night?0.85:1))/2;
+  while(MUS.next<c.currentTime+0.35){const t=MUS.next,i=MUS.step,inBar=i%8,ch=st.prog[Math.floor(i/16)%st.prog.length],R=st.root;
+    if(i%16===0){ch.forEach(n=>mVoice('pad',mtof(R+n-12),t,eighth*16,0.012*st.pad*(night?1.4:1)));mVoice(st.bass,mtof(R+ch[0]-24),t,eighth*4,0.09);}
+    if(i%16===8)mVoice(st.bass,mtof(R+ch[0]-24+(mrand()<0.5?7:0)),t,eighth*4,0.07);
+    if(st.skank&&inBar%2===1&&!night)ch.forEach(n=>mVoice('steel',mtof(R+n),t,0.2,0.018));
+    const p=(st.lead==='bell'?0.22:st.lp)*(night?0.6:1)*(inBar%2?0.7:1);
+    if(mrand()<p){const sc=st.scale,deg=Math.floor(mrand()*sc.length),oct=mrand()<0.3?24:12;let n=R+sc[deg]+oct;if(mrand()<0.4)n=R+ch[Math.floor(mrand()*ch.length)]+12;
+      mVoice(st.lead,mtof(n),t,eighth*2,st.lead==='bell'?0.05:st.lead==='marimba'?0.07:0.06);}
+    if(st.perc&&!night){if(st.perc==='jungle'){if(inBar===0||inBar===3||inBar===6)mPerc('drum',t,inBar?0.05:0.08);if(mrand()<0.7)mPerc('shaker',t,0.012);}
+      else{if(inBar===0||inBar===4)mPerc('drum',t,0.05);if(inBar%2===1)mPerc('shaker',t,0.009);}}
+    MUS.next+=eighth*(inBar%2===0?1.04:0.96);MUS.step++;}}
+
+function tone(f0,f1,dur,vol,type,delay){if(!A.ctx||!A.on)return;musDuck(dur+(delay||0));const c=A.ctx,t=c.currentTime+(delay||0),o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+dur);
   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+Math.min(0.02,dur/3));g.gain.exponentialRampToValueAtTime(0.0001,t+dur);o.connect(g);g.connect(A.master);o.start(t);o.stop(t+dur+0.05);}
-function hiss(f,dur,vol,type,delay){if(!A.ctx||!A.on)return;const c=A.ctx,t=c.currentTime+(delay||0),s=c.createBufferSource();s.buffer=A.buf;const fl=c.createBiquadFilter();fl.type=type||'bandpass';fl.frequency.value=f;const g=c.createGain();
+function hiss(f,dur,vol,type,delay){if(!A.ctx||!A.on)return;musDuck(dur+(delay||0));const c=A.ctx,t=c.currentTime+(delay||0),s=c.createBufferSource();s.buffer=A.buf;const fl=c.createBiquadFilter();fl.type=type||'bandpass';fl.frequency.value=f;const g=c.createGain();
   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);s.connect(fl);fl.connect(g);g.connect(A.master);s.start(t,Math.random());s.stop(t+dur+0.05);}
 const SFX={eat:()=>{for(let i=0;i<3;i++)hiss(1900,0.06,0.18,'bandpass',i*0.13);},happy:()=>tone(700,1250,0.16,0.14),sad:()=>tone(420,300,0.3,0.08,'triangle'),
   splash:()=>{hiss(800,0.5,0.3,'lowpass');hiss(2400,0.25,0.12,'highpass',0.05);},pop:()=>tone(520,260,0.08,0.1),find:()=>{tone(900,1500,0.1,0.1);tone(1200,1900,0.12,0.1,'sine',0.12);},
@@ -1361,12 +1596,14 @@ function openSheet(mode){sheetMode=mode;$('sheetWrap').hidden=false;const tabs=$
   if(mode==='beallit'){$('sTitle').textContent='Beállítások';tabs.innerHTML='';const vp=Math.round(A.vol*100);
     body.innerHTML='<div class="trait">Hang</div><div class="row"><span>'+(A.on?'Bekapcsolva':'Kikapcsolva')+'</span><button class="mini" type="button" data-snd="1">'+(A.on?'Kikapcsolom':'Bekapcsolom')+'</button></div>'+
       '<label class="row" for="volIn"><span>Hangerő</span><span id="volV">'+vp+'%</span></label><input id="volIn" class="range" type="range" min="0" max="100" step="5" value="'+vp+'" aria-label="Hangerő">'+
+      '<label class="row" for="musIn"><span>Zene</span><span id="musV">'+Math.round(MUS.vol*100)+'%</span></label><input id="musIn" class="range" type="range" min="0" max="100" step="5" value="'+Math.round(MUS.vol*100)+'" aria-label="Zene hangereje">'+
+      '<div class="trait">Nyelv</div><div class="tabs"><button class="tab'+(LANG==='hu'?' on':'')+'" type="button" data-lang="hu">Magyar</button><button class="tab'+(LANG==='en'?' on':'')+'" type="button" data-lang="en">English</button></div>'+
       '<div class="trait">Költözés</div><p class="muted">Most: '+BIO.name+'. Költözéskor a kincsek, a jellem és a napló vele megy, a kert és a berendezés itt marad.</p><div class="grid2">'+Object.values(BIOMES).filter(b=>b.id!==BIO.id).map(b=>'<button class="item'+(moveArm===b.id?' warn':'')+'" type="button" data-move="'+b.id+'"><b>'+(moveArm===b.id?'Biztos? Koppints újra':'Költözés: '+b.name)+'</b><span>'+b.desc+'</span></button>').join('')+'</div>'+
       '<div class="trait">Újrakezdés</div><p class="muted">Mindent töröl: '+esc(S.name)+' eltűnik a naplóval, a kincsekkel és a kerttel együtt, minden eszközödről. Utána új helyszínt és új karaktert választhatsz.</p>'+
       '<button class="item warn" type="button" data-reset="1"><b>'+(resetArm?'Biztos? Koppints újra a törléshez':'Újrakezdés')+'</b><span>'+(resetArm?'Ezt nem lehet visszavonni.':'Minden elölről kezdődik.')+'</span></button>';return;}
   $('sTitle').textContent=S.name;
   tabs.innerHTML=['naplo','jellem','kincsek'].map(k=>'<button class="tab'+(k===mode?' on':'')+'" type="button" data-tab="'+k+'">'+{naplo:'Napló',jellem:'Jellem',kincsek:'Kincsek'}[k]+'</button>').join('');
-  if(mode==='naplo'){body.innerHTML=S.log.length?S.log.map(e=>'<div class="entry"><time>'+new Date(e.t).toLocaleString('hu-HU',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+'</time><span>'+esc(e.text)+'</span></div>').join(''):'<p class="muted">Még üres a napló.</p>';}
+  if(mode==='naplo'){body.innerHTML=S.log.length?S.log.map(e=>'<div class="entry"><time>'+new Date(e.t).toLocaleString(LOC(),{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+'</time><span>'+esc(e.text)+'</span></div>').join(''):'<p class="muted">Még üres a napló.</p>';}
   else if(mode==='jellem'){const nw=v=>(v-0.3)/1.9;const ws=Object.keys(S.words).slice(-30);
     body.innerHTML='<div class="trait">Szavak</div>'+(ws.length?'<div class="chips">'+ws.map(w=>{const k=wordBest(S.words[w]);return '<span class="chip">„'+esc(w)+'” '+(k?'= '+MEAN[k]:'?')+'</span>';}).join('')+'</div>':'')+'<p class="muted" style="margin:0">Írj neki a „Szólj hozzá” mezőbe, aztán rögtön tedd azt, amit a szó jelent: adj bogyót, dobj tobozt, vagy írd be, hogy „ügyes”, ha odanézett. Háromszori ismétlés után megérti. A saját nevét magától megtanulja.</p><div class="trait">Jellem</div>'+'<div class="chips">'+traits().map(t=>'<span class="chip">'+t+'</span>').join('')+'</div>'+bar('Falánkság',nw(S.w.eat),'var(--hunger)')+bar('Játékosság',nw(S.w.play),'var(--fun)')+bar('Kalandvágy',nw(S.w.wander),'var(--leaf)')+bar('Pihenés szeretete',nw(S.w.sleep),'var(--energy)')+bar('Bátorság',S.bravery/100,'var(--trust)')+
       '<p class="muted" style="margin:0">A jellemét te alakítod a „Szólj hozzá” mezőben: ha dicsérő szót írsz (ügyes, jól van, szép volt), szívesebben csinálja azt, amit előtte tett; ha tiltót (nem szabad, tilos, rossz), ritkábban. A bátorsága a látogatókkal és az úszással nő.</p>';}
@@ -1375,7 +1612,13 @@ function openSheet(mode){sheetMode=mode;$('sheetWrap').hidden=false;const tabs=$
     const fl=Object.keys(S.fishLog);body.innerHTML+='<div class="trait">Halnapló</div>'+(fl.length?'<div class="grid2">'+fl.map(k=>'<div class="item" style="cursor:default"><b>'+esc(k)+'</b><span>'+S.fishLog[k].n+' db · legnagyobb '+S.fishLog[k].best+' cm</span></div>').join('')+'</div>':'<p class="muted" style="margin:0">Még nem horgásztatok.</p>');}}
 function closeSheet(){$('sheetWrap').hidden=true;sheetMode=null;moveArm=null;resetArm=false;}
 $('sClose').addEventListener('click',closeSheet);
-$('sheetWrap').addEventListener('input',e=>{if(e.target.id==='volIn'){setVol(+e.target.value/100);$('volV').textContent=e.target.value+'%';}});
+const RTIP={H:['Jóllakottság','Mennyire van tele a pocakja. Bogyóval és a kerti bokorral eteted.'],E:['Energia','Alvással töltődik. Este magától hazamegy aludni.'],F:['Kedv','Játékkal, simogatással és bújócskával nő.'],T:['Bizalom','Törődéssel és dicsérettel nő. Ha sokáig magára hagyod, csökken.']};
+let ringTipT=null;function showRingTip(k){if(!S)return;const el=$('ringTip'),r=$('g'+k).getBoundingClientRect(),v={H:S.hunger,E:S.energy,F:S.fun,T:S.trust}[k];
+  el.innerHTML='<b>'+RTIP[k][0]+'</b> · '+Math.round(clamp(v,0,100))+'%<br><span>'+RTIP[k][1]+'</span>';el.style.top=(r.bottom+8)+'px';
+  const w=Math.min(250,window.innerWidth-32);el.style.left=clamp(r.left+r.width/2-w/2,16,window.innerWidth-16-w)+'px';el.style.width=w+'px';el.style.opacity=1;clearTimeout(ringTipT);ringTipT=setTimeout(()=>el.style.opacity=0,3200);}
+['H','E','F','T'].forEach(k=>{const r=$('g'+k);r.addEventListener('click',()=>showRingTip(k));r.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showRingTip(k);}});});
+$('sheetWrap').addEventListener('input',e=>{if(e.target.id==='volIn'){setVol(+e.target.value/100);$('volV').textContent=e.target.value+'%';}
+  if(e.target.id==='musIn'){MUS.vol=clamp(+e.target.value/100,0,1);try{localStorage.setItem(PREF+'-mus',String(MUS.vol));}catch(_){}audioInit();if(MUS.vol>0&&!A.on){toggleSound();}musLevel();$('musV').textContent=e.target.value+'%';}});
 $('sheetWrap').addEventListener('click',e=>{if(e.target.id==='sheetWrap'){closeSheet();return;}
   const tb=e.target.closest('[data-tab]');if(tb){openSheet(tb.dataset.tab);return;}
   const gm=e.target.closest('[data-game]');if(gm&&!gm.disabled){if(gm.dataset.game==='seek')startSeek();else fishStart();return;}
@@ -1384,6 +1627,7 @@ $('sheetWrap').addEventListener('click',e=>{if(e.target.id==='sheetWrap'){closeS
     if(id==='steg'){S.decor.push({type:'steg',x:BIO.pier.x-1,z:BIO.pier.z});rebuildDecor();save();toast('Kész a stég a víz partján.',2.5);addLog('Kaptam egy stéget!');}
     else{placing=id;toast('Koppints a fűre, ahová a(z) '+CATALOG.find(c=>c.id===id).name.toLowerCase()+' kerüljön.',4);}return;}
   const mv=e.target.closest('[data-move]');if(mv){const id=mv.dataset.move;if(moveArm!==id){moveArm=id;resetArm=false;openSheet('beallit');return;}moveTo2(id);return;}
+  const lg=e.target.closest('[data-lang]');if(lg){setLang(lg.dataset.lang);return;}
   const sn=e.target.closest('[data-snd]');if(sn){toggleSound();openSheet('beallit');return;}
   const rs=e.target.closest('[data-reset]');if(rs){if(!resetArm){resetArm=true;moveArm=null;openSheet('beallit');return;}resetAll();return;}
   const rm=e.target.closest('[data-remove]');if(rm){S.decor.splice(+rm.dataset.remove,1);rebuildDecor();save();openSheet('berendez');}});
@@ -1537,8 +1781,8 @@ function respond(k){if(C.mode!=='surface')return;
   else if(k==='eat'){const f=S.foods.find(f=>f.landed);if(f)startAct({type:'eat',id:f.id,phase:'go',timer:0});else{C.bubble='berry';C.bubbleT=2.5;startAct({type:'idle',timer:2});setAnim('jump',0.8);turnToCamera();}}
   else if(k==='play'){if(S.toy)startAct({type:'play',kicks:0,pause:0});else{setAnim('jump',0.8);startAct({type:'idle',timer:2});turnToCamera();}}
   else if(k==='sleep'){if(S.energy<85||isNight())startAct({type:'sleep',phase:'go'});else{setAnim('yawn',1.3);SFX.yawn();startAct({type:'idle',timer:2});}}}
-const PRAISE=['ügyes','ügyes vagy','ügyi','okos','jó','jó vagy','nagyon jó','szép volt','szép','szeretlek','brávó','bravó','jól van','szuper','jó fiú','jó kislány','jó kisfiú'];
-const SCOLD=['nem','ne','rossz','rossz vagy','ejnye','hagyd','fúj','nem szabad','tilos','nem jó'];
+const PRAISE=['good','good boy','good girl','well done','good job','clever','nice','great','bravo','love you','i love you','awesome','super','ügyes','ügyes vagy','ügyi','okos','jó','jó vagy','nagyon jó','szép volt','szép','szeretlek','brávó','bravó','jól van','szuper','jó fiú','jó kislány','jó kisfiú'];
+const SCOLD=['no','bad','bad boy','bad girl','stop','dont','not allowed','forbidden','no no','nem','ne','rossz','rossz vagy','ejnye','hagyd','fúj','nem szabad','tilos','nem jó'];
 function phraseHit(w,list){const t=' '+w+' ';return list.some(p=>t.includes(' '+p+' '));}
 function say(raw){if(!S)return;const w=normWord(raw);if(!w)return;
   if(phraseHit(w,SCOLD)){teach(false);return;}if(phraseHit(w,PRAISE)){teach(true);return;}
