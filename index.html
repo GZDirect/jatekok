@@ -16,6 +16,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ui);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(env(safe-area-inset-top,0px) + 32px) calc(env(safe-area-inset-bottom,0px) + 32px);}
 main{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:24px;}
 h1{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(32px,7vw,48px);line-height:1.05;text-wrap:balance;}
+h2{margin:8px 0 -8px;font-family:var(--display);font-weight:600;font-size:24px;}
 .lead{margin:0;font-size:16px;line-height:1.55;color:var(--soft);max-width:60ch;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;}
 a.card{display:flex;flex-direction:column;gap:6px;padding:18px;border-radius:18px;border:2px solid var(--ink);background:var(--card);color:var(--ink);text-decoration:none;box-shadow:0 3px 0 var(--ink);transition:transform .12s;}
@@ -36,6 +37,12 @@ footer{font-size:13px;color:var(--soft);}
     <a class="card" href="pihe/"><b>Pihe odúja</b><span>Tamagocsi négy forgatható 3D diorámában: őszi erdő, havas tó, dzsungel és sziget, négy választható kis lakóval. Kert, horgászat, bújócska, szavak tanítása.</span></a>
     <a class="card" href="pip-terrarium/"><b>Pip terráriuma</b><span>Gondozós 3D játék egy pici ugrópókkal: nevet adsz neki, nő, vedlik, és fotóalbum készül az életéről.</span></a>
     <a class="card" href="arnyekerdo/"><span class="tag">Prototípus</span><b>Árnyékerdő</b><span>Tenchu-stílusú lopakodó küldetés egy éjszakai japán hegyi erdőben. Hat zseblámpás rendőr fésüli át a völgyet; surranj át észrevétlenül az északi útig, vagy tüntesd el őket egyenként tantóval, kampóval és füstbombával.</span></a>
+  </div>
+  <h2>Egyszerű logikai és szójátékok</h2>
+  <div class="grid">
+    <a class="card" href="forgoelemes/"><b>Forgóelemes játék</b><span>Kétszemélyes táblajáték a gép ellen. A rudakat egyik lyukuk körül forgatod; az nyer, aki beszorítja az ellenfél egyik rúdját.</span></a>
+    <a class="card" href="szocsere/"><b>Szócsere</b><span>Magyar szójáték: találd ki a két szót, vágd ketté és cseréld meg a végüket, így két új szó születik. Öt kör, huszonöt feladvány.</span></a>
+    <a class="card" href="terbeli-amoba/"><b>Térbeli amőba</b><span>Ötöt egy sorba egy forgatható kocka felszínén, a gép ellen. A sorok átfordulhatnak a kocka élein.</span></a>
   </div>
   <footer>© 2026 Fejes Géza. Minden jog fenntartva.</footer>
 </main>

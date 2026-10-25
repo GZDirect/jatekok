@@ -1,0 +1,45 @@
+Térbeli amőba
+Copyright © 2026 Fejes Géza. Minden jog fenntartva.
+
+MAGYARUL
+
+Ez a mappa és tartalma – a játék kódja, a kockás tábla, a szabályok, a gépi ellenfél, a grafika és a szövegek – Fejes Géza szellemi tulajdona.
+
+A játék a https://gzdirect.github.io/jatekok/terbeli-amoba/ címen szabadon
+kipróbálható és a link megosztható.
+
+A szerző előzetes, írásos engedélye nélkül tilos a tartalmat vagy annak
+bármely részét másolni, terjeszteni, módosítani, saját alkotásként
+feltüntetni, más weboldalon vagy alkalmazásban közzétenni, illetve
+értékesíteni vagy bármilyen más módon üzletileg hasznosítani.
+
+A tároló GitHubon való megtekinthetősége nem jelent felhasználási
+engedélyt; kizárólag a GitHub felhasználási feltételeiben (Terms of
+Service) meghatározott, a GitHubon belüli megtekintést és elágaztatást
+(fork) teszi lehetővé.
+
+Engedélykérés: a GitHub-fiókon (GZDirect) keresztül.
+
+IN ENGLISH
+
+Copyright © 2026 Fejes Géza. All rights reserved.
+
+This folder and its contents – the game code, the cube board, the rules, the computer opponent, graphics and texts – are the intellectual property of Fejes Géza.
+
+You may play the game at https://gzdirect.github.io/jatekok/terbeli-amoba/ and
+share the link.
+
+Without the author's prior written permission you may not copy,
+distribute, modify, present as your own, republish on another website
+or app, sell or otherwise commercially exploit the content or any part
+of it.
+
+The public visibility of this repository on GitHub does not grant any
+licence beyond viewing and forking within GitHub as set out in GitHub's
+Terms of Service.
+
+Permission requests: via the GitHub account GZDirect.
+
+THIRD-PARTY COMPONENTS (not covered by the above)
+
+- Poppins font – SIL Open Font License 1.1, embedded in the file.

@@ -1,41 +1,41 @@
 # Árnyékerdő – fejlesztői átadó
 
-Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti. Mindent tartalmaz, ami a munka folytatásához kell. Az utolsó átadás 2026. október 25-én volt.
+Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti. Mindent tartalmaz, ami a munka folytatásához kell. Utoljára frissítve: 2026. október 25., a rendőrös küldetés után.
 
 ## 1. Mi ez
 
 - Belső nézetes, lopakodós túlélőjáték egy éjszakai erdőben, elsősorban telefonra. Billentyűzettel és egérrel számítógépen is játszható.
 - Fejes Géza saját szórakoztatására készül, nem eladásra. Géza nem fejlesztő: magyarul ír, és kész, kipróbálható eredményt szeretne látni, nem kódot. Képernyőképekkel érdemes megmutatni, mi változott.
-- Állapot: játszható prototípus. Az eddigi utolsó nagy kör a grafika feljavítása volt. Géza azt mondta, hogy „első körben” ezt kéri; a következő kör tartalma még nincs eldöntve.
+- Állapot: játszható prototípus. Előbb a grafika lett feljavítva, aztán 2026. október 25-én a játék Tenchu-stílusú, rendőrös lopakodó küldetéssé alakult (lásd lent).
 - Élő változat: https://gzdirect.github.io/jatekok/arnyekerdo/
 
-## 2. A játékmenet most
+## 2. A játékmenet most (Tenchu-stílusú rendőrös küldetés)
 
-- **Két mód:**
-  - *Célpont*: amikor lejár a 3 perc, a kék fénynél (jelzőfénynél) kell lenned.
-  - *Túlélés*: élj túl 3 percet bárhol.
-- **Pálya:**
-  - Nagyjából 190 × 190 m-es erdő.
-  - A játékos a déli szélen indul (z = 84), az ellenfél az északin (z = −84).
-- **Az ellenfél minden körben véletlenül választódik.** Csak nyomokból derül ki, melyik az:
-  - **Szörny:** rosszul lát, de mindent hall. Karmos nyomokat hagy.
-  - **Nindzsa:** messzire lát, bokorban guggolva viszont nem lát meg. Nem hagy nyomot.
-  - **Szellem:** csak a mozgást látja, gyorsabb nálad, és dérnyomot hagy. Ha mozdulatlan maradsz, elveszít.
-- **Érzékelés:** látótávolság, látószög, hallás a játékos zajából, és takarás a fák mögött (`blocked()`).
-- **Ellenfél viselkedése:** három állapota van: őrjárat, nyomozás, üldözés.
-- **Játékos képességei:**
-  - Guggolás: halk, és bokorban rejtve vagy.
-  - Futás: erőt fogyaszt és zajos.
-  - Füst (2 db): elvakítja a közeli üldözőt, és benne rejtve vagy.
-- **Felület (HUD):**
-  - Ki-gyűrű és állapot (Nyugodt stb.), az ellenfél neve, ha már felismerted.
-  - Visszaszámláló, irány és távolság a célponthoz.
-  - Erő- és zajsáv, „Rejtve” jelzés.
-  - Képernyőeffektek: sötétebb képszélek (vignetta), veszély esetén vörös, bokorban zöld keret.
-  - Szívdobogás-hang.
+- **Helyzet:** éjszaka van a japán hegyekben, a rendőrség körbezárta a völgyet.
+  - A játékos a völgy déli végéből indul, a forgó villogós rendőrautó mellől.
+  - Cél: eljutni az északi hegyi útra, a kijárathoz (utcai nátriumlámpa, korlát, italautomata).
+  - Az irányt egy iránytű mutatja. Az idő felfelé számol.
+- **Hat rendőr** járja be a saját útvonalát, kezükben zseblámpa és revolver.
+  - **Állapotaik:** őrjárat, gyanakvás, keresés, riadó.
+  - **Látás:** a zseblámpa fénycsóvájában messzebbről, azon kívül közelről látnak. Guggolva és bokorban kevésbé.
+  - **Hallás:** a játékos zajára (futás, sima járás) gyanakodni kezdenek.
+  - **Leütött társ:** ha ilyet látnak, keresni kezdenek, és a többieket is riasztják.
+  - **Kiütött rendőr:** kb. 75 másodperc múlva magához tér, és riaszt.
+  - **Lövés:** riadóban lőnek. A játékosnak 100 életereje van, egy találat 18–26 pont.
+  - **Beszéd:** japánul szólnak meg (a böngésző felolvasójával), alul magyar felirattal.
+- **Eszközök** (váltás: 1–4):
+  - *Tantó*: hátulról egy csapással öl.
+  - *Tekko*: hátulról csak leüt.
+  - *Kampó*: célozz egy sűrű lombú óriásfára. Ha a lomb halványan felderül, fel tudsz kapaszkodni.
+  - *Karmok*: az óriásfa törzsén felmászhatsz.
+- **Fán:** csak akkor látnak meg, ha rád világítanak. Leugrással felülről is támadhatsz (szóköz), ez erősebb csapás.
+- **Füst** (2 db): elvakítja a közeli rendőröket, és eltakar.
+- **Értékelés a végén:** a rang a riasztások és a leszámolt rendőrök számától függ. A legjobb az Árnyék (senki sem vett észre, és senkit sem bántottál). A további fokozatok: Csendes halál, Nagymester, Mester, Nindzsa, Tanonc, Útonálló. Kiírja az időt, az ölések, a leütések és a riasztások számát is.
+- **Felület (HUD):** iránytű, ki-gyűrű, élet- és zajsávok, célkereszt felirattal, a kijárat jelölője, képernyőeffektek (vignetta, vörös veszély- és sérülésjelzés, zöld bokorkeret).
 - **Irányítás:**
-  - Telefon: bal hüvelykujj mozgás (megjelenő joystick), jobb hüvelykujj körülnézés, gombok: Guggol, Fut, Füst.
-  - Számítógép: W A S D mozgás, Shift futás, C guggolás, F füst, egérrel húzva körülnézés.
+  - Telefon: bal hüvelykujj mozgás, jobb hüvelykujj körülnézés, gombok.
+  - Számítógép: W A S D, egérrel húzva körülnézés, C guggolás, kattintás vagy E a használat, 1–4 eszközváltás, szóköz leugrás, F füst.
+- **A régi ellenfelek** (szörny, nindzsa, szellem) beállításai és viselkedése az `src/parkolt.js`-ben vannak félretéve. A modelljeik az `actors.js`-ben maradtak, később visszakapcsolhatók.
 
 ## 3. Fájlok
 
@@ -51,10 +51,12 @@ arnyekerdo/
                     távoli sziluettek, fák (fenyő, nyír, száraz fa), farönkök, bokrok, páfrány, kövek,
                     avar, világító gombák, holdfény-csóvák, ködpadok, fű, szentjánosbogarak, hulló levelek.
                     Mindent a window.AE objektumon ad tovább.
-    actors.js     ← ellenfelek modelljei és animációja (nindzsa, szörny, szellem), lábnyomok,
-                    célpont-jelzőfény, füst, a játékos kezei belső nézetben. A window.AE-t bővíti.
-    game.js       ← ellenféltípusok (TYPES), játékállapot, irányítás, érzékelés, mozgás, nyomok,
-                    üzenetek, hangok, képernyőeffektek, minőség-visszaszabályozás, fő ciklus.
+    actors.js     ← modellek és animációk: japán rendőr (zseblámpa, revolver), a régi ellenfelek
+                    (nindzsa, szörny, szellem), füst, kötél, a játékos kezei és eszközei. A window.AE-t bővíti.
+    parkolt.js    ← a régi ellenfelek félretett beállításai és viselkedése (most nem fut)
+    game.js       ← rendőrök érzékelése és viselkedése, eszközök, kampó, mászás, leugrás, irányítás,
+                    feliratok és hangok, HUD, értékelés, képernyőeffektek, minőség-visszaszabályozás, fő ciklus.
+                    Tesztelési horog: ?aetest címparaméterrel window.AE_TEST.
     build.py      ← összeállítja az index.html-t
 ```
 
