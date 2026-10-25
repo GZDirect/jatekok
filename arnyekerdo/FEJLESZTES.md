@@ -15,7 +15,9 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
   - A játékos a völgy déli végéből indul, a forgó villogós rendőrautó mellől.
   - Cél: eljutni az északi hegyi útra, a kijárathoz (utcai nátriumlámpa, korlát, italautomata).
   - Az irányt egy iránytű mutatja. Az idő felfelé számol.
-- **Hat rendőr** járja be a saját útvonalát, kezükben zseblámpa és revolver.
+- **Nehézség** (a kezdőképernyőn): Könnyű 4, Normál 6, Nehéz 8 rendőr; a nehezebb szinten messzebbre látnak, élesebben hallanak, hamarabb gyanakszanak, és nagyobbat sebez a lövésük (`DIFF` a game.js-ben). A választást a böngésző megjegyzi.
+- **Útvonalak:** minden körben újak (`genRoute`): a völgy délről északra sávokra oszlik, mindegyikben egy rendőr jár körbe négy ponton.
+- **A rendőrök** járják a saját útvonalukat, kezükben zseblámpa és revolver.
   - **Állapotaik:** őrjárat, gyanakvás, keresés, riadó.
   - **Látás:** a zseblámpa fénycsóvájában messzebbről, azon kívül közelről látnak. Guggolva és bokorban kevésbé.
   - **Hallás:** a játékos zajára (futás, sima járás) gyanakodni kezdenek.
@@ -23,18 +25,27 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
   - **Kiütött rendőr:** kb. 75 másodperc múlva magához tér, és riaszt.
   - **Lövés:** riadóban lőnek. A játékosnak 100 életereje van, egy találat 18–26 pont.
   - **Beszéd:** japánul szólnak meg (a böngésző felolvasójával), alul magyar felirattal.
-- **Eszközök** (váltás: 1–4):
+  - **Riasztásjelző a fejük fölött:** kérdőjel, ami a gyanúval narancsra telik; keresés közben teli; riadóban vörös felkiáltójel (`makeMark`, `drawMark`).
+  - **Zseblámpa:** látható fénykúp sodródó porszemekkel, és fénykör a talajon, ahol a tengelye földet ér (`makePool`, `beamHit` az actors.js-ben). A fény a talajt és a tárgyakat is megvilágítja (a legközelebbi 6 rendőr lámpája a shaderben).
+  - **Ütközés:** a rendőrök és a játékos sem mehet át fán, óriásfa gyökerén (`col`), sziklán (0,42 m-től), farönkön, a rendőrautón, a lámpaoszlopon és az italautomatán; a rendőrök egymáson és a játékoson sem.
+- **Eszközök** (váltás: 1–5):
   - *Tantó*: hátulról egy csapással öl.
   - *Tekko*: hátulról csak leüt.
   - *Kampó*: célozz egy sűrű lombú óriásfára. Ha a lomb halványan felderül, fel tudsz kapaszkodni.
   - *Karmok*: az óriásfa törzsén felmászhatsz.
+  - *Kavics* (Normálon 6 db): a koppanása 16 m-en belül odacsalja a nem riasztott rendőröket (`throwStone`, `stoneLand`).
+- **Test elrejtése:** a leütött vagy megölt rendőrt el lehet húzni (Húz gomb, G); ha bokorban engeded el, a társai nem találják meg (`hiddenBody`). Húzás közben lassú vagy.
 - **Fán:** csak akkor látnak meg, ha rád világítanak. Leugrással felülről is támadhatsz (szóköz), ez erősebb csapás.
 - **Füst** (2 db): elvakítja a közeli rendőröket, és eltakar.
 - **Értékelés a végén:** a rang a riasztások és a leszámolt rendőrök számától függ. A legjobb az Árnyék (senki sem vett észre, és senkit sem bántottál). A további fokozatok: Csendes halál, Nagymester, Mester, Nindzsa, Tanonc, Útonálló. Kiírja az időt, az ölések, a leütések és a riasztások számát is.
+- **Közeli térkép** (bal felső sarok, `drawRadar`): a nézési irány felfelé, 36 m sugarú környék; bokrok, óriásfák a lombjukkal, a kijárat iránya, füstfelhő, leütött rendőrök (×), és a kereső vagy riasztott rendőrök.
+- **Bemutató:** az első körben (a kezdőképernyőn ki-be kapcsolható) hét lépés vezet végig a mozgáson, a kampón, a leugráson, a kavicson és a test elrejtésén (`TUT`). Kihagyható.
+- **Hangok:** léptek talajonként más hanggal (avar, fű, bokor, aszfalt), a rendőrök léptei és rádiója térhatással, tücskök, bagoly, szél. A bokor megrezzen, ha átmész rajta, a fű elhajlik a játékos és a közeli rendőrök előtt.
 - **Felület (HUD):** iránytű, ki-gyűrű, élet- és zajsávok, célkereszt felirattal, a kijárat jelölője, képernyőeffektek (vignetta, vörös veszély- és sérülésjelzés, zöld bokorkeret).
 - **Irányítás:**
   - Telefon: bal hüvelykujj mozgás, jobb hüvelykujj körülnézés, gombok.
-  - Számítógép: W A S D, egérrel húzva körülnézés, C guggolás, kattintás vagy E a használat, 1–4 eszközváltás, szóköz leugrás, F füst.
+  - Számítógép: W A S D, egérrel húzva körülnézés, C guggolás, kattintás vagy E a használat, 1–5 eszközváltás, G húzás, szóköz leugrás, F füst.
+  - Telefonon és tableten csak fekvő helyzetben játszható. Az első érintésre teljes képernyőre vált, és fekvőre rögzít (Androidon). Álló helyzetben a „Fordítsd el a telefont” jelzés takarja, és a játék megáll. iPhone-on a Safari ezt nem engedi; ott a „Hozzáadás a főképernyőhöz” után indítva teljes képernyős (`manifest.webmanifest`, ikonok, `apple-mobile-web-app-capable`).
 - **A régi ellenfelek** (szörny, nindzsa, szellem) beállításai és viselkedése az `src/parkolt.js`-ben vannak félretéve. A modelljeik az `actors.js`-ben maradtak, később visszakapcsolhatók.
 
 ## 3. Fájlok
@@ -45,6 +56,7 @@ A `GZDirect/jatekok` repóban minden játék külön mappában van. A GitHub Pag
 arnyekerdo/
   index.html      ← GENERÁLT, ezt szolgálja ki a GitHub Pages. Kézzel ne szerkeszd.
   LICENSE, README.md, FEJLESZTES.md
+  manifest.webmanifest, icon-180/192/512.png  ← főképernyőre tett webalkalmazás (fekvő, teljes képernyő)
   src/
     shell.html    ← HTML, CSS, HUD, kezdő és záró képernyő; a /*@@JATEK@@*/ jelölő helyére kerül a JS
     world.js      ← terep (H() magasságfüggvény, JS-ben és GLSL-ben is), égbolt, hold, csillagok,
@@ -113,11 +125,14 @@ chromium args: --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshade
 
 ## 7. Lehetséges következő lépések
 
-Ezek csak ötletek, Géza még egyiket sem döntötte el.
+Ezek csak ötletek, Géza még nem döntötte el őket.
 
-- Több ellenféltípus vagy kettő egyszerre; nehézségi szintek.
-- Gazdagabb hangok: ellenfélenként saját hang, lépteknek más hangja avaron és fűben.
-- Térkép vagy iránytű, többféle célpont, több kör egymás után (pontszám, legjobb idő).
+- Valódi telefonos és tabletes teljesítményteszt, és ha kell, finomhangolás (a 8 rendőrös Nehéz szint a legterhelőbb).
+- A régi ellenfelek (`parkolt.js`) visszahozása külön küldetésként.
+- Több küldetés vagy pálya egymás után, pontszám és legjobb idő mentése.
 - Időjárás (eső, sűrűbb köd), ami a látást és a hallást is befolyásolja.
-- Rejtőzési lehetőségek: fára mászás, magas fű, víz.
-- Valódi telefonos teljesítményteszt, és ha kell, finomhangolás.
+- Többféle rejtekhely: magas fű, víz, barlang.
+
+---
+
+© 2026 Fejes Géza. Minden jog fenntartva. A játék és a leírás engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető.

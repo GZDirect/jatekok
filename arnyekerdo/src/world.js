@@ -118,7 +118,7 @@ const terrain=(function(){const g=new THREE.PlaneGeometry(220,300,110,150);g.rot
   const m=new THREE.Mesh(g,flashPatch(new THREE.MeshLambertMaterial({map:groundTex,vertexColors:true})));m.receiveShadow=true;scene.add(m);return m;})();
 
 /* ---------- Erdő ---------- */
-const CELL=8,grid=new Map(),bgrid=new Map(),trees=[],bushes=[];
+let bushMesh=null;const CELL=8,grid=new Map(),bgrid=new Map(),trees=[],bushes=[];
 const key=(a,b)=>a+','+b;
 function addTo(g,o){const k=key(Math.floor(o.x/CELL),Math.floor(o.z/CELL));let a=g.get(k);if(!a){a=[];g.set(k,a);}a.push(o);}
 function near(g,x,z,cb){const cx=Math.floor(x/CELL),cz=Math.floor(z/CELL);for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const a=g.get(key(cx+i,cz+j));if(a)for(let n=0;n<a.length;n++)cb(a[n]);}}
@@ -161,7 +161,7 @@ const inField=(x,z,m)=>Math.abs(x)<XW-m&&z<ZS-m&&z>-ZN+m;
   /* mászható óriásfák: sűrű lomb, vastag ágak, legalább 15 m-re egymástól */
   const fixed=[[-9,79],[11,73]];let tries=0;while(giants.length<26&&tries<4000){tries++;const fx=fixed[giants.length];const x=fx?fx[0]:(r()*2-1)*46,z=fx?fx[1]:-94+r()*182;if(!fx&&keepClear(x,z,4))continue;
     if(giants.some(g=>Math.hypot(g.x-x,g.z-z)<15))continue;const s=0.92+r()*0.22;
-    const t={kind:'giant',x,z,s,c:r(),r:1.05*s,cr:3.4*s,h:21*s,py:8.6*s,climb:true,i:giants.length};giants.push(t);trees.push(t);addTo(grid,t);}
+    const t={kind:'giant',x,z,s,c:r(),r:1.05*s,col:1.6*s,cr:3.4*s,h:21*s,py:8.6*s,climb:true,i:giants.length};giants.push(t);trees.push(t);addTo(grid,t);}
   for(let i=0;i<1250;i++){const x=(r()*2-1)*82,z=-132+r()*262;const inside=inField(x,z,-3);if(!inside&&r()<0.45)continue;if(keepClear(x,z,0))continue;
     const kind=r();const t={x,z,c:r(),v:Math.floor(r()*3)};
     if(kind<0.82){t.kind='pine';t.h=16+r()*15;t.w=3+r()*2.2;t.r=0.3+t.h*0.02;if(!freeSpot(x,z,t.r+1.0))continue;pines.push(t);}
@@ -210,7 +210,8 @@ function glowGiant(i,k){if(i<0)return;TC.copy(GLEAF_BASE[i]).multiplyScalar(1+k*
 /* bokrok */
 {const parts=[],r=mulberry32(31),dk=rgb(0x16261a),lt=rgb(0x35503a);for(let i=0;i<8;i++){const g=new THREE.IcosahedronGeometry(0.45+r()*0.35,0);jitter(g,0.3,i);const a=r()*6.28,rr=r()*0.75;g.translate(Math.cos(a)*rr,0.3+r()*0.55,Math.sin(a)*rr);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>mixc(dk,lt,clamp(ny*0.6+y*0.35,0,1))});}
   const g=merge(parts);bushes.forEach(b=>b._col=TC.setHSL(0.3+b.c*0.06,0.3,0.5+b.c*0.35).clone());
-  inst(g,vcMat(),bushes,b=>{D.position.set(b.x,H(b.x,b.z)-0.1,b.z);D.rotation.set(0,b.c*9,0);D.scale.set(1.5*b.s,1.05*b.s,1.5*b.s);},true);}
+  bushes.forEach((b,i)=>b.i=i);bushMesh=inst(g,vcMat(),bushes,b=>{D.position.set(b.x,H(b.x,b.z)-0.1,b.z);D.rotation.set(0,b.c*9,0);D.scale.set(1.5*b.s,1.05*b.s,1.5*b.s);},true);}
+function shakeBush(b,k,t){if(!bushMesh||!b)return;D.position.set(b.x,H(b.x,b.z)-0.1,b.z);D.rotation.set(Math.sin(t*23+b.c*9)*0.07*k,b.c*9+Math.sin(t*17)*0.05*k,Math.cos(t*19+b.c)*0.07*k);D.scale.set(1.5*b.s,1.05*b.s*(1-0.03*k),1.5*b.s);D.updateMatrix();bushMesh.setMatrixAt(b.i,D.matrix);bushMesh.instanceMatrix.needsUpdate=true;}
 /* páfrányok */
 {const pos=[],col=[],dk=rgb(0x13240f),lt=rgb(0x3f6a2c);for(let f=0;f<7;f++){const a=f/7*Math.PI*2+0.3;const ca=Math.cos(a),sa=Math.sin(a);
   for(let s=0;s<6;s++){const t0=s/6,t1=(s+1)/6;const px=(t)=>t*0.9,py=(t)=>Math.sin(t*2.2)*0.45;const x0=px(t0),y0=py(t0),x1=px(t1),y1=py(t1),wl=0.16*(1-t0*0.8);
@@ -221,7 +222,7 @@ function glowGiant(i,k){if(i<0)return;TC.copy(GLEAF_BASE[i]).multiplyScalar(1+k*
 /* kövek */
 {const g=jitter(new THREE.DodecahedronGeometry(1,0),0.45,5);const grey=rgb(0x55585a),moss=rgb(0x34502c);const m=merge([{g,flat:true,c:(x,y,z,nx,ny)=>mixc(grey,moss,clamp((ny-0.45)*2.4,0,1))}]);
   const r=mulberry32(51),list=[];for(let i=0;i<380;i++){const out=i>=270,x=out?(r()<0.5?-1:1)*(52+r()*22):(r()*2-1)*52,z=out?-125+r()*250:-102+r()*202,s=out?0.9+r()*2.4:0.25+Math.pow(r(),2.2)*1.6;if(!out&&keepClear(x,z,0))continue;list.push({x,z,s,sy:s*(0.55+r()*0.35),a:r()*6.28,c:r()});
-    if(s>0.95&&!out){const o={x,z,r:s*0.9,low:s<1.3};trees.push(o);addTo(grid,o);}}
+    if(s>0.42&&!out){const o={x,z,r:s*1.02,low:s<1.3,kind:'rock'};trees.push(o);addTo(grid,o);}}
   list.forEach(k=>k._col=TC.setHSL(0.3,0.05,0.55+k.c*0.35).clone());
   inst(m,vcMat(),list,k=>{D.position.set(k.x,H(k.x,k.z)-k.sy*0.3,k.z);D.rotation.set(k.c,k.a,k.c*0.5);D.scale.set(k.s,k.sy,k.s*(0.8+k.c*0.4));},true);}
 /* avar */
@@ -256,11 +257,11 @@ const grass=(function(){const T=40,N=26000,r=mulberry32(91),pos=[],root=[],col=[
     [[-w,0,base],[w,0,base],[lean*0.6,h,tipc]].forEach(q=>{pos.push(ca*q[0]+(q[1]?lean*0.4*sa:0),q[1],sa*q[0]);root.push(rx,rz);col.push(...q[2]);nor.push(0,1,0);});}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));
   g.setAttribute('aRoot',new THREE.Float32BufferAttribute(root,2));g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
-  const mat=new THREE.MeshLambertMaterial({vertexColors:true,side:THREE.DoubleSide});const U={uCam:{value:new THREE.Vector2()},uT:{value:0},uTile:{value:T},uPush:{value:new THREE.Vector3(0,0,-99)}};
-  mat.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);sh.vertexShader='attribute vec2 aRoot;uniform vec2 uCam;uniform float uT;uniform float uTile;uniform vec3 uPush;\n'+GLSL_H+sh.vertexShader.replace('#include <begin_vertex>',
+  const mat=new THREE.MeshLambertMaterial({vertexColors:true,side:THREE.DoubleSide});const U={uCam:{value:new THREE.Vector2()},uT:{value:0},uTile:{value:T},uPush:{value:new THREE.Vector3(0,0,-99)},uPC:{value:[0,1,2,3].map(()=>new THREE.Vector3(0,0,0))}};
+  mat.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);sh.vertexShader='attribute vec2 aRoot;uniform vec2 uCam;uniform float uT;uniform float uTile;uniform vec3 uPush;uniform vec3 uPC[4];\n'+GLSL_H+sh.vertexShader.replace('#include <begin_vertex>',
     'vec2 wp=aRoot+uTile*floor((uCam-aRoot)/uTile+0.5);float dd=length(wp-uCam);float fade=1.0-smoothstep(uTile*0.3,uTile*0.5,dd);vec3 transformed=position*vec3(1.0,fade,1.0);'+
     'float sway=sin(uT*1.6+wp.x*0.35+wp.y*0.27)*0.1+sin(uT*3.3+wp.x*1.7)*0.025;vec2 pd=wp-uPush.xy;float pl=length(pd);float pk=(1.0-smoothstep(0.0,0.9,pl))*uPush.z;'+
-    'transformed.xz+=(vec2(sway,sway*0.6)+normalize(pd+0.0001)*pk*0.35)*position.y;transformed.xz+=wp;transformed.y+=hgt(wp.x,wp.y)-0.02;')};
+    'transformed.xz+=(vec2(sway,sway*0.6)+normalize(pd+0.0001)*pk*0.35)*position.y;for(int i=0;i<4;i++){vec2 qd=wp-uPC[i].xy;float qk=(1.0-smoothstep(0.0,0.8,length(qd)))*uPC[i].z;transformed.xz+=normalize(qd+0.0001)*qk*0.3*position.y;}transformed.xz+=wp;transformed.y+=hgt(wp.x,wp.y)-0.02;')};
   flashPatch(mat);const m=new THREE.Mesh(g,mat);m.frustumCulled=false;m.receiveShadow=true;scene.add(m);m.userData.U=U;return m;})();
 
 /* ---------- Szentjánosbogarak, hulló levelek ---------- */
@@ -292,7 +293,8 @@ const exitGroup=new THREE.Group();scene.add(exitGroup);
   const front=new THREE.Mesh(new THREE.PlaneGeometry(0.95,1.75),new THREE.MeshBasicMaterial({map:vtex}));front.position.set(0,0.93,0.38);vm.add(front);
   const vl=new THREE.PointLight(0xd8ecff,0.9,9,1.8);vl.position.set(0,1.1,1.0);vm.add(vl);
   vm.position.set(4.9,H(4.9,-103),-103);vm.rotation.y=-0.35;exitGroup.add(vm);
-  exitGroup.userData={lamp};}
+  exitGroup.userData={lamp};
+  [{x:4.9,z:-103,r:0.8},{x:-4.6,z:-104,r:0.3}].forEach(o=>{o.kind='prop';trees.push(o);addTo(grid,o);});}
 /* ---------- Rendőrautó a rajtnál, forgó villogóval ---------- */
 const patrolCar=new THREE.Group();scene.add(patrolCar);
 {const wht=flashPatch(new THREE.MeshLambertMaterial({color:0xe6e8ea})),blk=flashPatch(new THREE.MeshLambertMaterial({color:0x15171a})),glass=new THREE.MeshLambertMaterial({color:0x1c2834});
@@ -304,10 +306,11 @@ const patrolCar=new THREE.Group();scene.add(patrolCar);
   const barM=new THREE.MeshBasicMaterial({color:0xff2a22});const bar=new THREE.Mesh(new THREE.BoxGeometry(1.1,0.14,0.28),barM);bar.position.set(0,1.77,0.15);patrolCar.add(bar);
   const red=new THREE.PointLight(0xff2020,1.2,18,1.5);red.position.set(0,2.2,0.15);patrolCar.add(red);
   const rs=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,color:0xff3020,transparent:true,opacity:0.8,depthWrite:false,blending:THREE.AdditiveBlending}));rs.scale.setScalar(2.6);rs.position.copy(bar.position);patrolCar.add(rs);
-  patrolCar.position.set(8,H(8,98)+0.02,98);patrolCar.rotation.y=0.5;patrolCar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+  patrolCar.position.set(8,H(8,98)+0.02,98);
+[-1.45,0,1.45].forEach(k=>{const o={x:8+Math.sin(0.5)*k,z:98+Math.cos(0.5)*k,r:1.05,kind:'prop'};trees.push(o);addTo(grid,o);});patrolCar.rotation.y=0.5;patrolCar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
   patrolCar.userData={red,rs};}
 function stepScenery(t){const u=patrolCar.userData,k=Math.max(0,Math.sin(t*7.5));u.red.intensity=0.25+k*1.6;u.rs.material.opacity=0.25+k*0.7;}
 
 window.AE={$,clamp,mulberry32,hash3,lerp,H,GLSL_H,normalAt,renderer,scene,camera,resize,MOON_DIR,moonLight,hemi,FOG_COL,canvasTex,radial,glowTex,softTex,merge,jitter,rgb,mixc,vcMat,
-  sky,moonSpr,moonHalo,stars,ring1,ring2,ring3,terrain,grid,bgrid,trees,bushes,near,shafts,fogSheets,grass,flies,falling,glowSprites,CELL,addTo,XW,ZS,ZN,rdg,EXIT,exitGroup,patrolCar,stepScenery,giants,glowGiant,FLU,NFL,flashPatch,freeSpot,keepClear,inField,setPR:(v)=>{PR=v;renderer.setPixelRatio(v);resize();}};
+  sky,moonSpr,moonHalo,stars,ring1,ring2,ring3,terrain,grid,bgrid,trees,bushes,near,shafts,fogSheets,grass,flies,falling,glowSprites,CELL,addTo,XW,ZS,ZN,rdg,EXIT,exitGroup,patrolCar,stepScenery,giants,shakeBush,glowGiant,FLU,NFL,flashPatch,freeSpot,keepClear,inField,setPR:(v)=>{PR=v;renderer.setPixelRatio(v);resize();}};
 })();

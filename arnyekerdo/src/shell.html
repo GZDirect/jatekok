@@ -85,9 +85,40 @@ h2{font-size:40px;}
 #endFoe{font-family:var(--display);font-size:22px;color:var(--lantern);}
 @media (prefers-reduced-motion:reduce){#msg,#kiRing,#kiChar,#fxLeaf,#sub{transition:none;}}
 .stats{font-size:13px;color:var(--mist);}
+body.menu .hud,body.menu #btns,body.menu #tools,body.menu #bDrag{visibility:hidden;}
+#radar{top:calc(env(safe-area-inset-top,0px) + 86px);left:calc(env(safe-area-inset-left,0px) + 16px);width:min(27vh,120px);height:min(27vh,120px);}
+#tut{top:calc(env(safe-area-inset-top,0px) + 96px);left:50%;transform:translateX(-50%);width:min(64vw,470px);background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--goal);border-radius:6px;padding:9px 12px 10px;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:start;}
+#tut[hidden]{display:none;}
+#tutStep{font-size:11px;letter-spacing:1.5px;color:var(--goal);grid-column:1;}
+#tutText{grid-column:1;font-size:14px;line-height:1.45;color:var(--moon);}
+#tutSkip{grid-column:2;grid-row:1 / span 2;align-self:center;pointer-events:auto;padding:8px 10px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--mist);font-family:var(--ui);font-size:12px;cursor:pointer;}
+#bDrag{position:fixed;right:calc(env(safe-area-inset-right,0px) + 92px);bottom:calc(env(safe-area-inset-bottom,0px) + 174px);border-color:var(--goal);}
+#bDrag[hidden]{display:none;}
+.tool small{font-size:10px;color:var(--mist);font-weight:400;}
+#rotate{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--night);text-align:center;padding:24px;}
+#rotate svg{width:88px;height:88px;color:var(--moon);}
+#rotate b{font-family:var(--display);font-size:28px;font-weight:700;}
+#rotate span{font-size:14px;color:var(--mist);max-width:30ch;line-height:1.5;}
+@media (orientation:portrait) and (pointer:coarse){#rotate{display:flex;}}
+.col1{display:flex;flex-direction:column;gap:14px;}
+.diff{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.diff button{padding:9px 6px;border:1.5px solid var(--line);border-radius:6px;background:rgba(236,229,211,0.06);color:var(--moon);font-family:var(--ui);font-size:14px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;}
+.diff small{font-size:11px;color:var(--mist);font-weight:400;}
+.diff button[aria-checked="true"]{border-color:var(--lantern);color:var(--lantern);}
+.opt{font-size:13px;color:var(--mist);display:flex;gap:8px;align-items:center;cursor:pointer;}
+.opt input{accent-color:var(--lantern);width:18px;height:18px;margin:0;}
+.diff button:focus-visible,#tutSkip:focus-visible{outline:2px solid var(--lantern);outline-offset:2px;}
+@media (orientation:landscape) and (max-height:620px){
+  .screen{align-items:flex-start;}
+  #start .card{max-width:920px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:10px 28px;align-items:start;}
+  #start h1{font-size:34px;} #start .card p{font-size:13px;line-height:1.42;} #start .how{font-size:11.5px;line-height:1.35;gap:3px 10px;margin:2px 0 0;}
+  .col1{gap:9px;} .choice{padding:9px 12px;} .choice b{font-size:19px;} .choice span{font-size:12px;} .diff button{padding:6px 4px;font-size:13px;} .eyebrow{font-size:11px;} #end .card{max-width:520px;} h2{font-size:32px;}
+  #tut{top:calc(env(safe-area-inset-top,0px) + 70px);width:min(52vw,440px);} #tutText{font-size:13px;}
+}
 </style>
 
 <canvas id="c" aria-label="Az erdő belső nézetből"></canvas>
+<script>document.body.classList.add("menu");</script>
 <div class="fx" id="fxVig"></div>
 <div class="fx" id="fxLeaf"></div>
 <div class="fx" id="fxDanger"></div>
@@ -111,6 +142,8 @@ h2{font-size:40px;}
   <div id="hidden" hidden>Rejtve</div>
   <div id="lit" hidden>Fényben!</div>
 </div>
+<canvas class="hud" id="radar" aria-label="Közeli térkép: bokrok, óriásfák, kijárat"></canvas>
+<div class="hud" id="tut" hidden><div id="tutStep">1 / 7</div><div id="tutText"></div><button id="tutSkip" type="button">Kihagyom</button></div>
 <div class="hud" id="msg"></div>
 <div class="hud" id="cross" hidden></div>
 <div class="hud" id="prompt" hidden></div>
@@ -123,6 +156,7 @@ h2{font-size:40px;}
   <button class="tool" type="button" data-i="1">Tekko<kbd>2</kbd></button>
   <button class="tool" type="button" data-i="2">Kampó<kbd>3</kbd></button>
   <button class="tool" type="button" data-i="3">Karmok<kbd>4</kbd></button>
+  <button class="tool" type="button" data-i="4">Kavics<small id="stoneN">×6</small><kbd>5</kbd></button>
 </div>
 <div id="btns">
   <button class="b" id="bCrouch" type="button">Guggol</button>
@@ -130,24 +164,36 @@ h2{font-size:40px;}
   <button class="b" id="bSmoke" type="button">Füst<small id="smokeN">×2</small></button>
   <button class="b" id="bUse" type="button">Szúr</button>
 </div>
+<button class="b" id="bDrag" type="button" hidden>Húz</button>
 
 <div class="screen" id="start">
   <div class="card">
-    <div class="eyebrow">Lopakodó küldetés · prototípus</div>
-    <h1>Árnyékerdő</h1>
-    <p>Éjszaka van, valahol a japán hegyekben. A rendőrség körbezárta a völgyet: hat rendőr fésüli át az erdőt zseblámpával és pisztollyal. Neked át kell jutnod a völgy déli végéből az északi útig. Hogy árnyékként surransz át, vagy egyenként tünteted el őket, rajtad múlik.</p>
-    <button class="choice" id="go" type="button"><b>Indulás</b><span>Cél: a kijárat az északi úton. Az iránytű mutatja az irányt.</span></button>
+    <div class="col1">
+      <div class="eyebrow">Lopakodó küldetés · prototípus</div>
+      <h1>Árnyékerdő</h1>
+      <p>Éjszaka van a japán hegyekben. A rendőrség körbezárta a völgyet: <span id="copsN">6</span> rendőr fésüli át az erdőt zseblámpával és pisztollyal. Juss el a déli végéből az északi útig – árnyékként, vagy úgy, hogy egyenként eltünteted őket.</p>
+      <div class="diff" id="diff" role="radiogroup" aria-label="Nehézség">
+        <button type="button" role="radio" data-d="konnyu">Könnyű<small>4 rendőr</small></button>
+        <button type="button" role="radio" data-d="normal">Normál<small>6 rendőr</small></button>
+        <button type="button" role="radio" data-d="nehez">Nehéz<small>8 rendőr</small></button>
+      </div>
+      <label class="opt"><input type="checkbox" id="tutOn" checked> Bemutató az első percben</label>
+      <button class="choice" id="go" type="button"><b>Indulás</b><span>Cél: az északi út. A rendőrök útvonala minden körben más.</span></button>
+      <p class="legal">© 2026 Fejes Géza. Minden jog fenntartva.</p>
+    </div>
     <dl class="how">
       <dt>Bal hüvelykujj</dt><dd>mozgás (gép: W A S D)</dd>
       <dt>Jobb hüvelykujj</dt><dd>körülnézés (gép: egérrel húzva)</dd>
       <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol (C)</dd>
       <dt>Tantó, tekko</dt><dd>hátulról egy csapás: a tantó öl, a tekko csak leüt (kattintás vagy E)</dd>
       <dt>Kampó</dt><dd>célozz egy sűrű lombú óriásfára: ha halványan felderül, fel tudsz kapaszkodni</dd>
-      <dt>Karmok</dt><dd>az óriásfa törzsén felmászhatsz (1–4: eszközváltás)</dd>
+      <dt>Karmok</dt><dd>az óriásfa törzsén felmászhatsz (1–5: eszközváltás)</dd>
       <dt>A fán</dt><dd>csak akkor látnak meg, ha rád világítanak; leugrással felülről támadhatsz (szóköz)</dd>
+      <dt>Kavics</dt><dd>a koppanása odacsalja a közeli rendőröket (5)</dd>
+      <dt>Test</dt><dd>a leütött rendőrt bokorba húzhatod, ott nem találják meg (Húz gomb, G)</dd>
       <dt>Füst</dt><dd>elvakítja a közeli rendőröket, és eltakar (F)</dd>
+      <dt>? és !</dt><dd>a rendőr feje fölött: a kérdőjel a gyanúval telik, a vörös felkiáltójel riadó</dd>
     </dl>
-    <p class="legal">© 2026 Fejes Géza. Minden jog fenntartva.</p>
   </div>
 </div>
 
@@ -163,6 +209,7 @@ h2{font-size:40px;}
   </div>
 </div>
 
+<div id="rotate" role="alert"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><rect x="16" y="6" width="16" height="28" rx="3"></rect><path d="M22 30 H26"></path><path d="M8 26 C8 36 14 42 24 42" ></path><path d="M20 38 L24 42 L20 46"></path></svg><b>Fordítsd el a telefont</b><span>Az Árnyékerdő fekvő helyzetben játszható. Fordítsd oldalra, és a játék kitölti a képernyőt.</span></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /*@@JATEK@@*/</script>
