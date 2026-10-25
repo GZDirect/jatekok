@@ -160,7 +160,7 @@ function bodyNear(){let best=null,bd=1.9;COPS.forEach(c=>{if(!c.down)return;cons
 function toggleDrag(){if(!S.running||P.mode!=='ground')return;
   if(P.drag){const c=P.drag;P.drag=null;c.hiddenBody=inBush(c.x,c.z);showMsg(c.hiddenBody?'Elrejtetted a bokorban. Itt nem találják meg.':'Elengedted. Ha egy társa meglátja, riaszt.');noiseHit(0.08,500,'lowpass',0.25);updateButtons();return;}
   const c=bodyNear();if(!c){showMsg('Nincs a közelben leütött rendőr.');return;}
-  P.drag=c;c.hiddenBody=false;P.run=false;showMsg('Húzod. Vidd be egy bokorba, és engedd el.');noiseHit(0.08,600,'lowpass',0.3);updateButtons();}
+  P.drag=c;c.hiddenBody=false;P.run=false;P.pitch=Math.min(P.pitch,-0.25);showMsg('Húzod. Vidd be egy bokorba, és engedd el.');noiseHit(0.08,600,'lowpass',0.3);updateButtons();}
 const STONE={on:false,x:0,y:0,z:0,vx:0,vy:0,vz:0,t:0,m:new THREE.Mesh(A.jitterStone(),new THREE.MeshLambertMaterial({color:0x8a8c88,flatShading:true}))};
 STONE.m.scale.setScalar(0.06);STONE.m.visible=false;scene.add(STONE.m);
 function throwStone(){if(STONE.on)return;if(S.stones<=0){showMsg('Elfogyott a kavics.');return;}S.stones--;
@@ -454,8 +454,8 @@ function update(dt){
     P.noise=P.moving?(P.drag?6:P.crouch?4:running?27:12)*mag:0;if(P.moving)P.bob+=dt*speed*2.2;
     {const ph=Math.floor(P.bob/Math.PI);if(ph!==P.stepPh){P.stepPh=ph;if(P.moving)footstep();}}
     {const b=P.moving?bushAt(P.x,P.z):null;BR.in=!!b;if(b){if(BR.b&&BR.b!==b)A.shakeBush(BR.b,0,0);BR.b=b;BR.k=1;}}
-    if(P.drag){const c=P.drag;if(!c.down){P.drag=null;updateButtons();}else{const f=fwd(),tx=P.x-f.x*1.15,tz=P.z-f.z*1.15,k=Math.min(1,dt*6);c.x+=(tx-c.x)*k;c.z+=(tz-c.z)*k;pushOut(c,0.35);c.ry=P.yaw;}}
-    P.camY+=((P.crouch?0.95:1.65)-P.camY)*Math.min(1,dt*8);
+    if(P.drag){const c=P.drag;if(!c.down){P.drag=null;updateButtons();}else{const f=fwd(),tx=P.x+f.x*1.0,tz=P.z+f.z*1.0,k=Math.min(1,dt*8);c.x+=(tx-c.x)*k;c.z+=(tz-c.z)*k;pushOut(c,0.35);c.ry=P.yaw+Math.PI;/* a rendőr hanyatt fekszik, a lábánál fogva húzod: a teste előtted látszik */}}
+    P.camY+=((P.crouch?0.95:P.drag?1.15:1.65)-P.camY)*Math.min(1,dt*8);
   }else{P.moving=false;P.running=false;P.noise=0;P.stam=clamp(P.stam+11*dt,0,100);if(P.mode!=='perch')stepPlayerAnim(dt);}
   if(P.noiseBoost>0){P.noise=Math.max(P.noise,P.noiseBoost);P.noiseBoost=Math.max(0,P.noiseBoost-dt*30);}
   P.atkCd=Math.max(0,P.atkCd-dt);

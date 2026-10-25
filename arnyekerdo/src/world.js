@@ -144,11 +144,12 @@ function birchCrown(seed){const parts=[],cols=[rgb(0x3e4a22),rgb(0x55602a),rgb(0
   return merge(parts);}
 const birchTrunkGeo=new THREE.CylinderGeometry(0.7,1,1,7,1,true);birchTrunkGeo.translate(0,0.5,0);
 /* száraz fa */
-function deadTree(seed){const r=mulberry32(seed),parts=[],c=rgb(0x4a4038),c2=rgb(0x5e5448);
-  const tr=new THREE.CylinderGeometry(0.12,0.3,1,7);tr.translate(0,0.5,0);parts.push({g:tr,c:c});
-  for(let i=0;i<7;i++){const y=0.35+r()*0.55,len=0.25+r()*0.35,a=r()*6.28,up=0.5+r()*0.6;const b=new THREE.CylinderGeometry(0.015,0.05,len,5);b.translate(0,len/2,0);
+/* méterben épül egy 12 m-es fára, és egyenletesen skálázódik (t.h/12), így a törzs vékony marad */
+function deadTree(seed){const r=mulberry32(seed),parts=[],c=rgb(0x4a4038),c2=rgb(0x5e5448),M=12;
+  const tr=new THREE.CylinderGeometry(0.09,0.34,M,8);tr.translate(0,M/2,0);parts.push({g:tr,c:c});
+  for(let i=0;i<7;i++){const y=(0.35+r()*0.55)*M,len=(0.22+r()*0.3)*M*0.6,a=r()*6.28,up=0.5+r()*0.6;const b=new THREE.CylinderGeometry(0.025,0.09,len,5);b.translate(0,len/2,0);
     const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(Math.cos(a),up,Math.sin(a)).normalize());b.applyMatrix4(new THREE.Matrix4().makeRotationFromQuaternion(q));b.translate(0,y,0);parts.push({g:b,c:c2});
-    const tip=new THREE.Vector3(Math.cos(a),up,Math.sin(a)).normalize().multiplyScalar(len*0.75);const b2=new THREE.CylinderGeometry(0.006,0.022,len*0.6,4);b2.translate(0,len*0.3,0);
+    const tip=new THREE.Vector3(Math.cos(a),up,Math.sin(a)).normalize().multiplyScalar(len*0.75);const b2=new THREE.CylinderGeometry(0.012,0.045,len*0.6,4);b2.translate(0,len*0.3,0);
     const q2=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(Math.cos(a+1),up+0.6,Math.sin(a+1)).normalize());b2.applyMatrix4(new THREE.Matrix4().makeRotationFromQuaternion(q2));b2.translate(tip.x,y+tip.y,tip.z);parts.push({g:b2,c:c2});}
   return merge(parts);}
 
@@ -166,7 +167,7 @@ const inField=(x,z,m)=>Math.abs(x)<XW-m&&z<ZS-m&&z>-ZN+m;
     const kind=r();const t={x,z,c:r(),v:Math.floor(r()*3)};
     if(kind<0.82){t.kind='pine';t.h=16+r()*15;t.w=3+r()*2.2;t.r=0.3+t.h*0.02;if(!freeSpot(x,z,t.r+1.0))continue;pines.push(t);}
     else if(kind<0.93){t.kind='birch';t.h=12+r()*6;t.w=2+r()*1.2;t.r=0.24;if(!freeSpot(x,z,1.1))continue;birches.push(t);}
-    else{t.kind='dead';t.h=9+r()*6;t.r=0.32;if(!freeSpot(x,z,1.0))continue;deads.push(t);}
+    else{t.kind='dead';t.h=9+r()*6;t.r=0.34*t.h/12+0.06;if(!freeSpot(x,z,1.0))continue;deads.push(t);}
     trees.push(t);addTo(grid,t);}
   for(let i=0;i<40;i++){const x=(r()*2-1)*48,z=-96+r()*188,a=r()*Math.PI,L=3.5+r()*3.5;if(keepClear(x,z,2))continue;
     const lg={x,z,a,L,rad:0.32+r()*0.15};logs.push(lg);for(let k=-L/2+0.6;k<=L/2-0.6;k+=1.1){const o={x:x+Math.cos(a)*k,z:z+Math.sin(a)*k,r:lg.rad+0.15,low:true};trees.push(o);addTo(grid,o);}}
@@ -180,7 +181,7 @@ pines.forEach(t=>t._col=null);
 inst(trunkGeo,trunkMat,pines,t=>{D.position.set(t.x,H(t.x,t.z)-0.3,t.z);D.rotation.set(0,t.c*9,0);D.scale.set(t.r,t.h*0.95,t.r);},true);
 inst(birchTrunkGeo,flashPatch(new THREE.MeshLambertMaterial({map:birchTex,color:0xb8b6ae})),birches,t=>{D.position.set(t.x,H(t.x,t.z)-0.2,t.z);D.rotation.set((t.c-0.5)*0.08,t.c*9,(t.c-0.5)*0.06);D.scale.set(0.2,t.h,0.2);},true);
 const bcG=[birchCrown(3),birchCrown(17)];[0,1].forEach(v=>{const list=birches.filter(t=>t.v%2===v);inst(bcG[v],vcMat(),list,t=>{D.position.set(t.x,H(t.x,t.z)-0.2,t.z);D.rotation.set(0,t.c*9,0);D.scale.setScalar(t.h/12);},true);});
-const dG=[deadTree(5),deadTree(23)];[0,1].forEach(v=>{const list=deads.filter(t=>t.v%2===v);inst(dG[v],vcMat(),list,t=>{D.position.set(t.x,H(t.x,t.z)-0.2,t.z);D.rotation.set(0,t.c*9,0);D.scale.set(t.h,t.h,t.h);},true);});
+const dG=[deadTree(5),deadTree(23)];[0,1].forEach(v=>{const list=deads.filter(t=>t.v%2===v);inst(dG[v],vcMat(),list,t=>{D.position.set(t.x,H(t.x,t.z)-0.2,t.z);D.rotation.set(0,t.c*9,0);D.scale.setScalar(t.h/12);},true);});
 /* mászható óriásfák: törzs + ágak/gyökerek + sűrű lomb (méterben épül, egyenletes skálával) */
 function giantParts(seed){const r=mulberry32(seed),wood=[],leaf=[],bark=rgb(0x4a3e33),bark2=rgb(0x5d4f40);
   for(let i=0;i<7;i++){const a=i/7*Math.PI*2+r()*0.5,y0=6.4+r()*1.8,len=3.6+r()*1.4,up=0.35+r()*0.35;const b=new THREE.CylinderGeometry(0.16,0.34,len,7);b.translate(0,len/2,0);
