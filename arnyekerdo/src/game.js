@@ -165,7 +165,7 @@ const STONE={on:false,x:0,y:0,z:0,vx:0,vy:0,vz:0,t:0,m:new THREE.Mesh(A.jitterSt
 STONE.m.scale.setScalar(0.06);STONE.m.visible=false;scene.add(STONE.m);
 function throwStone(){if(STONE.on)return;if(S.stones<=0){showMsg('Elfogyott a kavics.');return;}S.stones--;
   const e=eyePos(V1),d=V2.set(0,0,-1).applyEuler(camera.rotation);
-  Object.assign(STONE,{on:true,x:e.x+d.x*0.5,y:e.y-0.15+d.y*0.5,z:e.z+d.z*0.5,vx:d.x*15,vy:d.y*15+3.2,vz:d.z*15,t:0});STONE.m.visible=true;P.atk=0.001;noiseHit(0.05,2000,'bandpass',0.08);updateButtons();}
+  TS.thrown=true;Object.assign(STONE,{on:true,x:e.x+d.x*0.5,y:e.y-0.15+d.y*0.5,z:e.z+d.z*0.5,vx:d.x*15,vy:d.y*15+3.2,vz:d.z*15,t:0});STONE.m.visible=true;P.atk=0.001;noiseHit(0.05,2000,'bandpass',0.08);updateButtons();}
 function stepStone(dt){if(!STONE.on)return;STONE.t+=dt;STONE.vy-=9.8*dt;STONE.x+=STONE.vx*dt;STONE.y+=STONE.vy*dt;STONE.z+=STONE.vz*dt;
   STONE.m.position.set(STONE.x,STONE.y,STONE.z);STONE.m.rotation.x+=dt*9;STONE.m.rotation.y+=dt*7;
   const gy=H(STONE.x,STONE.z);let hit=STONE.y<=gy+0.05;
@@ -212,15 +212,18 @@ const TUT=[
   {t:isTouch?'Guggolj le a Guggol gombbal. Guggolva halkabb vagy, bokorban nem látnak.':'Guggolj le a C billentyűvel. Guggolva halkabb vagy, bokorban nem látnak.',done:()=>P.crouch},
   {t:isTouch?'Válaszd a Kampót, és célozz a közeli óriásfa lombjára. Ha a lomb felderül, nyomd meg a Kampó gombot.':'Válaszd a kampót (3), célozz a közeli óriásfa lombjára, és ha felderül, kattints.',done:()=>P.mode==='perch'},
   {t:'Fent vagy a lombban: innen csak akkor látnak meg, ha rád világítanak. Ugorj le ('+(isTouch?'Le gomb':'szóköz')+'). Ha alattad rendőr áll, felülről támadsz.',done:()=>P.mode==='ground'},
-  {t:'A kavics ('+(isTouch?'Kavics':'5')+') koppanása odacsalja a rendőröket. A tantóval hátulról egy szúrással végzel velük, a tekkóval csak leütöd őket.',wait:9},
-  {t:'A leütött rendőrt bokorba húzhatod ('+(isTouch?'Húz gomb':'G')+'), így a társai nem találják meg. A bal felső térkép mutatja a bokrokat és az óriásfákat. Indulj észak felé!',wait:10}];
-const TS={on:false,i:0,t:0,yaw:0,lastYaw:0};
-function tutShow(){const el=$('tut');if(!TS.on||TS.i>=TUT.length){el.hidden=true;return;}el.hidden=false;$('tutStep').textContent=(TS.i+1)+' / '+TUT.length;$('tutText').textContent=TUT[TS.i].t;}
-function tutStart(){TS.on=true;TS.i=0;TS.t=0;TS.yaw=0;TS.lastYaw=P.yaw;tutShow();}
+  {t:'Válaszd a kavicsot ('+(isTouch?'Kavics':'5')+'), és dobj el egyet ('+(isTouch?'Dob gomb':'kattintás')+'). A koppanása odacsalja a közeli rendőröket.',done:()=>TS.thrown},
+  {t:'A tantóval (1) hátulról egy szúrással végzel egy rendőrrel, a tekkóval (2) csak leütöd. Válaszd ki a tantót.',done:()=>P.item===0},
+  {t:'A leütött rendőrt bokorba húzhatod ('+(isTouch?'Húz gomb':'G')+'), így a társai nem találják meg. A bal felső térkép mutatja a bokrokat és az óriásfákat. Ha készen állsz, nyomd meg a Tovább gombot, és indulj észak felé!',manual:true}];
+const TS={on:false,i:0,t:0,yaw:0,lastYaw:0,thrown:false};
+function tutShow(){const el=$('tut');if(!TS.on||TS.i>=TUT.length){el.hidden=true;return;}el.hidden=false;$('tutStep').textContent=(TS.i+1)+' / '+TUT.length;$('tutText').textContent=TUT[TS.i].t;$('tutNext').textContent=TS.i===TUT.length-1?'Kész':'Tovább';}
+function tutStart(){TS.on=true;TS.i=0;TS.t=0;TS.yaw=0;TS.lastYaw=P.yaw;TS.thrown=false;tutShow();}
+function tutNext(ok){if(!TS.on)return;if(ok)tone(0.07,880,1320,0.12);TS.i++;TS.t=0;if(TS.i>=TUT.length)tutEnd(true);else tutShow();}
 function tutEnd(done){TS.on=false;tutShow();if(done){try{localStorage.setItem('ae-tut-done','1');}catch(e){}}}
 function tutStep(dt){if(!TS.on)return;TS.yaw+=Math.abs(wrapA(P.yaw-TS.lastYaw));TS.lastYaw=P.yaw;TS.t+=dt;const st=TUT[TS.i];
-  if(st.wait?TS.t>st.wait:(TS.t>0.6&&st.done())){if(!st.wait)tone(0.07,880,1320,0.12);TS.i++;TS.t=0;if(TS.i>=TUT.length)tutEnd(true);else tutShow();}}
+  if(!st.manual&&TS.t>0.6&&st.done())tutNext(true);}
 $('tutSkip').addEventListener('click',()=>tutEnd(true));
+$('tutNext').addEventListener('click',()=>tutNext(false));
 
 function useSmoke(){
   if(S.smoke<=0||!S.running)return;S.smoke--;S.smokeT=7;S.sx=P.x;S.sz=P.z;A.puffSmoke(P.x,H(P.x,P.z),P.z);noiseHit(0.3,500,'lowpass',0.5);

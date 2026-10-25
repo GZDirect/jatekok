@@ -39,7 +39,7 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
 - **Füst** (2 db): elvakítja a közeli rendőröket, és eltakar.
 - **Értékelés a végén:** a rang a riasztások és a leszámolt rendőrök számától függ. A legjobb az Árnyék (senki sem vett észre, és senkit sem bántottál). A további fokozatok: Csendes halál, Nagymester, Mester, Nindzsa, Tanonc, Útonálló. Kiírja az időt, az ölések, a leütések és a riasztások számát is.
 - **Közeli térkép** (bal felső sarok, `drawRadar`): a nézési irány felfelé, 36 m sugarú környék; bokrok, óriásfák a lombjukkal, a kijárat iránya, füstfelhő, leütött rendőrök (×), és a kereső vagy riasztott rendőrök.
-- **Bemutató:** az első körben (a kezdőképernyőn ki-be kapcsolható) hét lépés vezet végig a mozgáson, a kampón, a leugráson, a kavicson és a test elrejtésén (`TUT`). Kihagyható.
+- **Bemutató:** az első körben (a kezdőképernyőn ki-be kapcsolható) nyolc lépés vezet végig a mozgáson, a kampón, a leugráson, a kavicson, a tantón és a test elrejtésén (`TUT`). Ha a játékos megcsinálja, amit a lépés kér, magától továbblép; a Tovább gombbal léptetni is lehet, a Kihagyom bezárja.
 - **Hangok:** léptek talajonként más hanggal (avar, fű, bokor, aszfalt), a rendőrök léptei és rádiója térhatással, tücskök, bagoly, szél. A bokor megrezzen, ha átmész rajta, a fű elhajlik a játékos és a közeli rendőrök előtt.
 - **Felület (HUD):** iránytű, ki-gyűrű, élet- és zajsávok, célkereszt felirattal, a kijárat jelölője, képernyőeffektek (vignetta, vörös veszély- és sérülésjelzés, zöld bokorkeret).
 - **Irányítás:**
