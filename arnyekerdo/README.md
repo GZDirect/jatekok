@@ -1,6 +1,6 @@
 # Árnyékerdő
 
-Belső nézetes lopakodó túlélőjáték telefonra, egy éjszakai erdőben. Az erdő másik végén egy ismeretlen ellenfél vár: szörny, nindzsa vagy szellem, mindegyik másként vadászik. Nyomokból kell kitalálnod, mivel állsz szemben, és vagy túlélni három percet, vagy időben a célponthoz érni. Prototípus.
+Belső nézetes, Tenchu-stílusú lopakodó küldetés telefonra és számítógépre. Éjszaka van a japán hegyekben, a rendőrség körbezárta a völgyet: hat rendőr fésüli át az erdőt zseblámpával és pisztollyal. A völgy déli végéből kell eljutnod az északi útig, az iránytű mutatja az irányt. Árnyékként surransz át, vagy egyenként tünteted el őket: tantó, tekko, kampó az óriásfákra, mászókarmok, füstbomba, és támadás felülről a lombok közül. Prototípus.
 
 **Játék:** https://gzdirect.github.io/jatekok/arnyekerdo/
 

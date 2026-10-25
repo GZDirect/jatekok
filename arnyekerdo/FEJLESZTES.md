@@ -101,7 +101,7 @@ chromium args: --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshade
 ## 6. Szabályok
 
 - **Szerzői jog:** minden fájlban maradjon meg a „© 2026 Fejes Géza. Minden jog fenntartva.” jelölés: a HTML-kommentben, a kezdő és a záró képernyőn, és a LICENSE fájlban. A kisvakond repóhoz ne nyúlj.
-- **Commit szerzője:** `Fejes Géza <gezafejes890@gmail.com>`. Csak akkor commitolj és pusholj, ha Géza kéri.
+- **Commit szerzője:** Fejes Géza (az e-mail címet Géza adja meg, a repóban ne szerepeljen). Csak akkor commitolj és pusholj, ha Géza kéri.
 - **Nyelv:** a felület magyar. Ha angol is kell, a Pihe odúja (`pihe/`) szótáras fordítását érdemes átvenni (`EN_X`, `tr()`, MutationObserver).
 - **Hangulat:**
   - Éjszakai, holdfényes, ködös erdő; a felület vékony, a sarkokba húzódó, tusrajz-hatású.
