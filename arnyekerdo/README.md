@@ -4,6 +4,8 @@ Belső nézetes lopakodó túlélőjáték telefonra, egy éjszakai erdőben. Az
 
 **Játék:** https://gzdirect.github.io/jatekok/arnyekerdo/
 
+Fejlesztéshez: [FEJLESZTES.md](FEJLESZTES.md). A forrás az `src/` mappában van, az `index.html` generált (`python3 arnyekerdo/src/build.py`).
+
 ---
 
 © 2026 Fejes Géza. Minden jog fenntartva. A játék engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető. Részletek: [LICENSE](LICENSE).

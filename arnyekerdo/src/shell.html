@@ -1,0 +1,134 @@
+<!-- Árnyékerdő. © 2026 Fejes Géza. Minden jog fenntartva / All rights reserved. Engedély nélküli másolás, terjesztés, módosítás vagy értékesítés tilos. -->
+<title>Árnyékerdő</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+JP:wght@700&display=swap">
+<style>
+/* Teljes képernyős 3D erdő, fölötte vékony tus-HUD a sarkokban; egyetlen éjszakai megjelenés */
+:root{
+  --night:#0a0f13; --panel:rgba(5,8,10,0.72); --line:#2c3a36;
+  --moon:#ece5d3; --mist:#a9b2ab; --lantern:#e0a43a; --blood:#d4483b; --calm:#86a7c6; --goal:#7fd3e6;
+  --display:'EB Garamond', Georgia, 'Times New Roman', serif;
+  --ui:'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --kanji:'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+  color-scheme:dark;
+}
+html,body{height:100%;}
+body{background:var(--night);color:var(--moon);font-family:var(--ui);overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;}
+#touch{position:fixed;inset:0;touch-action:none;}
+.fx{position:fixed;inset:0;pointer-events:none;}
+#fxVig{background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 48%,rgba(2,4,8,0.62) 100%);}
+#fxDanger{background:radial-gradient(ellipse at 50% 50%,rgba(120,0,0,0) 42%,rgba(150,12,10,0.6) 100%);opacity:0;}
+#fxLeaf{background:radial-gradient(ellipse at 50% 50%,rgba(6,20,8,0) 38%,rgba(6,24,10,0.82) 92%);opacity:0;transition:opacity .5s;}
+#fxGrain{opacity:0.06;mix-blend-mode:overlay;}
+.hud{position:fixed;pointer-events:none;}
+#ki{top:calc(env(safe-area-inset-top,0px) + 14px);left:calc(env(safe-area-inset-left,0px) + 16px);display:flex;gap:10px;align-items:center;}
+#kiRing{width:62px;height:62px;border-radius:50%;border:3px solid var(--calm);background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color .3s;}
+#kiChar{font-family:var(--kanji);font-size:27px;line-height:1;color:var(--calm);transition:color .3s;}
+#kiDist{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:1px;}
+#kiText{display:flex;flex-direction:column;gap:2px;}
+#kiState{font-family:var(--display);font-size:20px;font-weight:700;color:var(--calm);}
+#foe{font-size:12px;color:var(--mist);}
+#top{top:calc(env(safe-area-inset-top,0px) + 14px);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;}
+#timer{font-family:var(--display);font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:1px;}
+#timer.late{color:var(--blood);}
+#goalBox{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--goal);font-variant-numeric:tabular-nums;}
+#arrow{width:22px;height:22px;}
+#meters{top:calc(env(safe-area-inset-top,0px) + 16px);right:calc(env(safe-area-inset-right,0px) + 16px);display:flex;flex-direction:column;gap:8px;width:96px;}
+.meter{display:flex;flex-direction:column;gap:3px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mist);}
+.bar{height:5px;background:rgba(236,229,211,0.15);border-radius:3px;overflow:hidden;}
+.bar i{display:block;height:100%;width:100%;background:var(--moon);border-radius:3px;}
+#noiseBar i{background:var(--lantern);width:0;}
+#hidden{font-size:12px;color:var(--goal);letter-spacing:1.5px;text-transform:uppercase;}
+#msg{left:50%;top:30%;transform:translateX(-50%);width:min(86vw,420px);text-align:center;font-family:var(--display);font-size:21px;line-height:1.3;color:var(--moon);text-shadow:0 2px 12px #000;opacity:0;transition:opacity .6s;text-wrap:balance;}
+#joy{position:fixed;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:2px solid rgba(236,229,211,0.35);background:rgba(5,8,10,0.25);pointer-events:none;}
+#knob{position:absolute;left:34px;top:34px;width:52px;height:52px;border-radius:50%;background:rgba(236,229,211,0.55);}
+#joyHint{left:calc(env(safe-area-inset-left,0px) + 26px);bottom:calc(env(safe-area-inset-bottom,0px) + 30px);font-size:12px;color:var(--mist);width:120px;height:120px;border-radius:50%;border:1.5px dashed rgba(236,229,211,0.22);display:flex;align-items:center;justify-content:center;text-align:center;}
+#btns{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 22px);display:grid;grid-template-columns:repeat(2,64px);gap:12px;}
+.b{width:64px;height:64px;border-radius:50%;border:2px solid rgba(236,229,211,0.45);background:var(--panel);color:var(--moon);font-family:var(--ui);font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;touch-action:none;}
+.b small{font-size:11px;font-weight:400;color:var(--mist);}
+.b.on{border-color:var(--lantern);color:var(--lantern);}
+#bSmoke{grid-column:1 / span 2;justify-self:center;}
+.b:focus-visible,.choice:focus-visible,#again:focus-visible{outline:2px solid var(--lantern);outline-offset:3px;}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(6,9,11,0.82);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(env(safe-area-inset-top,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 16px);overflow-y:auto;}
+.card{width:100%;max-width:420px;display:flex;flex-direction:column;gap:16px;}
+.eyebrow{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--mist);}
+h1,h2{margin:0;font-family:var(--display);font-weight:700;text-wrap:balance;line-height:1.05;}
+h1{font-size:52px;}
+h2{font-size:40px;}
+.card p{margin:0;font-size:15px;line-height:1.55;color:#d6d0c0;}
+.choice{display:flex;flex-direction:column;gap:3px;text-align:left;padding:14px 16px;background:rgba(236,229,211,0.06);border:1.5px solid var(--line);border-radius:6px;color:var(--moon);font-family:var(--ui);cursor:pointer;}
+.choice b{font-family:var(--display);font-size:22px;}
+.choice span{font-size:13px;color:var(--mist);}
+.choice:active{border-color:var(--lantern);}
+.how{font-size:13px;line-height:1.6;color:var(--mist);display:grid;grid-template-columns:auto 1fr;gap:4px 12px;}
+.how dt{color:var(--moon);font-weight:600;}
+.how dd{margin:0;}
+#again{padding:14px 16px;background:var(--moon);color:#0a0f13;border:0;border-radius:6px;font-family:var(--ui);font-size:16px;font-weight:600;cursor:pointer;}
+.legal{font-size:12px;color:var(--mist);text-align:center;margin:0;}
+#endFoe{font-family:var(--display);font-size:22px;color:var(--lantern);}
+@media (prefers-reduced-motion:reduce){#msg,#kiRing,#kiChar,#fxLeaf{transition:none;}}
+</style>
+
+<canvas id="c" aria-label="Az erdő belső nézetből"></canvas>
+<div class="fx" id="fxVig"></div>
+<div class="fx" id="fxLeaf"></div>
+<div class="fx" id="fxDanger"></div>
+<div class="fx" id="fxGrain"></div>
+<div id="touch"></div>
+
+<div class="hud" id="ki" aria-live="polite">
+  <div id="kiRing"><div id="kiChar">気</div><div id="kiDist">—</div></div>
+  <div id="kiText"><div id="kiState">Nyugodt</div><div id="foe">Ellenfél: ismeretlen</div></div>
+</div>
+<div class="hud" id="top">
+  <div id="timer">3:00</div>
+  <div id="goalBox"><svg id="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3 L19 19 L12 15 L5 19 Z"></path></svg><span id="goalDist">0 m</span></div>
+</div>
+<div class="hud" id="meters">
+  <div class="meter">Erő<div class="bar" id="stamBar"><i></i></div></div>
+  <div class="meter">Zaj<div class="bar" id="noiseBar"><i></i></div></div>
+  <div id="hidden" hidden>Rejtve</div>
+</div>
+<div class="hud" id="msg"></div>
+<div class="hud" id="joyHint">Mozgás</div>
+<div id="joy" hidden><div id="knob"></div></div>
+
+<div id="btns">
+  <button class="b" id="bCrouch" type="button">Guggol</button>
+  <button class="b" id="bRun" type="button">Fut</button>
+  <button class="b" id="bSmoke" type="button">Füst<small id="smokeN">×2</small></button>
+</div>
+
+<div class="screen" id="start">
+  <div class="card">
+    <div class="eyebrow">Lopakodó túlélés · prototípus</div>
+    <h1>Árnyékerdő</h1>
+    <p>Az erdő egyik végén állsz. A másikon vár valami, és nem tudod, mi az. Lehet szörny, egy másik nindzsa, vagy valami, ami nem is él. Figyeld a nyomokat, és találd ki, hogyan vadászik.</p>
+    <button class="choice" id="modeGoal" type="button"><b>Célpont</b><span>Amikor lejár a 3 perc, a kék fénynél kell lenned.</span></button>
+    <button class="choice" id="modeSurv" type="button"><b>Túlélés</b><span>Maradj életben 3 percig, bárhol.</span></button>
+    <dl class="how">
+      <dt>Bal hüvelykujj</dt><dd>mozgás</dd>
+      <dt>Jobb hüvelykujj</dt><dd>körülnézés</dd>
+      <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol</dd>
+      <dt>Futás</dt><dd>gyors, de messzire hallatszik</dd>
+      <dt>Füst</dt><dd>elvakítja a közeli üldözőt</dd>
+    </dl>
+    <p class="legal">© 2026 Fejes Géza. Minden jog fenntartva.</p>
+  </div>
+</div>
+
+<div class="screen" id="end" hidden>
+  <div class="card">
+    <div class="eyebrow" id="endEyebrow">Vége</div>
+    <h2 id="endTitle">Túlélted</h2>
+    <p id="endText"></p>
+    <div id="endFoe"></div>
+    <p id="endTip"></p>
+    <button id="again" type="button">Új kör</button>
+    <p class="legal">© 2026 Fejes Géza</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/*@@JATEK@@*/</script>
