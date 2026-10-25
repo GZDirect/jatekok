@@ -80,6 +80,65 @@ function buildGhost(){const g=new THREE.Group();
   return g;}
 function buildEnemy(type){return type==='monster'?buildMonster():type==='ninja'?buildNinja():buildGhost();}
 
+/* ================= Japán rendőr (zseblámpa bal kézben, revolver jobb kézben) =================
+   Előre a −z irány. anim(t,spd,dt,o): o={st,bp (lámpa dőlése fel+),sweep (felsőtest elfordulása),shoot,fall,stagger} */
+function buildPolice(seed){const g=new THREE.Group(),r=mulberry32(seed||1);
+  const navy=L(0x22304d),pants=L(0x1a2236),shirt=L(0x9ab6dc),skin=L(0xc9a07e),black=L(0x111216),glove=L(0xe6e6dc),gold=L(0xd8b040,{emissive:0x3a2a08}),
+    vest=L(0xb6d23c,{emissive:0x2c3608}),gunM=new THREE.MeshPhongMaterial({color:0x2a2c30,shininess:60,specular:0x666666});
+  const body=pivot(0,0,0);g.add(body);const hips=pivot(0,0.98,0);body.add(hips);
+  const legs=[-1,1].map(s=>{const hp=pivot(s*0.1,0,0);hips.add(hp);hp.add(limb(0.47,0.075,0.09,pants));const kn=pivot(0,-0.47,0);hp.add(kn);kn.add(limb(0.45,0.055,0.07,pants));
+    const ft=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.07,0.25),black);ft.position.set(0,-0.48,-0.05);kn.add(ft);return{hp,kn};});
+  const belt=new THREE.Mesh(new THREE.CylinderGeometry(0.185,0.185,0.07,10),black);belt.position.y=0.03;hips.add(belt);
+  const holster=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.15,0.1),black);holster.position.set(0.19,-0.03,0);hips.add(holster);
+  const radio=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.11,0.04),black);radio.position.set(-0.17,0.0,0.1);hips.add(radio);
+  const chest=pivot(0,0.06,0);hips.add(chest);
+  const torso=new THREE.Mesh(new THREE.CylinderGeometry(0.21,0.18,0.6,10),navy);torso.position.y=0.3;torso.castShadow=true;chest.add(torso);
+  const vestM=new THREE.Mesh(new THREE.CylinderGeometry(0.222,0.2,0.4,10,1,true),vest);vestM.position.y=0.32;chest.add(vestM);
+  [0.2,0.42].forEach(y=>{const band=new THREE.Mesh(new THREE.CylinderGeometry(0.226,0.226,0.035,10,1,true),L(0xe8eef0,{emissive:0x505456}));band.position.y=y;chest.add(band);});
+  const sh=new THREE.Mesh(new THREE.SphereGeometry(0.23,10,8),navy);sh.scale.set(1.08,0.55,0.75);sh.position.y=0.56;chest.add(sh);
+  const collar=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.09,0.06,8),shirt);collar.position.y=0.64;chest.add(collar);
+  const neck=pivot(0,0.66,0);chest.add(neck);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.12,12,10),skin);head.scale.set(0.95,1.08,1);head.position.y=0.12;head.castShadow=true;neck.add(head);
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(0.124,10,8,0,Math.PI*2,0,Math.PI*0.5),black);hair.position.set(0,0.13,0.012);neck.add(hair);
+  const capB=new THREE.Mesh(new THREE.CylinderGeometry(0.128,0.126,0.05,14),black);capB.position.y=0.2;neck.add(capB);
+  const capT=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.128,0.07,14),navy);capT.position.y=0.255;capT.rotation.x=-0.08;neck.add(capT);
+  const visor=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,0.012,14,1,false,Math.PI*0.5,Math.PI),black);visor.position.set(0,0.18,-0.06);visor.rotation.x=0.18;neck.add(visor);
+  const badge=new THREE.Mesh(new THREE.BoxGeometry(0.035,0.035,0.01),gold);badge.position.set(0,0.255,-0.15);neck.add(badge);
+  const eyeM=new THREE.MeshBasicMaterial({color:0x1a1210});[-1,1].forEach(s=>{const e=new THREE.Mesh(new THREE.SphereGeometry(0.012,6,5),eyeM);e.position.set(s*0.04,0.13,-0.113);neck.add(e);});
+  const arms=[-1,1].map(s=>{const shp=pivot(s*0.26,0.55,0);chest.add(shp);shp.add(limb(0.3,0.06,0.07,navy));const el=pivot(0,-0.3,0);shp.add(el);el.add(limb(0.27,0.05,0.06,navy));
+    const hand=new THREE.Mesh(new THREE.SphereGeometry(0.048,7,6),glove);hand.position.y=-0.3;el.add(hand);return{sh:shp,el};});
+  /* revolver a jobb kézben: a cső az alkar irányába mutat */
+  const gun=new THREE.Group();gun.position.set(0,-0.31,0);arms[1].el.add(gun);
+  {const grip=new THREE.Mesh(new THREE.BoxGeometry(0.03,0.04,0.09),gunM);grip.position.set(0,0,0.03);grip.rotation.x=-0.3;gun.add(grip);
+   const cyl=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.022,0.045,8),gunM);cyl.position.set(0,-0.04,-0.005);gun.add(cyl);
+   const bar=new THREE.Mesh(new THREE.CylinderGeometry(0.009,0.009,0.11,6),gunM);bar.position.set(0,-0.11,-0.01);gun.add(bar);}
+  const muzzle=glowSprite(0xffd27a,0.55,0);muzzle.position.set(0,-0.19,-0.01);gun.add(muzzle);
+  /* zseblámpa a bal kézben */
+  const torch=new THREE.Group();torch.position.set(0,-0.31,0);arms[0].el.add(torch);
+  {const tb=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.018,0.2,8),black);tb.position.y=-0.06;torch.add(tb);
+   const th=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.022,0.06,10),black);th.position.y=-0.18;torch.add(th);
+   const lens=new THREE.Mesh(new THREE.CircleGeometry(0.03,10),new THREE.MeshBasicMaterial({color:0xfff4d8}));lens.rotation.x=Math.PI/2;lens.position.y=-0.212;torch.add(lens);}
+  const lensP=new THREE.Object3D();lensP.position.y=-0.22;torch.add(lensP);
+  const lensGlow=glowSprite(0xfff0cc,0.7,0.9);lensGlow.position.y=-0.23;torch.add(lensGlow);
+  g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
+  const R={hips,chest,neck,arms,legs,body,lensP,lensGlow,muzzle};g.userData.R=R;g.userData.ph=r()*6;
+  g.userData.anim=(t,spd,dt,o)=>{const ph=g.userData.ph+=dt*spd*2.9;const k=clamp(spd/4,0,1)*(1-o.fall),sw=Math.sin(ph)*0.62*k;
+    legs[0].hp.rotation.x=sw;legs[1].hp.rotation.x=-sw;legs[0].kn.rotation.x=Math.max(0,-Math.sin(ph))*0.9*k+0.04;legs[1].kn.rotation.x=Math.max(0,Math.sin(ph))*0.9*k+0.04;
+    hips.position.y=0.98-Math.abs(Math.sin(ph))*0.04*k;hips.rotation.x=-0.05*k-o.stagger*0.35;chest.rotation.y=o.sweep*(1-o.fall);neck.rotation.x=-o.bp*0.5*(1-o.fall);
+    const alert=o.st==='alert'?1:0,lo=(1-o.fall);
+    arms[1].sh.rotation.x=lo*(alert?Math.PI/2-0.06+o.bp*0.5:0.25+sw*0.3)+o.fall*0.3;arms[1].el.rotation.x=alert?0:0.55*lo;arms[1].sh.rotation.z=alert?0.12:-0.06;
+    arms[0].sh.rotation.x=lo*(Math.PI/2-0.15+o.bp)+o.fall*0.2;arms[0].el.rotation.x=0.12*lo;arms[0].sh.rotation.z=0.1*lo;
+    body.rotation.x=o.fall*1.48;body.position.y=o.fall*0.12;body.position.z=o.fall*0.15;
+    muzzle.material.opacity=o.shoot;muzzle.scale.setScalar(0.4+o.shoot*0.5);};
+  return g;}
+
+/* látható fénycsóva: csúcsa az origóban, +y felé nyílik; a game.js irányítja */
+const beamMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,fog:false,uniforms:{uA:{value:1}},
+  vertexShader:'varying float vY;varying vec3 vN;varying vec3 vV;void main(){vY=uv.y;vec4 w=modelMatrix*vec4(position,1.0);vN=normalize(mat3(modelMatrix)*normal);vV=normalize(cameraPosition-w.xyz);gl_Position=projectionMatrix*viewMatrix*w;}',
+  fragmentShader:'uniform float uA;varying float vY;varying vec3 vN;varying vec3 vV;void main(){float e=pow(abs(dot(vN,vV)),1.3);float a=pow(1.0-vY,2.2)*smoothstep(0.0,0.03,vY)*e*0.13*uA;gl_FragColor=vec4(vec3(1.0,0.94,0.8),a);}'});
+const beamGeo=new THREE.CylinderGeometry(2.9,0.04,18,18,1,true);beamGeo.translate(0,9,0);
+function makeBeam(){const m=new THREE.Mesh(beamGeo,beamMat.clone());m.frustumCulled=false;m.renderOrder=6;scene.add(m);return m;}
+
 /* ================= Nyomok a talajon ================= */
 const printTex=canvasTex(128,128,(g,w,h)=>{g.clearRect(0,0,w,h);g.fillStyle='rgba(20,14,10,0.85)';g.beginPath();g.ellipse(64,78,26,32,0,0,Math.PI*2);g.fill();
   [[-26,-4],[-10,-14],[10,-14],[26,-4]].forEach(q=>{g.beginPath();g.ellipse(64+q[0],40+q[1],8,11,q[0]*0.02,0,Math.PI*2);g.fill();g.beginPath();g.moveTo(64+q[0]-3,30+q[1]);g.lineTo(64+q[0],12+q[1]);g.lineTo(64+q[0]+3,30+q[1]);g.fill();});});
@@ -111,25 +170,50 @@ const smoke=[];for(let i=0;i<34;i++){const s=new THREE.Sprite(new THREE.SpriteMa
 function puffSmoke(x,y,z){smoke.forEach((p,i)=>{p.life=5+Math.random()*2;p.max=p.life;p.s.position.set(x+(Math.random()-0.5)*0.6,y+0.4+Math.random()*0.6,z+(Math.random()-0.5)*0.6);const a=Math.random()*6.28,sp=1.2+Math.random()*2.2;p.v.set(Math.cos(a)*sp,0.25+Math.random()*0.5,Math.sin(a)*sp);p.s.scale.setScalar(0.6);});}
 function stepSmoke(dt){smoke.forEach(p=>{if(p.life<=0){p.s.material.opacity=0;return;}p.life-=dt;p.s.position.addScaledVector(p.v,dt);p.v.multiplyScalar(Math.exp(-dt*1.4));const k=1-p.life/p.max;p.s.scale.setScalar(0.8+k*5.5);p.s.material.opacity=Math.min(1,p.life/1.5)*0.38*(k<0.08?k/0.08:1);});}
 
-/* ================= Kezek (belső nézet) ================= */
+/* ================= Kezek (belső nézet) =================
+   Eszközök: tanto (rövid kés), tekko (vas ököl), kampo (kaginawa, kötélkampó), karom (shuko, mászókarmok). */
 const hands=new THREE.Group();camera.add(hands);
-{const sleeve=L(0x1a1e28),wrap=L(0x3a3a40),skin=L(0xb88a6a),steel=new THREE.MeshPhongMaterial({color:0xcfd8e0,shininess:120,specular:0xffffff}),grip=L(0x241a14);
-  function arm(isRight){const G=new THREE.Group();
+{const sleeve=L(0x1a1e28),wrap=L(0x3a3a40),steel=new THREE.MeshPhongMaterial({color:0xcfd8e0,shininess:120,specular:0xffffff}),iron=new THREE.MeshPhongMaterial({color:0x6c737a,shininess:70,specular:0x999999}),grip=L(0x241a14),rope=L(0x8a7350);
+  function arm(){const G=new THREE.Group();
     const fist=new THREE.Mesh(new THREE.SphereGeometry(0.036,10,8),L(0x2b2c33));fist.scale.set(1.1,0.85,1.25);G.add(fist);const kn=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.018,0.03),wrap);kn.position.set(0,0.022,-0.02);G.add(kn);
     const fa=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.05,0.42,8),sleeve);fa.rotation.x=Math.PI/2-0.4;fa.position.set(0,-0.08,0.2);G.add(fa);
-    const band=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.044,0.08,8),wrap);band.rotation.x=Math.PI/2-0.4;band.position.set(0,-0.02,0.06);G.add(band);
-    if(isRight){const h=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,0.12,6),grip);h.rotation.x=Math.PI/2;h.position.set(0,0.005,-0.02);G.add(h);
-      const gd=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.04,0.008),L(0x6a5a3a));gd.position.set(0,0.005,-0.085);G.add(gd);
-      const bl=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.024,0.3),steel);bl.position.set(0,0.008,-0.24);G.add(bl);
-      const edge=new THREE.Mesh(new THREE.BoxGeometry(0.0045,0.004,0.3),new THREE.MeshBasicMaterial({color:0xe8f0f8}));edge.position.set(0,-0.004,-0.24);G.add(edge);
-      const tip=new THREE.Mesh(new THREE.ConeGeometry(0.012,0.05,4),steel);tip.rotation.x=-Math.PI/2;tip.scale.set(0.35,1,1);tip.position.set(0,0.008,-0.415);G.add(tip);}
-    return G;}
-  const R=arm(true);R.position.set(0.24,-0.25,-0.42);R.rotation.set(0.12,-0.18,-0.25);hands.add(R);
-  const Lh=arm(false);Lh.position.set(-0.3,-0.31,-0.45);Lh.rotation.set(0.25,0.35,0.3);hands.add(Lh);
-  hands.userData={R,Lh};hands.traverse(o=>{if(o.material){o.material=o.material.clone();o.material.fog=false;}});}
-function stepHands(t,dt,bob,moving,running,crouch,lookDX){const u=hands.userData;const a=moving?(running?1.6:1):0;
+    const band=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.044,0.08,8),wrap);band.position.set(0,-0.02,0.06);band.rotation.x=Math.PI/2-0.4;G.add(band);return G;}
+  const R=arm(),Lh=arm();
+  const items={tanto:new THREE.Group(),tekko:new THREE.Group(),kampo:new THREE.Group(),karom:new THREE.Group()},itemsL={kampo:new THREE.Group(),karom:new THREE.Group()};
+  {const G=items.tanto;const h=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,0.12,6),grip);h.rotation.x=Math.PI/2;h.position.set(0,0.005,-0.02);G.add(h);
+    const gd=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.04,0.008),L(0x6a5a3a));gd.position.set(0,0.005,-0.085);G.add(gd);
+    const bl=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.024,0.3),steel);bl.position.set(0,0.008,-0.24);G.add(bl);
+    const edge=new THREE.Mesh(new THREE.BoxGeometry(0.0045,0.004,0.3),new THREE.MeshBasicMaterial({color:0xe8f0f8}));edge.position.set(0,-0.004,-0.24);G.add(edge);
+    const tip=new THREE.Mesh(new THREE.ConeGeometry(0.012,0.05,4),steel);tip.rotation.x=-Math.PI/2;tip.scale.set(0.35,1,1);tip.position.set(0,0.008,-0.415);G.add(tip);}
+  {const G=items.tekko;const plate=new THREE.Mesh(new THREE.BoxGeometry(0.085,0.028,0.03),iron);plate.position.set(0,0.012,-0.04);G.add(plate);
+    for(let i=0;i<4;i++){const sp=new THREE.Mesh(new THREE.ConeGeometry(0.008,0.026,5),steel);sp.rotation.x=-Math.PI/2;sp.position.set(-0.03+i*0.02,0.016,-0.065);G.add(sp);}
+    const bar=new THREE.Mesh(new THREE.CylinderGeometry(0.006,0.006,0.09,6),iron);bar.rotation.z=Math.PI/2;bar.position.set(0,-0.022,-0.01);G.add(bar);}
+  {const G=items.kampo;const sh=new THREE.Mesh(new THREE.CylinderGeometry(0.008,0.008,0.12,6),iron);sh.rotation.x=Math.PI/2;sh.position.set(0,0.01,-0.07);G.add(sh);
+    for(let i=0;i<4;i++){const pr=new THREE.Mesh(new THREE.TorusGeometry(0.03,0.005,4,8,Math.PI*0.9),iron);pr.position.set(0,0.01,-0.14);pr.rotation.set(0,Math.PI/2,0);pr.rotateX(i*Math.PI/2);G.add(pr);}
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(0.012,0.004,4,8),iron);ring.position.set(0,0.01,-0.005);G.add(ring);
+    const coil=new THREE.Mesh(new THREE.TorusGeometry(0.06,0.014,6,14),rope);coil.rotation.set(0.3,0.6,0);coil.position.set(0.02,0.01,-0.02);itemsL.kampo.add(coil);}
+  [items.karom,itemsL.karom].forEach(G=>{const bandC=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,0.025,10,1,true),iron);bandC.rotation.x=Math.PI/2-0.4;bandC.position.set(0,-0.005,0.02);G.add(bandC);
+    for(let i=0;i<4;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(0.006,0.04,4),steel);c.position.set(-0.024+i*0.016,-0.03,-0.03);c.rotation.x=-2.2;G.add(c);}});
+  Object.values(items).forEach(G=>R.add(G));Object.values(itemsL).forEach(G=>Lh.add(G));
+  R.position.set(0.24,-0.25,-0.42);R.rotation.set(0.12,-0.18,-0.25);hands.add(R);
+  Lh.position.set(-0.3,-0.31,-0.45);Lh.rotation.set(0.25,0.35,0.3);hands.add(Lh);
+  hands.userData={R,Lh,items,itemsL,item:'tanto'};hands.traverse(o=>{if(o.material){o.material=o.material.clone();o.material.fog=false;}});}
+function setHandItem(name){const u=hands.userData;u.item=name;Object.keys(u.items).forEach(k=>u.items[k].visible=k===name);Object.keys(u.itemsL).forEach(k=>u.itemsL[k].visible=k===name);}
+setHandItem('tanto');
+/* atk: 0..1 a csapás ideje; climb: mászás közben a kezek felváltva nyúlnak */
+function stepHands(t,dt,bob,moving,running,crouch,lookDX,atk,climb){const u=hands.userData;const a=moving?(running?1.6:1):0;
   hands.position.set(Math.cos(bob*0.5)*0.012*a-lookDX*0.02,-Math.abs(Math.sin(bob*0.5))*0.018*a+Math.sin(t*1.6)*0.004-(crouch?0.02:0),0);
-  u.R.rotation.z=-0.25+Math.sin(bob*0.5)*0.03*a;u.R.position.y=-0.25+(running?-0.04:0)+(crouch?0.02:0);u.Lh.position.y=-0.31+(running?-0.03:0)+Math.sin(bob*0.5+Math.PI)*0.01*a;}
+  const k=atk>0?Math.sin(Math.min(1,atk)*Math.PI):0,isT=u.item==='tanto';
+  u.R.rotation.set(0.12-k*(isT?0.25:0.1),-0.18+k*0.22,-0.25+Math.sin(bob*0.5)*0.03*a);
+  u.R.position.set(0.24-k*0.12,-0.25+(running?-0.04:0)+(crouch?0.02:0)+k*0.06,-0.42-k*0.2);
+  u.Lh.position.set(-0.3,-0.31+(running?-0.03:0)+Math.sin(bob*0.5+Math.PI)*0.01*a,-0.45);
+  if(climb){const c=Math.sin(t*9);u.R.position.y+=0.08+c*0.06;u.Lh.position.y+=0.08-c*0.06;u.R.position.z-=0.06;u.Lh.position.z-=0.06;}}
+/* kötélkampó: repülő kampó + kötél a kéztől */
+const hookFly=new THREE.Group();scene.add(hookFly);hookFly.visible=false;
+{const iron=L(0x6c737a);for(let i=0;i<4;i++){const pr=new THREE.Mesh(new THREE.TorusGeometry(0.12,0.02,4,8,Math.PI*0.9),iron);pr.rotation.set(0,Math.PI/2,0);pr.rotateX(i*Math.PI/2);hookFly.add(pr);}}
+const ropeGeo=new THREE.BufferGeometry();ropeGeo.setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array(6),3));
+const rope=new THREE.Line(ropeGeo,new THREE.LineBasicMaterial({color:0x9a8260}));rope.frustumCulled=false;rope.visible=false;scene.add(rope);
+function setRope(ax,ay,az,bx,by,bz,on){rope.visible=hookFly.visible=on;if(!on)return;const p=ropeGeo.attributes.position;p.setXYZ(0,ax,ay,az);p.setXYZ(1,bx,by,bz);p.needsUpdate=true;hookFly.position.set(bx,by,bz);hookFly.lookAt(ax,ay,az);}
 
-Object.assign(window.AE,{buildEnemy,dropPrint,stepPrints,clearPrints,beacon,stepBeacon,puffSmoke,stepSmoke,hands,stepHands});
+Object.assign(window.AE,{buildEnemy,buildPolice,makeBeam,dropPrint,stepPrints,clearPrints,beacon,stepBeacon,puffSmoke,stepSmoke,hands,stepHands,setHandItem,setRope});
 })();

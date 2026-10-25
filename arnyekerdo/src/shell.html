@@ -29,15 +29,32 @@ body{background:var(--night);color:var(--moon);font-family:var(--ui);overflow:hi
 #kiState{font-family:var(--display);font-size:20px;font-weight:700;color:var(--calm);}
 #foe{font-size:12px;color:var(--mist);}
 #top{top:calc(env(safe-area-inset-top,0px) + 14px);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;}
-#timer{font-family:var(--display);font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:1px;}
-#timer.late{color:var(--blood);}
-#goalBox{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--goal);font-variant-numeric:tabular-nums;}
-#arrow{width:22px;height:22px;}
+#compass{width:min(52vw,230px);height:40px;display:block;}
+#goalBox{font-size:12px;color:var(--goal);font-variant-numeric:tabular-nums;letter-spacing:0.5px;}
+#timer{font-size:11px;color:var(--mist);font-variant-numeric:tabular-nums;letter-spacing:1px;}
 #meters{top:calc(env(safe-area-inset-top,0px) + 16px);right:calc(env(safe-area-inset-right,0px) + 16px);display:flex;flex-direction:column;gap:8px;width:96px;}
 .meter{display:flex;flex-direction:column;gap:3px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mist);}
 .bar{height:5px;background:rgba(236,229,211,0.15);border-radius:3px;overflow:hidden;}
 .bar i{display:block;height:100%;width:100%;background:var(--moon);border-radius:3px;}
 #noiseBar i{background:var(--lantern);width:0;}
+#hpBar i{background:#c9d6c0;}
+#hpBar.low i{background:var(--blood);}
+#lit{font-size:12px;color:var(--lantern);letter-spacing:1.5px;text-transform:uppercase;}
+#fxHurt{background:radial-gradient(ellipse at 50% 50%,rgba(160,0,0,0) 30%,rgba(190,20,14,0.75) 100%);opacity:0;}
+#cross{left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:1.5px solid rgba(236,229,211,0.45);}
+#cross.ok{border-color:var(--goal);box-shadow:0 0 10px rgba(127,211,230,0.6);}
+#cross.far{border-color:rgba(236,229,211,0.25);}
+#prompt{left:50%;top:calc(50% + 18px);transform:translateX(-50%);font-size:13px;color:var(--moon);text-shadow:0 1px 6px #000;white-space:nowrap;letter-spacing:0.5px;}
+#sub{left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 180px);transform:translateX(-50%);width:min(80vw,420px);text-align:center;font-size:15px;color:var(--moon);text-shadow:0 2px 8px #000;opacity:0;transition:opacity .4s;}
+#sub b{font-family:var(--display);font-size:19px;color:var(--lantern);font-weight:700;}
+#tools{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 182px);display:flex;flex-direction:column;gap:6px;}
+.tool{width:64px;height:40px;border-radius:6px;border:1.5px solid rgba(236,229,211,0.3);background:var(--panel);color:var(--mist);font-family:var(--ui);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:4px;touch-action:none;}
+.tool kbd{font-family:var(--ui);font-size:10px;opacity:0.6;}
+.tool.on{border-color:var(--goal);color:var(--goal);}
+@media (max-height:520px){#tools{flex-direction:row;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);right:calc(env(safe-area-inset-right,0px) + 172px);}#sub{bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}}
+@media (max-width:560px){#top{top:calc(env(safe-area-inset-top,0px) + 90px);}}
+@media (pointer:fine){.tool kbd{display:inline;}}
+@media (pointer:coarse){.tool kbd{display:none;}}
 #hidden{font-size:12px;color:var(--goal);letter-spacing:1.5px;text-transform:uppercase;}
 #msg{left:50%;top:30%;transform:translateX(-50%);width:min(86vw,420px);text-align:center;font-family:var(--display);font-size:21px;line-height:1.3;color:var(--moon);text-shadow:0 2px 12px #000;opacity:0;transition:opacity .6s;text-wrap:balance;}
 #joy{position:fixed;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:2px solid rgba(236,229,211,0.35);background:rgba(5,8,10,0.25);pointer-events:none;}
@@ -47,7 +64,7 @@ body{background:var(--night);color:var(--moon);font-family:var(--ui);overflow:hi
 .b{width:64px;height:64px;border-radius:50%;border:2px solid rgba(236,229,211,0.45);background:var(--panel);color:var(--moon);font-family:var(--ui);font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;touch-action:none;}
 .b small{font-size:11px;font-weight:400;color:var(--mist);}
 .b.on{border-color:var(--lantern);color:var(--lantern);}
-#bSmoke{grid-column:1 / span 2;justify-self:center;}
+#bUse{border-color:var(--moon);}
 .b:focus-visible,.choice:focus-visible,#again:focus-visible{outline:2px solid var(--lantern);outline-offset:3px;}
 .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(6,9,11,0.82);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(env(safe-area-inset-top,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 16px);overflow-y:auto;}
 .card{width:100%;max-width:420px;display:flex;flex-direction:column;gap:16px;}
@@ -66,52 +83,69 @@ h2{font-size:40px;}
 #again{padding:14px 16px;background:var(--moon);color:#0a0f13;border:0;border-radius:6px;font-family:var(--ui);font-size:16px;font-weight:600;cursor:pointer;}
 .legal{font-size:12px;color:var(--mist);text-align:center;margin:0;}
 #endFoe{font-family:var(--display);font-size:22px;color:var(--lantern);}
-@media (prefers-reduced-motion:reduce){#msg,#kiRing,#kiChar,#fxLeaf{transition:none;}}
+@media (prefers-reduced-motion:reduce){#msg,#kiRing,#kiChar,#fxLeaf,#sub{transition:none;}}
+.stats{font-size:13px;color:var(--mist);}
 </style>
 
 <canvas id="c" aria-label="Az erdő belső nézetből"></canvas>
 <div class="fx" id="fxVig"></div>
 <div class="fx" id="fxLeaf"></div>
 <div class="fx" id="fxDanger"></div>
+<div class="fx" id="fxHurt"></div>
 <div class="fx" id="fxGrain"></div>
 <div id="touch"></div>
 
 <div class="hud" id="ki" aria-live="polite">
   <div id="kiRing"><div id="kiChar">気</div><div id="kiDist">—</div></div>
-  <div id="kiText"><div id="kiState">Nyugodt</div><div id="foe">Ellenfél: ismeretlen</div></div>
+  <div id="kiText"><div id="kiState">Nyugodt</div><div id="foe">Rendőrök: 6</div></div>
 </div>
 <div class="hud" id="top">
-  <div id="timer">3:00</div>
-  <div id="goalBox"><svg id="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3 L19 19 L12 15 L5 19 Z"></path></svg><span id="goalDist">0 m</span></div>
+  <canvas id="compass" aria-label="Iránytű a kijárat felé"></canvas>
+  <div id="goalBox"><span id="goalDist">Kijárat</span></div>
+  <div id="timer">0:00</div>
 </div>
 <div class="hud" id="meters">
+  <div class="meter">Élet<div class="bar" id="hpBar"><i></i></div></div>
   <div class="meter">Erő<div class="bar" id="stamBar"><i></i></div></div>
   <div class="meter">Zaj<div class="bar" id="noiseBar"><i></i></div></div>
   <div id="hidden" hidden>Rejtve</div>
+  <div id="lit" hidden>Fényben!</div>
 </div>
 <div class="hud" id="msg"></div>
+<div class="hud" id="cross" hidden></div>
+<div class="hud" id="prompt" hidden></div>
+<div class="hud" id="sub"></div>
 <div class="hud" id="joyHint">Mozgás</div>
 <div id="joy" hidden><div id="knob"></div></div>
 
+<div id="tools" role="toolbar" aria-label="Eszköztár">
+  <button class="tool on" type="button" data-i="0">Tantó<kbd>1</kbd></button>
+  <button class="tool" type="button" data-i="1">Tekko<kbd>2</kbd></button>
+  <button class="tool" type="button" data-i="2">Kampó<kbd>3</kbd></button>
+  <button class="tool" type="button" data-i="3">Karmok<kbd>4</kbd></button>
+</div>
 <div id="btns">
   <button class="b" id="bCrouch" type="button">Guggol</button>
   <button class="b" id="bRun" type="button">Fut</button>
   <button class="b" id="bSmoke" type="button">Füst<small id="smokeN">×2</small></button>
+  <button class="b" id="bUse" type="button">Szúr</button>
 </div>
 
 <div class="screen" id="start">
   <div class="card">
-    <div class="eyebrow">Lopakodó túlélés · prototípus</div>
+    <div class="eyebrow">Lopakodó küldetés · prototípus</div>
     <h1>Árnyékerdő</h1>
-    <p>Az erdő egyik végén állsz. A másikon vár valami, és nem tudod, mi az. Lehet szörny, egy másik nindzsa, vagy valami, ami nem is él. Figyeld a nyomokat, és találd ki, hogyan vadászik.</p>
-    <button class="choice" id="modeGoal" type="button"><b>Célpont</b><span>Amikor lejár a 3 perc, a kék fénynél kell lenned.</span></button>
-    <button class="choice" id="modeSurv" type="button"><b>Túlélés</b><span>Maradj életben 3 percig, bárhol.</span></button>
+    <p>Éjszaka van, valahol a japán hegyekben. A rendőrség körbezárta a völgyet: hat rendőr fésüli át az erdőt zseblámpával és pisztollyal. Neked át kell jutnod a völgy déli végéből az északi útig. Hogy árnyékként surransz át, vagy egyenként tünteted el őket, rajtad múlik.</p>
+    <button class="choice" id="go" type="button"><b>Indulás</b><span>Cél: a kijárat az északi úton. Az iránytű mutatja az irányt.</span></button>
     <dl class="how">
-      <dt>Bal hüvelykujj</dt><dd>mozgás</dd>
-      <dt>Jobb hüvelykujj</dt><dd>körülnézés</dd>
-      <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol</dd>
-      <dt>Futás</dt><dd>gyors, de messzire hallatszik</dd>
-      <dt>Füst</dt><dd>elvakítja a közeli üldözőt</dd>
+      <dt>Bal hüvelykujj</dt><dd>mozgás (gép: W A S D)</dd>
+      <dt>Jobb hüvelykujj</dt><dd>körülnézés (gép: egérrel húzva)</dd>
+      <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol (C)</dd>
+      <dt>Tantó, tekko</dt><dd>hátulról egy csapás: a tantó öl, a tekko csak leüt (kattintás vagy E)</dd>
+      <dt>Kampó</dt><dd>célozz egy sűrű lombú óriásfára: ha halványan felderül, fel tudsz kapaszkodni</dd>
+      <dt>Karmok</dt><dd>az óriásfa törzsén felmászhatsz (1–4: eszközváltás)</dd>
+      <dt>A fán</dt><dd>csak akkor látnak meg, ha rád világítanak; leugrással felülről támadhatsz (szóköz)</dd>
+      <dt>Füst</dt><dd>elvakítja a közeli rendőröket, és eltakar (F)</dd>
     </dl>
     <p class="legal">© 2026 Fejes Géza. Minden jog fenntartva.</p>
   </div>
@@ -124,8 +158,8 @@ h2{font-size:40px;}
     <p id="endText"></p>
     <div id="endFoe"></div>
     <p id="endTip"></p>
-    <button id="again" type="button">Új kör</button>
-    <p class="legal">© 2026 Fejes Géza</p>
+    <button id="again" type="button">Újra</button>
+    <p class="legal">© 2026 Fejes Géza. Minden jog fenntartva.</p>
   </div>
 </div>
 
