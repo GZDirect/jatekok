@@ -122,6 +122,7 @@ Délben, a hegyek között. Kuroda jobbkeze, Mori, a cég iratait a magánvonat�
 - **Őrök a kocsik között:** a `steerCops` a kocsi ajtóin át vezeti őket (fülkés kocsiban a folyosón, a mozdonyban a géptermen kívül), hogy keresés után vissza tudjanak térni a helyükre.
 - **Mentési pontok:** a fülkés kocsi eleje és a szalonkocsi ajtaja. Halál után „Folytatás a mentési pontról”.
 - **Ülő utasok:** díszlet, nem figyelnek (`civ:true`).
+- **Grafika:** rizsföldek (vízzel elárasztott parcellák, palántasorok), rétek, japán parasztházak, cédrusok, lombos fák (néhány vörös juhar), bambuszligetek, távíróoszlopok vezetékkel, töltés kavicsos vállal, dombok, piros rácsos acélhíd, vasúti átjáró villogó lámpákkal és várakozó autókkal, távoli hósapkás hegyek, felhők. A csempék közös geometriákat használnak (`G2`, `M2`). Belül: függönyök, fali lámpák, sárgaréz csomagtartók, napfényfoltok a padlón (az alagútban kialszanak, a fali lámpák felerősödnek). Az alagút bordás betonfalú, lámpákkal.
 - **Pecsétek:** Árnyék (nem volt riasztás), Tiszta kéz (senki sem halt meg), Gyors (7 percen belül).
 - **Teszt:** `?palya=vonat&aetest`, `window.AE_VONAT`.
 

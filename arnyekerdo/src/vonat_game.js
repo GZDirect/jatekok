@@ -69,7 +69,7 @@ function setPhase(k,first){T.ph=k%2;T.phT=T.ph?14:28;const b=boss();if(b.down)re
 const BASE={};
 function applyDark(){const d=T.dark;if(!BASE.mi){BASE.mi=A.moonLight.intensity;BASE.hi=A.hemi.intensity;BASE.bg=A.scene.background.clone();BASE.fog=A.scene.fog.color.clone();}
   A.moonLight.intensity=BASE.mi*(1-0.95*d);A.hemi.intensity=BASE.hi*(1-0.72*d);const dk=new THREE.Color(0x0c0d0e);A.scene.background.copy(BASE.bg).lerp(dk,d);A.scene.fog.color.copy(BASE.fog).lerp(dk,d);
-  G.visMul=1-0.45*d;}
+  G.visMul=1-0.45*d;V.SUNM.opacity=0.16*(1-d);V.SCONG.opacity=0.45+0.4*d;if(V.LIFE.clouds)V.LIFE.clouds.forEach(c=>c.visible=d<0.5);}
 function failReset(why){if(T.resetT>0)return;T.resetTo=T.cp||(P.z<68?{x:0,z:68.9}:null);T.resetT=1.4;T.falls++;G.showMsg(why);G.thump(0.6);G.noiseHit(0.4,300,'lowpass',0.5,1);}
 function doReset(){const cp=T.resetTo||T.cp||G.START;Object.assign(P,{x:cp.x,z:cp.z,yaw:0,pitch:0,mode:'ground',tree:null,anim:null,drag:null,crouch:true,run:false,pend:null,camY:0.95});A.setRope(0,0,0,0,0,0,false);
   S.alarm=0;S.smokeT=0;G.clearSpikes();ALLCOPS.forEach(c=>{if(!c.down&&c.active!==false&&(c.st==='alert'||c.st==='search'||c.st==='suspect')){c.st='patrol';c.aw=0;}});G.updateButtons();}
