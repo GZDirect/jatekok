@@ -343,6 +343,34 @@ document.addEventListener('pointerdown',()=>{if(!S.running&&!document.fullscreen
 /* nehézség és bemutató a kezdőképernyőn */
 function showDiff(){document.querySelectorAll('#diff [data-d]').forEach(b=>b.setAttribute('aria-checked',DIFF[b.dataset.d]===D?'true':'false'));$('copsN').textContent=D.n;}
 document.querySelectorAll('#diff [data-d]').forEach(b=>b.addEventListener('click',()=>{D=DIFF[b.dataset.d];try{localStorage.setItem('ae-diff',b.dataset.d);}catch(e){}showDiff();}));
+/* ---------- Nyitókép és mentések (3 hely, a böngészőben tárolva) ---------- */
+const R1=['Útonálló','Tanonc','Nindzsa','Mester','Nagymester','Csendes halál','Árnyék'],R2=['Tanítvány','Nindzsa','Mester','Árnyékmester'];
+const lsGet=k=>{try{return localStorage.getItem(k);}catch(e){return null;}},lsSet=(k,v)=>{try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v);}catch(e){}};
+const slotNo=()=>clamp(+lsGet('ae-slot')||1,1,3);
+function loadSave(n){try{return JSON.parse(lsGet('ae-save-'+n))||{};}catch(e){return{};}}
+function storeSave(n,o){lsSet('ae-save-'+n,JSON.stringify(o));}
+if(lsGet('ae-l1-done')&&!lsGet('ae-save-1')){storeSave(1,{l1:true});}
+function saveProgress(o){const n=slotNo(),sv=loadSave(n);
+  if(o.l1){sv.l1=true;if(R1.indexOf(o.r1)>R1.indexOf(sv.r1||''))sv.r1=o.r1;}
+  if(o.l2){sv.l2=true;if(R2.indexOf(o.r2)>R2.indexOf(sv.r2||'')){sv.r2=o.r2;sv.s2=o.s2;}}
+  sv.t=Date.now();storeSave(n,sv);}
+G.saveProgress=saveProgress;G.loadSave=()=>loadSave(slotNo());
+function saveText(sv){if(!sv.t&&!sv.l1)return'Üres';const a=[];a.push('1. pálya: '+(sv.l1?(sv.r1||'kész'):'még nincs kész'));if(sv.l1)a.push('2. pálya: '+(sv.l2?(sv.r2||'kész')+(sv.s2&&sv.s2.length?' ('+sv.s2.length+' pecsét)':''):'nyitva'));return a.join(' · ');}
+function refreshLvl(){const sv=G.loadSave(),f=LV==='falu',l2=$('lvl2');$('lvl1').classList.toggle('on',!f);l2.classList.toggle('on',f);
+  if(!sv.l1&&!f){l2.classList.add('locked');l2.removeAttribute('href');l2.innerHTML='2 · A mester faluja<small>az 1. pálya után nyílik</small>';}
+  else{l2.classList.remove('locked');l2.setAttribute('href','?palya=falu');l2.textContent='2 · A mester faluja';}
+  const n=slotNo();$('tStartSub').textContent='Mentés '+n+' · '+(sv.l1?(sv.l2?'mindkét pálya kész':'folytatás: 2. pálya'):(sv.t?'folytatás: 1. pálya':'új játék'));}
+function drawSlots(){const box=$('slots');box.innerHTML='';const cur=slotNo();
+  for(let n=1;n<=3;n++){const sv=loadSave(n),el=document.createElement('div');el.className='slot'+(n===cur?' on':'');el.setAttribute('role','button');el.tabIndex=0;
+    el.innerHTML='<b>Mentés '+n+(n===cur?' · kiválasztva':'')+'</b><span>'+saveText(sv)+'</span>'+(sv.t||sv.l1?'<button class="del" type="button">Törlés</button>':'');
+    el.addEventListener('click',e=>{if(e.target.classList.contains('del')){if(e.target.dataset.sure){lsSet('ae-save-'+n,null);drawSlots();refreshLvl();}else{e.target.dataset.sure=1;e.target.textContent='Biztos?';}return;}
+      lsSet('ae-slot',String(n));drawSlots();refreshLvl();});box.appendChild(el);}}
+function showTitle(on){$('title').hidden=!on;$('start').hidden=on;if(on){$('saves').hidden=true;$('title').classList.remove('sv');}refreshLvl();}
+$('tStart').addEventListener('click',()=>{const sv=G.loadSave();if(sv.t===undefined&&!sv.l1)saveProgress({});const want=sv.l1&&!sv.l2?'falu':'erdo';
+  if(want!==LV&&!(sv.l1&&sv.l2)){location.href='?palya='+want;return;}showTitle(false);goFull();});
+$('tSaves').addEventListener('click',()=>{drawSlots();$('saves').hidden=false;$('title').classList.add('sv');});
+$('sBack').addEventListener('click',()=>{$('saves').hidden=true;$('title').classList.remove('sv');refreshLvl();});
+showTitle(!/[?&]palya=/.test(location.search));
 showDiff();try{$('tutOn').checked=!localStorage.getItem('ae-tut-done');}catch(e){$('tutOn').checked=true;}
 $('again').addEventListener('click',()=>{$('end').hidden=true;$('start').hidden=false;});
 function rank(){const a=S.alarms,downs=S.kills+S.kos;
@@ -544,7 +572,7 @@ function update(dt){
     aimMark.position.set(g.x+pr.dx*1.0*g.s,giantBase(g)+g.py+1.6*g.s,g.z+pr.dz*1.0*g.s);aimMark.material.opacity=0.22+0.16*k;aimMark.visible=true;}else aimMark.visible=false;
 
   /* Cél */
-  if(LV==='erdo'&&P.mode==='ground'&&P.z<-ZN-4&&Math.abs(P.x)<6){try{localStorage.setItem('ae-l1-done','1');}catch(e){}const rk=rank();endGame(true,'Kijutottál',rk[0]==='Árnyék'?'Átjutottál a völgyön, és senki sem tudta, hogy ott voltál.':'Elérted az északi utat '+fmt(S.time)+' alatt.');return;}
+  if(LV==='erdo'&&P.mode==='ground'&&P.z<-ZN-4&&Math.abs(P.x)<6){const rk=rank();saveProgress({l1:true,r1:rk[0]});endGame(true,'Kijutottál',rk[0]==='Árnyék'?'Átjutottál a völgyön, és senki sem tudta, hogy ott voltál.':'Elérted az északi utat '+fmt(S.time)+' alatt.');return;}
 
   if(G.hooks.update){G.hooks.update(dt);if(!S.running)return;}
   if(S.msgT>0){S.msgT-=dt;if(S.msgT<=0)$('msg').style.opacity=0;}

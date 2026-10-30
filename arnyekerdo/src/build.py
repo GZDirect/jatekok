@@ -21,7 +21,7 @@ wrap_head = ('<!doctype html>\n<html lang="hu">\n<head>\n<meta charset="utf-8">\
   '<meta name="mobile-web-app-capable" content="yes">\n'
   '<meta name="apple-mobile-web-app-capable" content="yes">\n'
   '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n'
-  '<meta name="apple-mobile-web-app-title" content="Árnyékerdő">\n'
+  '<meta name="apple-mobile-web-app-title" content="Shinobi">\n'
   '<link rel="manifest" href="manifest.webmanifest">\n'
   '<link rel="apple-touch-icon" href="icon-180.png">\n'
   '<link rel="icon" href="icon-192.png">\n'

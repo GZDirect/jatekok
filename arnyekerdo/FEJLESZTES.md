@@ -80,6 +80,9 @@ Mintának a Tenchu kiképző küldetését (szobáról szobára, egy ötlet egy 
 - **Pályák sorrendje:** a 2. pálya gombja a kezdőképernyőn le van zárva, amíg az 1. pályát egyszer nem teljesítetted (`localStorage` `ae-l1-done`). Az 1. pálya sikeres vége után a záró képernyőn „Tovább: 2 · A mester faluja” gomb jelenik meg. A `?palya=falu` cím közvetlenül mindig működik.
 - **Minőség:** ha 150 kép átlaga 30 ms fölött van, a játék lejjebb veszi a minőséget (pixelarány, fű, árnyék).
 
+- **Nyitókép:** a játék neve **Shinobi** (a mappa és a link marad `arnyekerdo`). Induláskor a nyitókép jön (`#title`: `nyitokep.jpg` 2560×1440 nagy kijelzőre, `nyitokep-kicsi.jpg` 1280×720 telefonra), rajta a „Shinobi” cím, a Kezdés és a Mentések gomb. A kép egy kunyhó belseje a fegyvertartóval; a bal oldalra sötét átmenet kerül a felirat miatt. Ha a címben van `?palya=`, a nyitókép kimarad (például a Tovább gombnál).
+- **Mentések:** három hely a böngészőben (`ae-save-1..3`, a kiválasztott: `ae-slot`). Tárolja, hogy kész-e az 1. és a 2. pálya, a legjobb rangot és a 2. pálya pecsétjeit (`saveProgress`, `loadSave`). A Kezdés a kiválasztott mentés szerint folytat: ha az 1. pálya kész, a 2. pálya kezdőképernyőjére visz. A régi `ae-l1-done` jelzést az 1. mentésbe veszi át.
+
 ## 3. Fájlok
 
 A `GZDirect/jatekok` repóban minden játék külön mappában van. A GitHub Pages a `main` ágból közvetlenül szolgálja ki őket.
@@ -88,6 +91,7 @@ A `GZDirect/jatekok` repóban minden játék külön mappában van. A GitHub Pag
 arnyekerdo/
   index.html      ← GENERÁLT, ezt szolgálja ki a GitHub Pages. Kézzel ne szerkeszd.
   LICENSE, README.md, FEJLESZTES.md
+  nyitokep.jpg, nyitokep-kicsi.jpg  ← a nyitókép
   manifest.webmanifest, icon-180/192/512.png  ← főképernyőre tett webalkalmazás (fekvő, teljes képernyő)
   src/
     shell.html    ← HTML, CSS, HUD, kezdő és záró képernyő; a /*@@JATEK@@*/ jelölő helyére kerül a JS

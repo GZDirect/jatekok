@@ -189,7 +189,7 @@ function dayFade(on){const fd=$('dayFade');fd.style.opacity=1;
 
 /* ---------- vége: rang és pecsétek ---------- */
 function seals(){const out=[];if(S.alarms-T.examAl===0)out.push('Árnyék');if(T.fails===0)out.push('Türelmes');if(S.time<600)out.push('Gyors');return out;}
-function finish(){speak(L.final);S.running=false;const sl=seals();T.sl=sl;setTimeout(()=>{G.endGame(true,'Átmentél a kiképzésen',
+function finish(){speak(L.final);S.running=false;const sl=seals();T.sl=sl;G.saveProgress({l2:true,r2:G.hooks.rank()[0],s2:sl});setTimeout(()=>{G.endGame(true,'Átmentél a kiképzésen',
   ST.length+' próba '+G.fmt(S.time)+' alatt. '+(T.fails?'Újrakezdések: '+T.fails+'.':'Egyszer sem kellett újrakezdened.'));$('endEyebrow').textContent='Kiképzés vége';},2600);}
 G.hooks.rank=()=>{const sl=T.sl||seals(),n=sl.length,names=['Tanítvány','Nindzsa','Mester','Árnyékmester'];
   const miss=['Árnyék (vizsga riasztás nélkül)','Türelmes (egy újrakezdés sem)','Gyors (10 perc alatt)'].filter((s,k)=>!sl.includes(['Árnyék','Türelmes','Gyors'][k]));

@@ -1,4 +1,7 @@
-# Árnyékerdő
+# Shinobi
+
+(A mappa neve a régi munkacím, `arnyekerdo`, hogy a link ne változzon.)
+
 
 Belső nézetes, Tenchu-stílusú lopakodó küldetés telefonra és számítógépre. Éjszaka van a japán hegyekben, a rendőrség körbezárta a völgyet: rendőrök fésülik át az erdőt zseblámpával és pisztollyal (nehézségtől függően 4, 6 vagy 8). A völgy déli végéből kell eljutnod az északi útig, az iránytű mutatja az irányt. Árnyékként surransz át, vagy egyenként tünteted el őket: tantó, tekko, kampó az óriásfákra, mászókarmok, elcsaló kavics, füstbomba, a testek bokorba rejtése, és támadás felülről a lombok közül. Prototípus.
 

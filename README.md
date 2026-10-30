@@ -8,7 +8,7 @@ Saját szórakozásra készült böngészős játékok. Mind telepítés nélkü
 |---|---|---|
 | [Pihe odúja](https://gzdirect.github.io/jatekok/pihe/) | Tamagocsi négy forgatható 3D diorámában (őszi erdő, havas tó, dzsungel, sziget). Kert, horgászat, bújócska, szavak tanítása. | [`pihe/`](pihe/) |
 | [Pip terráriuma](https://gzdirect.github.io/jatekok/pip-terrarium/) | Gondozós 3D játék egy pici ugrópókkal. Magyarul és angolul. | [`pip-terrarium/`](pip-terrarium/) |
-| [Árnyékerdő](https://gzdirect.github.io/jatekok/arnyekerdo/) | Tenchu-stílusú lopakodó küldetés egy éjszakai japán hegyi erdőben, hat rendőrrel (prototípus). | [`arnyekerdo/`](arnyekerdo/) |
+| [Shinobi (Árnyékerdő)](https://gzdirect.github.io/jatekok/arnyekerdo/) | Tenchu-stílusú lopakodó küldetés egy éjszakai japán hegyi erdőben, hat rendőrrel (prototípus). | [`arnyekerdo/`](arnyekerdo/) |
 | [Cincin](https://gzdirect.github.io/jatekok/cincin/) | Design előtti teszt. Kisegeres ügyességi játék egy padláson, az alvó macska mellett kell elosonni. | [`cincin/`](cincin/) |
 | [Forgóelemes játék](https://gzdirect.github.io/jatekok/forgoelemes/) | Kétszemélyes logikai táblajáték a gép ellen, forgatható rudakkal. | [`forgoelemes/`](forgoelemes/) |
 | [Szócsere](https://gzdirect.github.io/jatekok/szocsere/) | Magyar szójáték: két szó végét kell megcserélni. | [`szocsere/`](szocsere/) |
