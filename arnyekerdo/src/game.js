@@ -113,7 +113,7 @@ function endPtr(e){if(e.pointerId===joy.id){joy.id=null;joy.x=joy.y=0;joyEl.hidd
 /* egér: a játéktérre kattintva rögzül (pointer lock), onnantól húzás nélkül nézel körül, kattintás = használat, Esc elengedi.
    Az egér érzékenysége kisebb, mint az ujjé: ugyanannyi képpont kisebb fordulat, ettől lesz sima a körbenézés. */
 const MOUSE_K=0.42;
-touch.addEventListener('mousedown',e=>{if(!S.running||isTouch||e.button!==0)return;if(document.pointerLockElement!==touch){try{const r=touch.requestPointerLock();if(r&&r.catch)r.catch(()=>{});}catch(_){}}else useItem();});
+touch.addEventListener('mousedown',e=>{if(!S.running||isTouch||e.button!==0)return;if(document.pointerLockElement!==touch){goFull();try{const r=touch.requestPointerLock();if(r&&r.catch)r.catch(()=>{});}catch(_){}}else useItem();});
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement!==touch||!S.running)return;const dx=clamp(e.movementX,-200,200),dy=clamp(e.movementY,-200,200);
   P.yaw-=dx*0.0058*MOUSE_K;P.pitch=clamp(P.pitch-dy*0.0045*MOUSE_K,-1.25,1.3);P.lookDX+=dx*0.01*MOUSE_K;});
 touch.addEventListener('pointerup',endPtr);touch.addEventListener('pointercancel',endPtr);
@@ -338,7 +338,10 @@ $('go').addEventListener('click',startGame);
 /* telefonon és tableten fekvő helyzet, teljes képernyő */
 const PORT=matchMedia('(orientation:portrait) and (pointer:coarse)');
 function lockL(){try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{});}catch(e){}}
-function goFull(){try{if(!isTouch)return;const el=document.documentElement;if(!document.fullscreenElement&&el.requestFullscreen)el.requestFullscreen({navigationUI:'hide'}).then(lockL,lockL);else lockL();}catch(e){}}
+/* teljes képernyő minden eszközön: a böngésző csak felhasználói mozdulatra engedi, ezért az első kattintásnál/érintésnél kapcsol be.
+   Gépen nincs fekvőre rögzítés; ha a játékos Esc-kel kilép, a következő kattintás a menüben újra teljes képernyőre vált. */
+function goFull(){try{const el=document.documentElement,rq=el.requestFullscreen||el.webkitRequestFullscreen;const fs=document.fullscreenElement||document.webkitFullscreenElement;
+  if(!fs&&rq){const r=rq.call(el,{navigationUI:'hide'});if(r&&r.then)r.then(()=>{if(isTouch)lockL();},()=>{});}else if(isTouch)lockL();}catch(e){}}
 document.addEventListener('pointerdown',()=>{if(!S.running&&!document.fullscreenElement)goFull();},{capture:true});
 /* nehézség és bemutató a kezdőképernyőn */
 function showDiff(){document.querySelectorAll('#diff [data-d]').forEach(b=>b.setAttribute('aria-checked',DIFF[b.dataset.d]===D?'true':'false'));$('copsN').textContent=D.n;}
