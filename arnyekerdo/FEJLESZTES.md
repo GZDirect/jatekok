@@ -24,7 +24,7 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
   - **Leütött társ:** ha ilyet látnak, keresni kezdenek, és a többieket is riasztják.
   - **Kiütött rendőr:** kb. 75 másodperc múlva magához tér, és riaszt.
   - **Lövés:** riadóban lőnek. A játékosnak 100 életereje van, egy találat 18–26 pont.
-  - **Beszéd:** japánul szólnak meg (a böngésző felolvasójával), alul magyar felirattal.
+  - **Beszéd:** mindenki magyarul beszél: alul felirat, és a böngésző magyar hanggal felolvassa (`say`, `sayLine`, `showSub`, `speak`). A szövegtömbökben megmaradt a japán eredeti is (0. és 1. elem), de nem jelenik meg; csak a 2. elem, a magyar szöveg számít. Géza kérése: japán szöveg ne legyen.
   - **Riasztásjelző a fejük fölött:** kérdőjel, ami a gyanúval narancsra telik; keresés közben teli; riadóban vörös felkiáltójel (`makeMark`, `drawMark`).
   - **Zseblámpa:** látható fénykúp sodródó porszemekkel, és fénykör a talajon, ahol a tengelye földet ér (`makePool`, `beamHit` az actors.js-ben). A fény a talajt és a tárgyakat is megvilágítja (a legközelebbi 6 rendőr lámpája a shaderben).
   - **Ütközés:** a rendőrök és a játékos sem mehet át fán, óriásfa gyökerén (`col`), sziklán (0,42 m-től), farönkön, a rendőrautón, a lámpaoszlopon és az italautomatán; a rendőrök egymáson és a játékoson sem.
@@ -58,7 +58,7 @@ Történetben a rendőrös küldetés után jön: az idős mester rejtett hegyi 
 Mintának a Tenchu kiképző küldetését (szobáról szobára, egy ötlet egy helyen, a végén rang), a Mark of the Ninja egyértelmű visszajelzéseit és vállalható pecsétjeit, a Sekiro Hanbeijét (gyakorlótárs, akihez vissza lehet menni) és a Shadow Tactics fokozatos, egyszerre egy eszközt bevezető pályáit vettük.
 
 - **Felépítés:** a falu délről északra tizenkét udvarra oszlik (`ROOMS` a `falu.js`-ben), bambuszkerítésekkel és kapukkal. Az első kapu tórii. A kampós udvarban 3,3 m-es vakolt fal áll, kapu nélkül. Az északi végén a dódzsó (影道場), mellette kőlámpások, a kerítésen kívül falusi házak.
-- **A mester** (`buildPolice(…,{master:true})`) minden próbánál máshol áll, a játékos felé fordul. Japánul beszél beszédszintézissel (`sayLine`, ja-JP), magyar felirattal. A feladat a felső panelen olvasható. Az iránytű és a térkép a mestert mutatja.
+- **A mester** (`buildPolice(…,{master:true})`) minden próbánál máshol áll, a játékos felé fordul. Magyarul beszél (`sayLine`, hu-HU felolvasás, felirat). A feladat a felső panelen olvasható. Az iránytű és a térkép a mestert mutatja.
 - **A tizenkét próba** (`ST` a `falu_game.js`-ben):
   1. Érkezés: odamenni a mesterhez. Bemutatkozik, és kinyitja a tóriit.
   2. Csend: egy háttal álló tanítvány mellett guggolva elosonni. Ha járva megy el mellette, meghallja.

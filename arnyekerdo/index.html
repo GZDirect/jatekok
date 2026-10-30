@@ -1114,9 +1114,11 @@ const LINES={
 let ac=null,noiseBuf=null;
 function say(c,kind){const now=S.time;if(now-c.saidT<2.5)return;c.saidT=now;const L=LINES[kind],l=L[Math.floor(Math.random()*L.length)];
   const d=Math.hypot(c.x-P.x,c.z-P.z);if(d>45)return;
-  const sub=$('sub');sub.innerHTML='<b>„'+l[1]+'”</b> '+l[2];sub.style.opacity=1;S.subT=2.6;
-  try{if(window.speechSynthesis){const u=new SpeechSynthesisUtterance(l[0]);u.lang='ja-JP';u.rate=1.15;u.pitch=0.8+c.id*0.06;u.volume=clamp(1.1-d/40,0.15,1);
-    const v=speechSynthesis.getVoices().find(v=>/^ja/i.test(v.lang));if(v){u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u);}}}catch(e){}}
+  showSub(l[2],2.6);speak(l[2],1.1,0.8+c.id*0.06,clamp(1.1-d/40,0.15,1));}
+/* mindenki magyarul beszél: felirat és felolvasás magyar hanggal (ha a készüléken nincs magyar hang, az alapértelmezett szól) */
+function showSub(t,dur){const sub=$('sub');sub.innerHTML='<b>„'+t+'”</b>';sub.style.opacity=1;S.subT=dur;}
+function speak(t,rate,pitch,vol){try{if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='hu-HU';u.rate=rate;u.pitch=pitch;u.volume=vol;
+  const v=speechSynthesis.getVoices().find(v=>/^hu/i.test(v.lang));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
 function audioInit(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume();if(!noiseBuf){noiseBuf=ac.createBuffer(1,ac.sampleRate*0.6,ac.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;}}catch(e){ac=null;}}
 function env(g,t,a,peak,dec){g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+dec);}
 function noiseHit(vol,freq,type,dec,q){if(!ac)return;try{const t=ac.currentTime,s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=noiseBuf;f.type=type||'lowpass';f.frequency.value=freq;f.Q.value=q||0.7;
@@ -1646,9 +1648,7 @@ function hud(){
 }
 A.hands.visible=false;A.beacon.visible=false;
 /* a falu (kiképzés) logikája ezen keresztül éri el a játék belsejét */
-function sayLine(l,x,z,pitch){const d=Math.hypot(x-P.x,z-P.z);const sub=$('sub');sub.innerHTML='<b>„'+l[1]+'”</b> '+l[2];sub.style.opacity=1;S.subT=Math.max(3.2,l[2].length*0.075);
-  try{if(window.speechSynthesis){const u=new SpeechSynthesisUtterance(l[0]);u.lang='ja-JP';u.rate=0.95;u.pitch=pitch||0.6;u.volume=clamp(1.1-d/40,0.25,1);
-    const v=speechSynthesis.getVoices().find(v=>/^ja/i.test(v.lang));if(v){u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u);}}}catch(e){}}
+function sayLine(l,x,z,pitch){const d=Math.hypot(x-P.x,z-P.z);showSub(l[2],Math.max(3.2,l[2].length*0.075));speak(l[2],0.95,pitch||0.6,clamp(1.1-d/40,0.25,1));}
 Object.assign(G,{clearSpikes,SPK,DART,LINES,setDiff:k=>{D=DIFF[k];},P,S,COPS,ALLCOPS,GOAL,START,ITEMS,showMsg,sayLine,say,selectItem,updateButtons,pushOut,inBush,bodyNear,tone,thump,noiseHit,endGame,eyePos,fwd,resetCop,nextWaypoint,fmt,wrapA,rnd,STONE,startGame,
   setStones:n=>{S.stones=n;updateButtons();},setSpikes:n=>{S.spikes=n;updateButtons();},setDarts:n=>{S.darts=n;updateButtons();},setSmoke:n=>{S.smoke=n;updateButtons();}});
 /* Tesztelési horog: csak ?aetest címparaméterrel él, az élő játékban nincs. */
@@ -1659,7 +1659,7 @@ requestAnimationFrame(frame);
 (function(){
 /* Árnyékerdő – 2. pálya: kiképzés a mester falujában (a próbák menete).
    © 2026 Fejes Géza. Minden jog fenntartva.
-   Minden udvar egy próba. A mester japánul szól (magyar felirattal), a feladat a felső panelen áll.
+   Minden udvar egy próba. A mester magyarul szól (felirattal és felolvasással), a feladat a felső panelen áll.
    Ha elrontod, a mester megszólal, és az udvar elejéről kezded újra. */
 const A=window.AE;if(A.LV!=='falu')return;
 const G=A.G,F=A.FALU,{$,H,clamp}=A,{P,S,COPS,ALLCOPS,GOAL}=G;
