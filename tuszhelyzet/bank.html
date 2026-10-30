@@ -114,7 +114,7 @@ button:disabled{opacity:.3;cursor:default}
   <button class="vb" id="vR" aria-label="Forgatás jobbra"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
   <button class="vb txt" id="vLvl" aria-label="Látható szintek">3 szint</button>
   <a class="vb" href="./" aria-label="1. pálya">1.<br>pálya</a>
-  <a class="vb" href="../" aria-label="Vissza a játékokhoz">Játé-<br>kok</a>
+  <a class="vb" href="borton.html" aria-label="3. pálya">3.<br>pálya</a>
   <button class="vb" id="vRe" aria-label="Újrakezdés"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v6h6"/><path d="M20 20v-6h-6"/><path d="M5 15a8 8 0 0 0 14 2M19 9A8 8 0 0 0 5 7"/></svg></button>
 </div>
 <div id="endcard" hidden><h2 id="endT"></h2><p id="endP"></p><button id="again">Újra</button></div>
@@ -602,7 +602,7 @@ const env = {power:true, cctv:false, timelock:false, sprinkler:false, exit:false
   shutter:false, vent:false, bell:false, rain:false, media:false, swat:false, pa:false, lock:false};
 const ENV0 = {...env};
 const S = {};
-const S0 = () => ({dusk:0, T:25, vault:150, vaultOpen:false, packing:false, fleeing:false, fleeTries:0, fleeCool:0, esc:null, inside:HOST.slice(), out:0, ended:false,
+const S0 = () => ({caughtN:0, endKind:null, dusk:0, T:25, vault:150, vaultOpen:false, packing:false, fleeing:false, fleeTries:0, fleeCool:0, esc:null, inside:HOST.slice(), out:0, ended:false,
   loud:0, droneT:8, mediaT:10, moodT:0, lastWarn:0, swatWait:0, breaching:false, busyEv:false});
 Object.assign(S, S0());
 const lines = []; let fadeT;
@@ -733,7 +733,7 @@ function checkCatch(){
   const e = S.esc; if (!e || e.phase !== 'inside' || e.caught) return;
   const c = covered(e.rt); if (!c) return;
   if (dark() >= 1 && !e.lucky && Math.random() < 0.4){ e.lucky = true; log('A sötétben nem vették észre a mozgást.'); return; }
-  e.caught = true; const P = e.h.p, d = P.done; P.path = []; P.done = null; d && d();
+  e.caught = true; S.caughtN++; const P = e.h.p, d = P.done; P.path = []; P.done = null; d && d();
   bump(14); Snd.play('sting'); robbers.L.p.look(P.g.position.x, P.g.position.z);
   log('Rajtakapták a szökő túszt, vissza kellett ülnie. A rablók idegesebbek lettek.');
   e.h.c *= 0.85;
@@ -851,9 +851,9 @@ const btn = {};
 let hintT;
 function hint(text){ const h = $('hint'); h.textContent = text; h.hidden = false; clearTimeout(hintT); hintT = setTimeout(() => h.hidden = true, 1600); }
 ENV.forEach(d => { const b = document.createElement('button'); b.className = 'ic tg'; b.id = 'env-'+d.k; b.title = d.full; b.setAttribute('aria-label', d.full);
-  b.innerHTML = svg(d.k) + `<span>${d.t}</span>`; b.onclick = () => { Snd.unlock(); sndIcon(); toggle(d.k); hint(`${d.full}: ${env[d.k] ? 'BE' : 'KI'}`); }; $('ctrl').append(b); btn[d.k] = b; });
+  b.innerHTML = svg(d.k) + `<span>${d.t}</span>`; b.onclick = () => { if (!Duel.take(d.k)) return; Snd.unlock(); sndIcon(); toggle(d.k); hint(`${d.full}: ${env[d.k] ? 'BE' : 'KI'}`); }; $('ctrl').append(b); btn[d.k] = b; });
 EV.forEach(d => { const b = document.createElement('button'); b.className = 'ic ev'; b.id = 'ev-'+d.k; b.title = d.full; b.setAttribute('aria-label', d.full);
-  b.innerHTML = svg(d.k) + `<span>${d.t}</span>`; b.onclick = () => { Snd.unlock(); sndIcon(); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash'); hint(d.full); events[d.k](); }; $('ctrl').append(b); btn[d.k] = b; });
+  b.innerHTML = svg(d.k) + `<span>${d.t}</span>`; b.onclick = () => { if (!Duel.take(d.k)) return; Snd.unlock(); sndIcon(); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash'); hint(d.full); events[d.k](); }; $('ctrl').append(b); btn[d.k] = b; });
 $('status').onclick = () => $('lines').classList.toggle('open');
 
 function refresh(){
@@ -965,6 +965,7 @@ function end(kind, o={}){
     lose: o.forced ? `A kommandó akkor ment be, amikor a rablók figyeltek. A helyzet órákig elhúzódott. ${S.out} túsz jutott ki.`
        : `A rablók eltorlaszolták magukat ${left} tússzal. ${S.out} túsz jutott ki. A csengő, a reflektor és a sötétség gyorsan emeli a feszültséget.`}[kind];
   $('endT').textContent = T; $('endP').textContent = P;
+  S.endKind = kind === 'win' ? (o.forced ? 'risky' : 'good') : kind; Duel.over(S.endKind);
 }
 $('again').onclick = () => reset();
 function reset(){
@@ -982,6 +983,142 @@ function reset(){
   refresh(); drawTimer();
 }
 $('vRe').onclick = reset;
+
+// ================= two-player mode: Angel (wants everyone safe) vs Demon (wants chaos)
+const Duel = (() => {
+  const ROUNDS = 8, PLAN = 60, RESOLVE = 12;
+  const NAME = {angel:'Angyal', demon:'Démon'};
+  const D = {on:false, phase:'off', turn:'angel', left:PLAN, res:0, round:1, sc:{angel:0, demon:0}, br:null, block:{angel:null, demon:null}, seenOut:0, seenCaught:0, lastMove:''};
+  const css = document.createElement('style');
+  css.textContent = `
+#duelBar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + var(--dockH,120px) + 18px);display:flex;align-items:center;gap:10px;
+  background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 6px 5px 14px;font-family:var(--display);letter-spacing:.04em;z-index:5;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap;max-width:calc(100% - 24px)}
+#duelBar .who{font-size:16px;font-weight:700;text-transform:uppercase}
+#duelBar.angel{border-color:rgba(255,215,106,.7);box-shadow:0 0 18px rgba(255,215,106,.25)} #duelBar.angel .who{color:#ffd76a}
+#duelBar.demon{border-color:rgba(255,74,74,.7);box-shadow:0 0 18px rgba(255,74,74,.25)} #duelBar.demon .who{color:#ff6a6a}
+#duelBar .clk{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;min-width:2.6em;text-align:center;color:var(--ink)}
+#duelBar .sc{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums} #duelBar .sc b.a{color:#ffd76a} #duelBar .sc b.d{color:#ff6a6a}
+#duelBar button{min-height:32px;padding:4px 12px;border:1px solid var(--line);border-radius:999px;font-family:var(--display);font-size:14px;text-transform:uppercase;color:var(--ink);background:var(--panel-2)}
+#duelBar.resolve .clk{color:var(--muted)}
+.ic.blocked{opacity:.3;outline:1px dashed rgba(255,106,106,.7);outline-offset:-3px}
+.modal{position:fixed;inset:0;display:grid;place-items:center;background:rgba(5,7,12,.55);z-index:20;padding:16px}
+.modal .box{width:min(440px,100%);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);max-height:calc(100% - 32px);overflow:auto}
+.modal h2{margin:0;font-family:var(--display);font-size:26px;letter-spacing:.05em;text-transform:uppercase;line-height:1.05}
+.modal p,.modal li{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+.modal ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.modal .choices{display:grid;gap:8px}
+.modal .choices button{min-height:48px;justify-content:center;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);font-family:var(--display);font-size:17px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center}
+.modal .choices button.duo{border-color:rgba(255,215,106,.5);background:linear-gradient(90deg,rgba(255,215,106,.14),rgba(255,74,74,.14))}
+.modal table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.modal td{padding:4px 0;border-bottom:1px solid var(--line);color:var(--muted)} .modal td:nth-child(n+2){text-align:right;color:var(--ink);width:4.5em}
+.modal th{font-family:var(--display);font-size:15px;text-align:right;padding-bottom:4px} .modal th:first-child{text-align:left}
+.modal th.a{color:#ffd76a} .modal th.d{color:#ff6a6a} .modal tr.tot td{font-weight:700;color:var(--ink);border-bottom:0}
+`;
+  document.head.appendChild(css);
+  const bar = document.createElement('div'); bar.id = 'duelBar'; bar.hidden = true;
+  bar.innerHTML = `<span class="who" id="dWho"></span><span class="clk" id="dClk"></span><span class="sc">Kör <b id="dRnd"></b>/${ROUNDS} · <b class="a" id="dA">0</b> : <b class="d" id="dD">0</b></span><button id="dPass">Passz</button>`;
+  document.body.appendChild(bar);
+  const modal = document.createElement('div'); modal.className = 'modal'; modal.hidden = true; document.body.appendChild(modal);
+  const $d = id => document.getElementById(id);
+
+  function showMode(){
+    modal.innerHTML = `<div class="box"><h2>Hogyan játszotok?</h2>
+      <p>Egyedül a túszok kimentése a cél. Ketten az egyik játékos az <b style="color:#ffd76a">Angyal</b>, aki rendet és épségben kijutó túszokat akar, a másik a <b style="color:#ff6a6a">Démon</b>, aki minél nagyobb káoszt.</p>
+      <div class="choices"><button id="mSolo">Egyedül</button><button class="duo" id="mDuo">Két játékos: Angyal és Démon</button></div>
+      <ul><li>Felváltva léptek, az Angyal kezd. Egy lépés = egy kapcsoló átállítása vagy egy esemény, vagy passz.</li>
+      <li>Gondolkodás közben a világ áll. Egy percetek van, utána a lépés elvész.</li>
+      <li>Lépés után 12 másodpercig fut a szimuláció, és látszik, mit okozott.</li>
+      <li>Amit az ellenfél épp most állított át, ahhoz a következő lépésben nem nyúlhatsz.</li>
+      <li>8 kör után, vagy ha a helyzet véget ér, a pontok döntenek.</li></ul>
+      <p><b>Pontozás.</b> Angyal: +10 minden kijutott túszért, és minden lépés után +0–4 a nyugalomért (alacsony feszültség). Démon: +6 minden lebukott szökésért, és minden lépés után +0–4 a káoszért (magas feszültség). A végkimenetel bónuszt ad: jó befejezés +25 Angyal, kockázatos behatolás +12 Angyal és +6 Démon, meglógás +20 Démon, elfajult helyzet +30 Démon. Ha a 8 kör letelik, minden bent maradt túsz +5 a Démonnak.</p></div>`;
+    modal.hidden = false;
+    $d('mSolo').onclick = () => { modal.hidden = true; stop(); };
+    $d('mDuo').onclick = () => { modal.hidden = true; start(); };
+  }
+  function start(){
+    reset();
+    Object.assign(D, {on:true, phase:'plan', turn:'angel', left:PLAN, res:0, round:1, sc:{angel:0, demon:0}, block:{angel:null, demon:null}, seenOut:S.out, seenCaught:S.caughtN || 0,
+      br:{angel:{save:0, calm:0, end:0}, demon:{caught:0, chaos:0, end:0, left:0}}});
+    log('Párbaj indul. Az Angyal lép először: válassz egy kapcsolót vagy eseményt.');
+    bar.hidden = false; ui();
+  }
+  function stop(){ D.on = false; D.phase = 'off'; bar.hidden = true; ui(); }
+  function paused(){ return D.on && (D.phase === 'plan' || D.phase === 'over'); }
+  function take(k){
+    if (!D.on) return true;
+    if (D.phase !== 'plan') return false;
+    if (D.block[D.turn] === k){ hint('Ezt az ellenfél most állította át, ebben a lépésben nem nyúlhatsz hozzá.'); return false; }
+    setTimeout(() => resolve(k), 0); return true;
+  }
+  function resolve(k){
+    if (!D.on || D.phase !== 'plan') return;
+    const other = D.turn === 'angel' ? 'demon' : 'angel';
+    D.block[other] = k; D.block[D.turn] = null; D.phase = 'resolve'; D.res = RESOLVE; ui();
+  }
+  function endTurn(){
+    const T = S.T;
+    const calm = Math.round((100 - T)/25), chaos = Math.round(T/25);
+    D.sc.angel += calm; D.br.angel.calm += calm; D.sc.demon += chaos; D.br.demon.chaos += chaos;
+    if (D.turn === 'demon') D.round++;
+    if (D.round > ROUNDS){ return finish(null); }
+    D.turn = D.turn === 'angel' ? 'demon' : 'angel'; D.phase = 'plan'; D.left = PLAN;
+    log(`${NAME[D.turn]} következik.`); ui();
+  }
+  function tick(dt){
+    if (!D.on || D.phase === 'over' || D.phase === 'off') return;
+    const out = S.out, caught = S.caughtN || 0;
+    if (out > D.seenOut){ const n = out - D.seenOut; D.sc.angel += 10*n; D.br.angel.save += 10*n; D.seenOut = out; }
+    if (caught > D.seenCaught){ const n = caught - D.seenCaught; D.sc.demon += 6*n; D.br.demon.caught += 6*n; D.seenCaught = caught; }
+    if (D.phase === 'plan'){ D.left -= dt; if (D.left <= 0){ log(`${NAME[D.turn]}: lejárt az idő, a lépés elveszett.`); resolve(null); } }
+    else if (D.phase === 'resolve'){ D.res -= dt; if (D.res <= 0) endTurn(); }
+    if ((D.uiT = (D.uiT || 0) - dt) <= 0){ D.uiT = 0.2; ui(); }
+  }
+  // called by the level when the situation ends
+  function over(kind){
+    if (!D.on) return false;
+    tick(0); finish(kind); return true;
+  }
+  function finish(kind){
+    D.phase = 'over';
+    const B = {good:['angel', 25], risky:null, flee:['demon', 20], lose:['demon', 30]};
+    if (kind === 'good'){ D.sc.angel += 25; D.br.angel.end = 25; }
+    if (kind === 'risky'){ D.sc.angel += 12; D.br.angel.end = 12; D.sc.demon += 6; D.br.demon.end = 6; }
+    if (kind === 'flee'){ D.sc.demon += 20; D.br.demon.end = 20; }
+    if (kind === 'lose'){ D.sc.demon += 30; D.br.demon.end = 30; }
+    if (!kind){ const left = S.inside.length + (S.esc ? 1 : 0); D.sc.demon += 5*left; D.br.demon.left = 5*left; }
+    const a = D.sc.angel, d = D.sc.demon, win = a > d ? 'angel' : d > a ? 'demon' : null;
+    const endTxt = {good:'Jó befejezés', risky:'Kockázatos behatolás', flee:'A tettesek meglógtak', lose:'A helyzet elfajult'}[kind] || 'Letelt a 8 kör';
+    $('endcard').hidden = true;
+    modal.innerHTML = `<div class="box"><h2 style="color:${win === 'angel' ? '#ffd76a' : win === 'demon' ? '#ff6a6a' : 'var(--ink)'}">${win ? (win === 'angel' ? 'Az Angyal nyert' : 'A Démon nyert') : 'Döntetlen'}</h2>
+      <p>${endTxt}. ${S.out} túsz jutott ki.</p>
+      <table><tr><th>Pont</th><th class="a">Angyal</th><th class="d">Démon</th></tr>
+      <tr><td>Kijutott túszok / lebukott szökések</td><td>${D.br.angel.save}</td><td>${D.br.demon.caught}</td></tr>
+      <tr><td>Nyugalom / káosz a lépések után</td><td>${D.br.angel.calm}</td><td>${D.br.demon.chaos}</td></tr>
+      <tr><td>Végkimenetel</td><td>${D.br.angel.end}</td><td>${D.br.demon.end}</td></tr>
+      <tr><td>Bent maradt túszok</td><td>0</td><td>${D.br.demon.left}</td></tr>
+      <tr class="tot"><td>Összesen</td><td>${a}</td><td>${d}</td></tr></table>
+      <div class="choices"><button class="duo" id="mAgain">Visszavágó</button><button id="mMode">Mód választása</button></div></div>`;
+    modal.hidden = false; ui();
+    $d('mAgain').onclick = () => { modal.hidden = true; start(); };
+    $d('mMode').onclick = () => { D.on = false; bar.hidden = true; showMode(); };
+  }
+  function ui(){
+    if (!D.on){ document.querySelectorAll('.ic.blocked').forEach(b => b.classList.remove('blocked')); return; }
+    bar.className = D.turn + (D.phase === 'resolve' ? ' resolve' : '');
+    $d('dWho').textContent = D.phase === 'over' ? 'Vége' : D.phase === 'resolve' ? `${NAME[D.turn]} lépett` : `${NAME[D.turn]} köre`;
+    $d('dClk').textContent = D.phase === 'plan' ? `0:${String(Math.max(0, Math.ceil(D.left))).padStart(2,'0')}` : D.phase === 'resolve' ? `${Math.max(0, Math.ceil(D.res))}s` : '';
+    $d('dRnd').textContent = Math.min(D.round, ROUNDS); $d('dA').textContent = D.sc.angel; $d('dD').textContent = D.sc.demon;
+    $d('dPass').disabled = D.phase !== 'plan';
+    const blocked = D.phase === 'plan' ? D.block[D.turn] : null;
+    document.querySelectorAll('.ic').forEach(b => { b.classList.toggle('blocked', !!blocked && (b.id === 'env-'+blocked || b.id === 'ev-'+blocked)); if (D.phase !== 'plan' && D.phase !== 'off') b.disabled = true; });
+    if (D.phase === 'plan') refresh();
+    const dock = document.querySelector('.dock'); if (dock) document.documentElement.style.setProperty('--dockH', dock.offsetHeight + 'px');
+  }
+  bar.querySelector('#dPass').onclick = () => { if (D.phase === 'plan'){ log(`${NAME[D.turn]} passzolt.`); resolve(null); } };
+  return {showMode, take, tick, paused, over, get on(){ return D.on; }, get blockedKey(){ return D.on && D.phase === 'plan' ? D.block[D.turn] : null; }};
+})();
 
 // ================= view controls
 $('vL').onclick = () => thetaGoal -= Math.PI/2;
@@ -1002,19 +1139,20 @@ function setZoom(z){ cam.zoom = THREE.MathUtils.clamp(z, 0.75, 3.2); cam.updateP
 // ================= main loop
 await document.fonts.ready;
 $('loading').hidden = true;
-reset();
-const clock = new THREE.Clock();
+reset(); Duel.showMode();
+const clock = new THREE.Clock(); let simT = 0;
 const DUSK = {sky:new THREE.Color(), sky0:new THREE.Color(0x4a3d58), sky1:new THREE.Color(0x07090f), h0:new THREE.Color(0xffc29a), h1:new THREE.Color(0x4a5a90),
   g0:new THREE.Color(0x7a5a50), g1:new THREE.Color(0x0a0b12), s0:new THREE.Color(0xff9a58), s1:new THREE.Color(0x8ea4ff)};
 let tickUI = 0;
 renderer.setAnimationLoop(() => {
-  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
-  theta += (thetaGoal - theta)*Math.min(1, dt*7);
+  const dtR = Math.min(clock.getDelta(), 0.05), dt = Duel.paused() ? 0 : dtR; simT += dt; const t = simT;
+  Duel.tick(dtR);
+  theta += (thetaGoal - theta)*Math.min(1, dtR*7);
   cam.position.set(target.x + 50*Math.sin(theta)*Math.cos(PHI), target.y + 50*Math.sin(PHI), target.z + 50*Math.cos(theta)*Math.cos(PHI));
   cam.lookAt(target);
   const sx = Math.sin(theta), cz = Math.cos(theta);
-  walls.forEach(w => { const goal = (w.nx*sx + w.nz*cz) > 0.25 ? 0.06 : 1; w.s += (goal - w.s)*Math.min(1, dt*8); w.g.scale.y = w.s; if (w.band){ w.band.visible = w.s > 0.5; sign.visible = w.s > 0.5; } });
-  { const goal = sx < -0.3 ? 0.12 : 1; nbBrick.opacity += (goal - nbBrick.opacity)*Math.min(1, dt*6); nbBrick.depthWrite = nbBrick.opacity > 0.95;
+  walls.forEach(w => { const goal = (w.nx*sx + w.nz*cz) > 0.25 ? 0.06 : 1; w.s += (goal - w.s)*Math.min(1, dtR*8); w.g.scale.y = w.s; if (w.band){ w.band.visible = w.s > 0.5; sign.visible = w.s > 0.5; } });
+  { const goal = sx < -0.3 ? 0.12 : 1; nbBrick.opacity += (goal - nbBrick.opacity)*Math.min(1, dtR*6); nbBrick.depthWrite = nbBrick.opacity > 0.95;
     nb.children.forEach(c => { if (!Array.isArray(c.material)) c.visible = nbBrick.opacity > 0.5; }); }
   // power, screens, lights
   roomLights.forEach(l => { l.intensity += ((env.power ? 13 : 0) - l.intensity)*Math.min(1, dt*10); });
@@ -1055,7 +1193,7 @@ renderer.setAnimationLoop(() => {
   tickTimers(dt); simTick(dt, t);
   if (dogMesh.visible) dogMesh.position.y = 0.05 + Math.abs(Math.sin(t*12))*0.04;
   people.forEach(pp => { pp.g.visible = pp.show; if (pp.show) pp.update(dt, t); });
-  if ((tickUI += dt) > 0.15){ tickUI = 0; $('tval').textContent = Math.round(S.T); $('tbar').style.width = S.T + '%'; $('tbar').style.backgroundPosition = `-${S.T*2}px 0`; }
+  if ((tickUI += dtR) > 0.15){ tickUI = 0; $('tval').textContent = Math.round(S.T); $('tbar').style.width = S.T + '%'; $('tbar').style.backgroundPosition = `-${S.T*2}px 0`; }
   composer.render();
 });
 window.__ready = true;
