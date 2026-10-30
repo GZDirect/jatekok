@@ -129,7 +129,7 @@ new MutationObserver(()=>{if(!$('end').hidden)$('cpBtn').hidden=!($('endEyebrow'
 $('startEyebrow').textContent='3. fejezet · Üvegtorony';
 $('lead').textContent='Délben, egy nagyváros közepén. Egy felhőkarcoló tetején állsz; a szomszéd torony üvegfalú irodájában Kuroda ül, a cégvezető, aki a rendőröket rád küldte. Két testőr vigyázza, a tetőn járőrök és kamerák. Nappal nincs sötétség: a sövények, a klímaberendezések és a füst rejtenek.';
 document.querySelectorAll('#diff [data-d] small').forEach(s=>{const k=s.parentNode.dataset.d;s.textContent=NP[k]+' őr a tetőn';});
-{const dts=document.querySelectorAll('.how dt');dts.forEach(dt=>{if(dt.textContent==='Kampó')dt.nextElementSibling.textContent='célozz egy kampópontra (daru, víztorony, antenna): ha felderül, átlendülsz rá';if(dt.textContent==='Karmok')dt.nextElementSibling.textContent='a víztorony lábán és az antenna oszlopán felmászhatsz (1–7: eszközváltás)';});}
+{const dts=document.querySelectorAll('.how dt');dts.forEach(dt=>{if(dt.textContent==='Kampó')dt.nextElementSibling.textContent='célozz egy kampópontra (daru, víztorony, antenna): ha felderül, átlendülsz rá';if(dt.textContent==='Karmok')dt.nextElementSibling.textContent='a víztorony lábán és az antenna oszlopán felmászhatsz (1–8: eszközváltás)';});}
 $('go').querySelector('span').textContent='Cél: Kuroda. Utána a kábel a terasz sarkában.';
 /* az üveg egyszer lefotózza a környezetét (tükröződés) */
 try{const rt=new THREE.WebGLCubeRenderTarget(256,{generateMipmaps:true,minFilter:THREE.LinearMipmapLinearFilter});const cc=new THREE.CubeCamera(0.5,900,rt);cc.position.set(6,2.2,-37);A.scene.add(cc);

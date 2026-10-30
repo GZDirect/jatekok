@@ -241,7 +241,7 @@ const hands=new THREE.Group();camera.add(hands);
     const fa=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.05,0.42,8),sleeve);fa.rotation.x=Math.PI/2-0.4;fa.position.set(0,-0.08,0.2);G.add(fa);
     const band=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.044,0.08,8),wrap);band.position.set(0,-0.02,0.06);band.rotation.x=Math.PI/2-0.4;G.add(band);return G;}
   const R=arm(),Lh=arm();
-  const items={tanto:new THREE.Group(),tekko:new THREE.Group(),kampo:new THREE.Group(),karom:new THREE.Group(),kavics:new THREE.Group(),tuske:new THREE.Group(),fukiya:new THREE.Group()},itemsL={kampo:new THREE.Group(),karom:new THREE.Group()};
+  const items={tanto:new THREE.Group(),tekko:new THREE.Group(),kampo:new THREE.Group(),karom:new THREE.Group(),kavics:new THREE.Group(),tuske:new THREE.Group(),fukiya:new THREE.Group(),shuriken:new THREE.Group()},itemsL={kampo:new THREE.Group(),karom:new THREE.Group()};
   {const G=items.tanto;const h=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,0.12,6),grip);h.rotation.x=Math.PI/2;h.position.set(0,0.005,-0.02);G.add(h);
     const gd=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.04,0.008),L(0x6a5a3a));gd.position.set(0,0.005,-0.085);G.add(gd);
     const bl=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.024,0.3),steel);bl.position.set(0,0.008,-0.24);G.add(bl);
@@ -264,6 +264,7 @@ const hands=new THREE.Group();camera.add(hands);
     const G=items.fukiya,bam=L(0x9a8a4a),node=L(0x6a5a2a);const tb=new THREE.Mesh(new THREE.CylinderGeometry(0.011,0.013,0.62,8),bam);tb.rotation.x=Math.PI/2;tb.position.set(-0.05,0.07,-0.2);G.add(tb);
     [-0.02,-0.2,-0.38].forEach(z=>{const n=new THREE.Mesh(new THREE.TorusGeometry(0.0125,0.003,5,10),node);n.position.set(-0.05,0.07,z);G.add(n);});
     G.rotation.set(0.05,0.12,0);}
+  {/* dobócsillag (shuriken) két ujj között */const G=items.shuriken,st=new THREE.Mesh(starGeo(),steel);st.scale.setScalar(0.06);st.rotation.set(Math.PI/2-0.3,0,0.3);st.position.set(0,0.03,-0.07);G.add(st);}
   Object.values(items).forEach(G=>R.add(G));Object.values(itemsL).forEach(G=>Lh.add(G));
   R.position.set(0.24,-0.25,-0.42);R.rotation.set(0.12,-0.18,-0.25);hands.add(R);
   Lh.position.set(-0.3,-0.31,-0.45);Lh.rotation.set(0.25,0.35,0.3);hands.add(Lh);
@@ -284,6 +285,9 @@ function spikeGeo(){const g=[];const v=[[0,1,0],[0.943,-0.333,0],[-0.471,-0.333,
   return A_mergeGeos(g);}
 function A_mergeGeos(list){let pos=[],nor=[];list.forEach(g=>{const ng=g.index?g.toNonIndexed():g;pos.push(...ng.attributes.position.array);nor.push(...ng.attributes.normal.array);});
   const o=new THREE.BufferGeometry();o.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));o.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));return o;}
+/* négyágú dobócsillag (shuriken), középen lyukkal, laposan */
+function starGeo(){const sh=new THREE.Shape(),n=4;for(let i=0;i<n*2;i++){const a=i/(n*2)*Math.PI*2,r=i%2?0.32:1;const x=Math.cos(a)*r,y=Math.sin(a)*r;if(i)sh.lineTo(x,y);else sh.moveTo(x,y);}sh.closePath();
+  const hole=new THREE.Path();hole.absarc(0,0,0.14,0,Math.PI*2,true);sh.holes.push(hole);const g=new THREE.ExtrudeGeometry(sh,{depth:0.06,bevelEnabled:true,bevelThickness:0.03,bevelSize:0.04,bevelSegments:1});g.translate(0,0,-0.03);return g;}
 function jitterStone(){const g=new THREE.DodecahedronGeometry(1,0),p=g.attributes.position;for(let i=0;i<p.count;i++){const k=0.8+0.4*hash3(Math.round(p.getX(i)*7),Math.round(p.getY(i)*7),Math.round(p.getZ(i)*7));p.setXYZ(i,p.getX(i)*k,p.getY(i)*k*0.8,p.getZ(i)*k);}g.computeVertexNormals();return g;}
 /* kötélkampó: repülő kampó + kötél a kéztől */
 const hookFly=new THREE.Group();scene.add(hookFly);hookFly.visible=false;
@@ -292,5 +296,5 @@ const ropeGeo=new THREE.BufferGeometry();ropeGeo.setAttribute('position',new THR
 const rope=new THREE.Line(ropeGeo,new THREE.LineBasicMaterial({color:0x9a8260}));rope.frustumCulled=false;rope.visible=false;scene.add(rope);
 function setRope(ax,ay,az,bx,by,bz,on){rope.visible=hookFly.visible=on;if(!on)return;const p=ropeGeo.attributes.position;p.setXYZ(0,ax,ay,az);p.setXYZ(1,bx,by,bz);p.needsUpdate=true;hookFly.position.set(bx,by,bz);hookFly.lookAt(ax,ay,az);}
 
-Object.assign(window.AE,{beamU,makePool,beamHit,jitterStone,spikeGeo,buildEnemy,buildPolice,makeBeam,dropPrint,stepPrints,clearPrints,beacon,stepBeacon,puffSmoke,stepSmoke,hands,stepHands,setHandItem,setRope});
+Object.assign(window.AE,{starGeo,beamU,makePool,beamHit,jitterStone,spikeGeo,buildEnemy,buildPolice,makeBeam,dropPrint,stepPrints,clearPrints,beacon,stepBeacon,puffSmoke,stepSmoke,hands,stepHands,setHandItem,setRope});
 })();

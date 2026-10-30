@@ -28,7 +28,7 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
   - **Riasztásjelző a fejük fölött:** kérdőjel, ami a gyanúval narancsra telik; keresés közben teli; riadóban vörös felkiáltójel (`makeMark`, `drawMark`).
   - **Zseblámpa:** látható fénykúp sodródó porszemekkel, és fénykör a talajon, ahol a tengelye földet ér (`makePool`, `beamHit` az actors.js-ben). A fény a talajt és a tárgyakat is megvilágítja (a legközelebbi 6 rendőr lámpája a shaderben).
   - **Ütközés:** a rendőrök és a játékos sem mehet át fán, óriásfa gyökerén (`col`), sziklán (0,42 m-től), farönkön, a rendőrautón, a lámpaoszlopon és az italautomatán; a rendőrök egymáson és a játékoson sem.
-- **Eszközök** (váltás: 1–7):
+- **Eszközök** (váltás: 1–8):
   - *Tantó*: hátulról egy csapással öl.
   - *Tekko*: hátulról csak leüt.
   - *Kampó*: célozz egy sűrű lombú óriásfára. Ha a lomb halványan felderül, fel tudsz kapaszkodni.
@@ -36,7 +36,8 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
   - *Kavics* (Normálon 6 db): a koppanása 16 m-en belül odacsalja a nem riasztott rendőröket (`throwStone`, `stoneLand`).
   - Tüskék (makibishi, 6): állva előre dobod (ív, mint a kavics), futás közben magad mögé szórod. Aki belelép, 4,5 mp-re megáll, és addig nem is kap el (`useSpikes`, `stepSpikes`, `SPK`).
   - Köpőcső (fukiya, 7): altatónyíl, egyenes, gyors lövedék 30 m-ig. Akit eltalál, 1,3 mp múlva elalszik (nem öl; a rendőr 55 mp-ig alszik). Ha a célkereszt felderül, talál (`blowDart`, `stepDart`, `dartTarget`, `DART`).
-  - Készlet nehézségenként: tüske 3/2/2, nyíl 4/3/2 (`DIFF`).
+  - Shuriken (dobócsillag, 8): gyors, enyhén íves dobás. Találatonként 1 életpontot visz le (a rendőrnek 3 van, a 3. találat leteríti; a faluban nem öl). Ha nem talál, a csattanása 10 m-ről odacsalja az őröket, a földön marad, és rálépve visszaveheted (`throwStar`, `stepStars`, `STARS`).
+  - Készlet nehézségenként: tüske 3/2/2, nyíl 4/3/2, dobócsillag 6/5/4 (`DIFF`). A falu vizsgáján 5 csillag jár.
 - **Test elrejtése:** a leütött vagy megölt rendőrt el lehet húzni (Húz gomb, G); ha bokorban engeded el, a társai nem találják meg (`hiddenBody`). Húzás közben lassú vagy.
 - **Fán:** csak akkor látnak meg, ha rád világítanak. Leugrással felülről is támadhatsz (szóköz), ez erősebb csapás.
 - **Füst** (2 db): elvakítja a közeli rendőröket, és eltakar.
@@ -47,7 +48,7 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
 - **Felület (HUD):** iránytű, ki-gyűrű, élet- és zajsávok, célkereszt felirattal, a kijárat jelölője, képernyőeffektek (vignetta, vörös veszély- és sérülésjelzés, zöld bokorkeret).
 - **Irányítás:**
   - Telefon: bal hüvelykujj mozgás, jobb hüvelykujj körülnézés, gombok.
-  - Számítógép: W A S D; jobb egérgomb = guggolás (vagy C), Q = futás be/ki (vagy Shift nyomva), görgő = eszközváltás. Gépen a jobb oldali érintőgombok (Guggol, Fut, Füst, Szúr, Húz) el vannak rejtve (`body.desk`). a játéktérre kattintva az egér rögzül (pointer lock), onnan húzás nélkül nézel körül, kattintás = használat, Esc elengedi (rögzítés nélkül húzással is megy). Az egér érzékenysége az ujjénak 0,42-szerese (`MOUSE_K`), a kamera pedig 30 ms körüli simítással követi a nézést (`VIEW`). Enter: bemutató, Tovább. C guggolás, kattintás vagy E a használat, 1–7 eszközváltás, G húzás, szóköz leugrás, F füst.
+  - Számítógép: W A S D; jobb egérgomb = guggolás (vagy C), Q = futás be/ki (vagy Shift nyomva), görgő = eszközváltás. Gépen a jobb oldali érintőgombok (Guggol, Fut, Füst, Szúr, Húz) el vannak rejtve (`body.desk`). a játéktérre kattintva az egér rögzül (pointer lock), onnan húzás nélkül nézel körül, kattintás = használat, Esc elengedi (rögzítés nélkül húzással is megy). Az egér érzékenysége az ujjénak 0,42-szerese (`MOUSE_K`), a kamera pedig 30 ms körüli simítással követi a nézést (`VIEW`). Enter: bemutató, Tovább. C guggolás, kattintás vagy E a használat, 1–8 eszközváltás, G húzás, szóköz leugrás, F füst.
   - Telefonon és tableten csak fekvő helyzetben játszható. Az első érintésre teljes képernyőre vált, és fekvőre rögzít (Androidon). Álló helyzetben a „Fordítsd el a telefont” jelzés takarja, és a játék megáll. iPhone-on a Safari ezt nem engedi; ott a „Hozzáadás a főképernyőhöz” után indítva teljes képernyős (`manifest.webmanifest`, ikonok, `apple-mobile-web-app-capable`).
 - **A régi ellenfelek** (szörny, nindzsa, szellem) beállításai és viselkedése az `src/parkolt.js`-ben vannak félretéve. A modelljeik az `actors.js`-ben maradtak, később visszakapcsolhatók.
 

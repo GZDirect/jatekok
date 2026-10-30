@@ -91,7 +91,7 @@ function startStation(i){T.i=i;T.done=false;T.resetT=0;T.grace=0.8;T.stFails=0;T
   tools(i);if(i===EX){T.examAl=S.alarms;T.fadeT=3.4;dayFade(true);}
   if(st.say&&i!==EX)queue([st.say]);panel();G.tone(0.07,660,990,0.14);}
 function tools(i){if(i===1||i===6)G.setStones(3);if(i===8)G.setSmoke(2);if(i===9)G.setDarts(3);if(i===10)G.setSpikes(2);
-  if(i===EX){G.setStones(3);G.setSmoke(2);G.setDarts(3);G.setSpikes(2);}}
+  if(i===EX){G.setStones(3);G.setSmoke(2);G.setDarts(3);G.setSpikes(2);G.setStars(5);}}
 function complete(){if(T.done)return;T.done=true;const i=T.i;G.tone(0.08,880,1320,0.16);
   activate(i,false);roomCops(i).forEach(c=>{if(!F.students[c.id].body&&!c.down){c.st='patrol';c.aw=0;c.mark.visible=false;}});
   const g=F.GATES[F.ROOMS[i].id];if(g)g.setOpen(true);
@@ -121,7 +121,7 @@ G.hooks.caught=c=>{if((T.i===8||T.i===10||T.i===EX)&&roomCops(T.i).includes(c))f
 /* ---------- körönként ---------- */
 G.hooks.newRound=()=>{Object.assign(T,{i:0,done:false,wait:0,q:[],qt:0,fails:0,stFails:0,grace:0,resetT:0,dropT:-9,examAl:0,used:{tanto:0,tekko:0},spoke:false,fust:false,onQ:null,onQT:0});
   Object.values(F.GATES).forEach(g=>g.setOpen(g.kind==='open',true));F.DUMMIES.forEach(d=>{d.hit=false;d.how=null;d.mark.visible=false;});
-  GOAL.x=MS.x;GOAL.z=MS.z;G.setStones(0);G.setSmoke(0);G.setDarts(0);G.setSpikes(0);G.clearSpikes();setDay(false);$('dayFade').style.opacity=0;T.fadeT=0;startStation(0);
+  GOAL.x=MS.x;GOAL.z=MS.z;G.setStones(0);G.setSmoke(0);G.setDarts(0);G.setSpikes(0);G.setStars(0);G.clearSpikes();setDay(false);$('dayFade').style.opacity=0;T.fadeT=0;startStation(0);
   G.showMsg('A mester a kapu előtt vár.');};
 
 G.hooks.noiseMul=(x,z)=>(F.SHISHI.maskT>0&&Math.hypot(x-F.SHISHI.x,z-F.SHISHI.z)<18?0.25:1)*(F.gravelAt(x,z)?1.7:1);

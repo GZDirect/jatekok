@@ -52,7 +52,7 @@ body.day #fxVig{opacity:0.35;}
 .tool{width:64px;height:40px;border-radius:6px;border:1.5px solid rgba(236,229,211,0.3);background:var(--panel);color:var(--mist);font-family:var(--ui);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:4px;touch-action:none;}
 .tool kbd{font-family:var(--ui);font-size:10px;opacity:0.6;}
 .tool.on{border-color:var(--goal);color:var(--goal);}
-@media (max-height:520px){.tool{width:56px;font-size:10px;}.tool kbd{display:none!important;}#tools{flex-direction:row;gap:4px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);right:calc(env(safe-area-inset-right,0px) + 172px);}#sub{bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}}
+@media (max-height:520px){.tool{width:54px;font-size:10px;flex-direction:column;gap:0;line-height:1.1;}.tool kbd{display:none!important;}#tools{flex-direction:row;gap:4px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);right:calc(env(safe-area-inset-right,0px) + 172px);}#sub{bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}}
 @media (max-width:560px){#top{top:calc(env(safe-area-inset-top,0px) + 90px);}}
 @media (pointer:fine){.tool kbd{display:inline;}}
 @media (pointer:coarse){.tool kbd{display:none;}}
@@ -192,6 +192,7 @@ body.varos label.opt,body.varos .tutB,body.falu #diff,body.falu label.opt,body.f
   <button class="tool" type="button" data-i="4">Kavics<small id="stoneN">×6</small><kbd>5</kbd></button>
   <button class="tool" type="button" data-i="5">Tüskék<small id="spikeN">×2</small><kbd>6</kbd></button>
   <button class="tool" type="button" data-i="6">Köpőcső<small id="dartN">×3</small><kbd>7</kbd></button>
+  <button class="tool" type="button" data-i="7">Shuriken<small id="starN">×5</small><kbd>8</kbd></button>
 </div>
 <div id="btns">
   <button class="b" id="bCrouch" type="button">Guggol</button>
@@ -234,11 +235,12 @@ body.varos label.opt,body.varos .tutB,body.falu #diff,body.falu label.opt,body.f
       <dt>Futás</dt><dd>gyors, de hangos (Q vagy Shift)</dd>
       <dt>Tantó, tekko</dt><dd>hátulról egy csapás: a tantó öl, a tekko csak leüt (kattintás vagy E)</dd>
       <dt>Kampó</dt><dd>célozz egy sűrű lombú óriásfára: ha halványan felderül, fel tudsz kapaszkodni</dd>
-      <dt>Karmok</dt><dd>az óriásfa törzsén felmászhatsz (1–7: eszközváltás)</dd>
+      <dt>Karmok</dt><dd>az óriásfa törzsén felmászhatsz (1–8: eszközváltás)</dd>
       <dt>A fán</dt><dd>csak akkor látnak meg, ha rád világítanak; leugrással felülről támadhatsz (szóköz)</dd>
       <dt>Kavics</dt><dd>a koppanása odacsalja a közeli rendőröket (5)</dd>
       <dt>Test</dt><dd>a leütött rendőrt bokorba húzhatod, ott nem találják meg (Húz gomb, G)</dd>
       <dt>Tüskék</dt><dd>előre dobod, futás közben magad mögé szórod; aki belelép, megáll (6)</dd>
+      <dt>Shuriken</dt><dd>dobócsillag: sebez; ha nem talál, a csattanása odacsal, és felveheted (8)</dd>
       <dt>Köpőcső</dt><dd>altatónyíl: akit eltalálsz, elalszik (7)</dd>
       <dt>Füst</dt><dd>elvakítja a közeli rendőröket, és eltakar (F)</dd>
       <dt>? és !</dt><dd>a rendőr feje fölött: a kérdőjel a gyanúval telik, a vörös felkiáltójel riadó</dd>
