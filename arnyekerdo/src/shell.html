@@ -89,6 +89,9 @@ body.menu .hud,body.menu #btns,body.menu #tools,body.menu #bDrag{visibility:hidd
 #radar{top:calc(env(safe-area-inset-top,0px) + 86px);left:calc(env(safe-area-inset-left,0px) + 16px);width:min(27vh,120px);height:min(27vh,120px);}
 #tut{top:calc(env(safe-area-inset-top,0px) + 96px);left:50%;transform:translateX(-50%);width:min(64vw,470px);background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--goal);border-radius:6px;padding:9px 12px 10px;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:start;}
 #tut[hidden]{display:none;}
+.lvl{display:flex;gap:6px;margin:2px 0 10px;}.lvl a{flex:1;text-align:center;padding:7px 8px;border:1px solid var(--line);border-radius:6px;color:var(--mist);text-decoration:none;font-size:13px;}
+.lvl a.on{border-color:var(--goal);color:var(--moon);background:rgba(127,211,230,0.08);}
+body.falu #diff,body.falu label.opt,body.falu .tutB{display:none;}
 #tutStep{font-size:11px;letter-spacing:1.5px;color:var(--goal);grid-column:1;}
 #tutText{grid-column:1;font-size:14px;line-height:1.45;color:var(--moon);}
 .tutB{grid-column:2;grid-row:1 / span 2;align-self:center;display:flex;flex-direction:column;gap:6px;}
@@ -171,9 +174,10 @@ body.menu .hud,body.menu #btns,body.menu #tools,body.menu #bDrag{visibility:hidd
 <div class="screen" id="start">
   <div class="card">
     <div class="col1">
-      <div class="eyebrow">Lopakodó küldetés · prototípus</div>
+      <div class="eyebrow" id="startEyebrow">1. fejezet · Lopakodó küldetés</div>
       <h1>Árnyékerdő</h1>
-      <p>Éjszaka van a japán hegyekben. A rendőrség körbezárta a völgyet: <span id="copsN">6</span> rendőr fésüli át az erdőt zseblámpával és pisztollyal. Juss el a déli végéből az északi útig – árnyékként, vagy úgy, hogy egyenként eltünteted őket.</p>
+      <nav class="lvl" aria-label="Pálya"><a href="./" id="lvl1">1 · Rendőrkordon</a><a href="?palya=falu" id="lvl2">2 · A mester faluja</a></nav><script>document.getElementById(/[?&]palya=falu/.test(location.search)?"lvl2":"lvl1").classList.add("on");</script>
+      <p id="lead">Éjszaka van a japán hegyekben. A rendőrség körbezárta a völgyet: <span id="copsN">6</span> rendőr fésüli át az erdőt zseblámpával és pisztollyal. Juss el a déli végéből az északi útig – árnyékként, vagy úgy, hogy egyenként eltünteted őket.</p>
       <div class="diff" id="diff" role="radiogroup" aria-label="Nehézség">
         <button type="button" role="radio" data-d="konnyu">Könnyű<small>4 rendőr</small></button>
         <button type="button" role="radio" data-d="normal">Normál<small>6 rendőr</small></button>

@@ -82,44 +82,56 @@ function buildEnemy(type){return type==='monster'?buildMonster():type==='ninja'?
 
 /* ================= Japán rendőr (zseblámpa bal kézben, revolver jobb kézben) =================
    Előre a −z irány. anim(t,spd,dt,o): o={st,bp (lámpa dőlése fel+),sweep (felsőtest elfordulása),shoot,fall,stagger} */
-function buildPolice(seed){const g=new THREE.Group(),r=mulberry32(seed||1);
-  const navy=L(0x22304d),pants=L(0x1a2236),shirt=L(0x9ab6dc),skin=L(0xc9a07e),black=L(0x111216),glove=L(0xe6e6dc),gold=L(0xd8b040,{emissive:0x3a2a08}),
+/* opt.student: kiképzésen részt vevő tanítvány (indigó ruha, fejpánt, fakard, papírlámpás); opt.master: idős mester (szürke köntös, fehér haj és szakáll, bot) */
+function buildPolice(seed,opt){opt=opt||{};const ST=!!opt.student,MA=!!opt.master,POL=!ST&&!MA;const g=new THREE.Group(),r=mulberry32(seed||1);
+  const navy=L(MA?0x5d5a55:ST?0x2b2e48:0x22304d),pants=L(MA?0x46433d:ST?0x1b1b25:0x1a2236),shirt=L(MA?0x8a857a:ST?0xd9d4c8:0x9ab6dc),skin=L(0xc9a07e),black=L(0x111216),glove=L(0xe6e6dc),gold=L(0xd8b040,{emissive:0x3a2a08}),
     vest=L(0xb6d23c,{emissive:0x2c3608}),gunM=new THREE.MeshPhongMaterial({color:0x2a2c30,shininess:60,specular:0x666666});
   const body=pivot(0,0,0);g.add(body);const hips=pivot(0,0.98,0);body.add(hips);
   const legs=[-1,1].map(s=>{const hp=pivot(s*0.1,0,0);hips.add(hp);hp.add(limb(0.47,0.075,0.09,pants));const kn=pivot(0,-0.47,0);hp.add(kn);kn.add(limb(0.45,0.055,0.07,pants));
     const ft=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.07,0.25),black);ft.position.set(0,-0.48,-0.05);kn.add(ft);return{hp,kn};});
   const belt=new THREE.Mesh(new THREE.CylinderGeometry(0.185,0.185,0.07,10),black);belt.position.y=0.03;hips.add(belt);
-  const holster=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.15,0.1),black);holster.position.set(0.19,-0.03,0);hips.add(holster);
-  const radio=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.11,0.04),black);radio.position.set(-0.17,0.0,0.1);hips.add(radio);
+  if(POL){const holster=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.15,0.1),black);holster.position.set(0.19,-0.03,0);hips.add(holster);
+  const radio=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.11,0.04),black);radio.position.set(-0.17,0.0,0.1);hips.add(radio);}
   const chest=pivot(0,0.06,0);hips.add(chest);
   const torso=new THREE.Mesh(new THREE.CylinderGeometry(0.21,0.18,0.6,10),navy);torso.position.y=0.3;torso.castShadow=true;chest.add(torso);
-  const vestM=new THREE.Mesh(new THREE.CylinderGeometry(0.222,0.2,0.4,10,1,true),vest);vestM.position.y=0.32;chest.add(vestM);
-  [0.2,0.42].forEach(y=>{const band=new THREE.Mesh(new THREE.CylinderGeometry(0.226,0.226,0.035,10,1,true),L(0xe8eef0,{emissive:0x505456}));band.position.y=y;chest.add(band);});
+  if(POL){const vestM=new THREE.Mesh(new THREE.CylinderGeometry(0.222,0.2,0.4,10,1,true),vest);vestM.position.y=0.32;chest.add(vestM);
+  [0.2,0.42].forEach(y=>{const band=new THREE.Mesh(new THREE.CylinderGeometry(0.226,0.226,0.035,10,1,true),L(0xe8eef0,{emissive:0x505456}));band.position.y=y;chest.add(band);});}
   const sh=new THREE.Mesh(new THREE.SphereGeometry(0.23,10,8),navy);sh.scale.set(1.08,0.55,0.75);sh.position.y=0.56;chest.add(sh);
   const collar=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.09,0.06,8),shirt);collar.position.y=0.64;chest.add(collar);
   const neck=pivot(0,0.66,0);chest.add(neck);
   const head=new THREE.Mesh(new THREE.SphereGeometry(0.12,12,10),skin);head.scale.set(0.95,1.08,1);head.position.y=0.12;head.castShadow=true;neck.add(head);
-  const hair=new THREE.Mesh(new THREE.SphereGeometry(0.124,10,8,0,Math.PI*2,0,Math.PI*0.5),black);hair.position.set(0,0.13,0.012);neck.add(hair);
-  const capB=new THREE.Mesh(new THREE.CylinderGeometry(0.128,0.126,0.05,14),black);capB.position.y=0.2;neck.add(capB);
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(0.124,10,8,0,Math.PI*2,0,Math.PI*0.5),MA?L(0xe6e2da):black);hair.position.set(0,0.13,0.012);neck.add(hair);
+  if(POL){const capB=new THREE.Mesh(new THREE.CylinderGeometry(0.128,0.126,0.05,14),black);capB.position.y=0.2;neck.add(capB);
   const capT=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.128,0.07,14),navy);capT.position.y=0.255;capT.rotation.x=-0.08;neck.add(capT);
   const visor=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,0.012,14,1,false,Math.PI*0.5,Math.PI),black);visor.position.set(0,0.18,-0.06);visor.rotation.x=0.18;neck.add(visor);
-  const badge=new THREE.Mesh(new THREE.BoxGeometry(0.035,0.035,0.01),gold);badge.position.set(0,0.255,-0.15);neck.add(badge);
+  const badge=new THREE.Mesh(new THREE.BoxGeometry(0.035,0.035,0.01),gold);badge.position.set(0,0.255,-0.15);neck.add(badge);}
+  if(ST){const hb=new THREE.Mesh(new THREE.TorusGeometry(0.124,0.014,6,18),L(0xe8e4da));hb.rotation.x=Math.PI/2;hb.position.y=0.17;neck.add(hb);
+    const tail=new THREE.Mesh(new THREE.BoxGeometry(0.03,0.16,0.01),L(0xe8e4da));tail.position.set(0.03,0.1,0.13);tail.rotation.z=0.3;neck.add(tail);}
+  if(MA){const knot=new THREE.Mesh(new THREE.SphereGeometry(0.045,8,6),L(0xe6e2da));knot.position.set(0,0.25,0.04);neck.add(knot);
+    const beard=new THREE.Mesh(new THREE.ConeGeometry(0.07,0.22,8),L(0xece8e0));beard.rotation.x=Math.PI;beard.position.set(0,-0.02,-0.08);neck.add(beard);
+    [-1,1].forEach(s=>{const br=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.012,0.02),L(0xece8e0));br.position.set(s*0.045,0.165,-0.11);neck.add(br);});
+    const robe=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.34,0.8,12,1,true),navy);robe.position.y=-0.32;hips.add(robe);}
   const eyeM=new THREE.MeshBasicMaterial({color:0x1a1210});[-1,1].forEach(s=>{const e=new THREE.Mesh(new THREE.SphereGeometry(0.012,6,5),eyeM);e.position.set(s*0.04,0.13,-0.113);neck.add(e);});
   const arms=[-1,1].map(s=>{const shp=pivot(s*0.26,0.55,0);chest.add(shp);shp.add(limb(0.3,0.06,0.07,navy));const el=pivot(0,-0.3,0);shp.add(el);el.add(limb(0.27,0.05,0.06,navy));
     const hand=new THREE.Mesh(new THREE.SphereGeometry(0.048,7,6),glove);hand.position.y=-0.3;el.add(hand);return{sh:shp,el};});
   /* revolver a jobb kézben: a cső az alkar irányába mutat */
   const gun=new THREE.Group();gun.position.set(0,-0.31,0);arms[1].el.add(gun);
-  {const grip=new THREE.Mesh(new THREE.BoxGeometry(0.03,0.04,0.09),gunM);grip.position.set(0,0,0.03);grip.rotation.x=-0.3;gun.add(grip);
+  if(ST){const bk=new THREE.Mesh(new THREE.CylinderGeometry(0.016,0.02,0.95,7),L(0x8a6a44));bk.position.set(0,-0.42,-0.02);gun.add(bk);}
+  else if(MA){const st=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.025,1.6,7),L(0x6a5038));st.position.set(0,-0.15,0);gun.add(st);}
+  else{const grip=new THREE.Mesh(new THREE.BoxGeometry(0.03,0.04,0.09),gunM);grip.position.set(0,0,0.03);grip.rotation.x=-0.3;gun.add(grip);
    const cyl=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.022,0.045,8),gunM);cyl.position.set(0,-0.04,-0.005);gun.add(cyl);
    const bar=new THREE.Mesh(new THREE.CylinderGeometry(0.009,0.009,0.11,6),gunM);bar.position.set(0,-0.11,-0.01);gun.add(bar);}
   const muzzle=glowSprite(0xffd27a,0.55,0);muzzle.position.set(0,-0.19,-0.01);gun.add(muzzle);
   /* zseblámpa a bal kézben */
   const torch=new THREE.Group();torch.position.set(0,-0.31,0);arms[0].el.add(torch);
-  {const tb=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.018,0.2,8),black);tb.position.y=-0.06;torch.add(tb);
+  if(ST){const lp=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,0.22,10),new THREE.MeshLambertMaterial({color:0xf4e2c0,emissive:0xd07a30,emissiveIntensity:0.9}));lp.position.y=-0.2;torch.add(lp);
+    const lc=new THREE.Mesh(new THREE.CylinderGeometry(0.085,0.085,0.02,10),black);lc.position.y=-0.08;torch.add(lc);const lc2=lc.clone();lc2.position.y=-0.32;torch.add(lc2);}
+  else if(!MA){const tb=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.018,0.2,8),black);tb.position.y=-0.06;torch.add(tb);
    const th=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.022,0.06,10),black);th.position.y=-0.18;torch.add(th);
    const lens=new THREE.Mesh(new THREE.CircleGeometry(0.03,10),new THREE.MeshBasicMaterial({color:0xfff4d8}));lens.rotation.x=Math.PI/2;lens.position.y=-0.212;torch.add(lens);}
+  torch.visible=!MA;
   const lensP=new THREE.Object3D();lensP.position.y=-0.22;torch.add(lensP);
-  const lensGlow=glowSprite(0xfff0cc,0.7,0.9);lensGlow.position.y=-0.23;torch.add(lensGlow);
+  const lensGlow=glowSprite(ST?0xffb060:0xfff0cc,ST?1.1:0.7,0.9);lensGlow.position.y=ST?-0.2:-0.23;torch.add(lensGlow);
   g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
   const R={hips,chest,neck,arms,legs,body,lensP,lensGlow,muzzle};g.userData.R=R;g.userData.ph=r()*6;
   g.userData.anim=(t,spd,dt,o)=>{const ph=g.userData.ph+=dt*spd*2.9;const k=clamp(spd/4,0,1)*(1-o.fall),sw=Math.sin(ph)*0.62*k;

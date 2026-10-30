@@ -8,12 +8,14 @@ const lerp=(a,b,t)=>a+(b-a)*t;
 /* ---------- Terep magassága (JS és GLSL ugyanaz) ----------
    Fix méretű völgy: |x|<XW és -ZN<z<ZS a járható rész, körülötte meredek gerincek (rdg).
    Északon (x≈0) egy szoros vezet ki az útra: ott van a kijárat. */
-const XW=52,ZS=100,ZN=104;
+/* két pálya: 1. erdő (rendőrkordon), 2. falu (kiképzés). A falu a ?palya=falu címmel töltődik. */
+const LV=/[?&]palya=falu/.test(location.search)?'falu':'erdo';
+const XW=LV==='falu'?26:52,ZS=LV==='falu'?50:100,ZN=LV==='falu'?104:104,HB=LV==='falu'?0.15:1;
 const sstep=(a,b,v)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t);};
-function rdg(x,z){const ex=Math.max(Math.abs(x)-XW,0),ez=z>0?Math.max(z-ZS,0):Math.max(-z-ZN,0)*sstep(5,12,Math.abs(x)),e=ex+ez;return e*(0.35+0.055*e)+0.6*Math.min(e,8)*Math.sin(x*0.21+z*0.17);}
-function H(x,z){return 1.5*Math.sin(x*0.043+1.1)*Math.cos(z*0.037-0.4)+0.9*Math.sin(x*0.097+z*0.071+2.0)+0.4*Math.sin(x*0.23-z*0.19+0.7)+0.25*Math.cos(x*0.31+z*0.27)+rdg(x,z);}
-const GLSL_H='float rdg(float x,float z){float ex=max(abs(x)-52.0,0.0);float ez=z>0.0?max(z-100.0,0.0):max(-z-104.0,0.0)*smoothstep(5.0,12.0,abs(x));float e=ex+ez;return e*(0.35+0.055*e)+0.6*min(e,8.0)*sin(x*0.21+z*0.17);}\n'+
-  'float hgt(float x,float z){return 1.5*sin(x*0.043+1.1)*cos(z*0.037-0.4)+0.9*sin(x*0.097+z*0.071+2.0)+0.4*sin(x*0.23-z*0.19+0.7)+0.25*cos(x*0.31+z*0.27)+rdg(x,z);}\n';
+function rdg(x,z){const ex=Math.max(Math.abs(x)-XW,0),ez=z>0?Math.max(z-ZS,0):Math.max(-z-ZN,0)*(LV==='falu'?1:sstep(5,12,Math.abs(x))),e=ex+ez;return e*(0.35+0.055*e)+0.6*Math.min(e,8)*Math.sin(x*0.21+z*0.17);}
+function H(x,z){return HB*(1.5*Math.sin(x*0.043+1.1)*Math.cos(z*0.037-0.4)+0.9*Math.sin(x*0.097+z*0.071+2.0)+0.4*Math.sin(x*0.23-z*0.19+0.7)+0.25*Math.cos(x*0.31+z*0.27))+rdg(x,z);}
+const GLSL_H='float rdg(float x,float z){float ex=max(abs(x)-'+XW.toFixed(1)+',0.0);float ez=z>0.0?max(z-'+ZS.toFixed(1)+',0.0):max(-z-'+ZN.toFixed(1)+',0.0)*'+(LV==='falu'?'1.0':'smoothstep(5.0,12.0,abs(x))')+';float e=ex+ez;return e*(0.35+0.055*e)+0.6*min(e,8.0)*sin(x*0.21+z*0.17);}\n'+
+  'float hgt(float x,float z){return '+HB.toFixed(2)+'*(1.5*sin(x*0.043+1.1)*cos(z*0.037-0.4)+0.9*sin(x*0.097+z*0.071+2.0)+0.4*sin(x*0.23-z*0.19+0.7)+0.25*cos(x*0.31+z*0.27))+rdg(x,z);}\n';
 function normalAt(x,z){const e=0.4,dx=H(x+e,z)-H(x-e,z),dz=H(x,z+e)-H(x,z-e);return new THREE.Vector3(-dx,2*e,-dz).normalize();}
 
 /* ---------- Renderelő ---------- */
@@ -113,7 +115,7 @@ const ring1=silhouetteRing(170,55,0x0b131b,8,false);
 /* ---------- Talaj ---------- */
 const terrain=(function(){const g=new THREE.PlaneGeometry(220,300,110,150);g.rotateX(-Math.PI/2);const p=g.attributes.position,c=[];const moss=rgb(0x2a3d26),dirt=rgb(0x3a3326),dark=rgb(0x16211a),pale=rgb(0x4a5a3a),rock=rgb(0x4c4f4c);
   for(let i=0;i<p.count;i++){const x=p.getX(i),z=p.getZ(i),h=H(x,z);p.setY(i,h);const n=hash3(Math.floor(x*0.5),0,Math.floor(z*0.5)),n2=0.5+0.5*Math.sin(x*0.08+Math.cos(z*0.06)*2)*Math.cos(z*0.07);
-    let col=mixc(moss,dirt,clamp(n2*0.8+(n-0.5)*0.3,0,1));col=mixc(col,dark,clamp(-h*0.25,0,0.6));col=mixc(col,pale,clamp((h-1.5)*0.3,0,0.4));const rg=rdg(x,z);if(rg>1.5)col=mixc(col,mixc(rock,dark,n*0.6),clamp((rg-1.5)*0.12+n*0.25,0,0.85));c.push(col[0],col[1],col[2]);}
+    let col=mixc(moss,dirt,clamp(n2*0.8+(n-0.5)*0.3,0,1));col=mixc(col,dark,clamp(-h*0.25,0,0.6));col=mixc(col,pale,clamp((h-1.5)*0.3,0,0.4));if(LV==='falu'&&Math.abs(x)<17&&z<48&&z>-103)col=mixc(col,mixc(rgb(0x5a5040),rgb(0x6a604c),n),0.7);const rg=rdg(x,z);if(rg>1.5)col=mixc(col,mixc(rock,dark,n*0.6),clamp((rg-1.5)*0.12+n*0.25,0,0.85));c.push(col[0],col[1],col[2]);}
   g.setAttribute('color',new THREE.Float32BufferAttribute(c,3));g.computeVertexNormals();
   const m=new THREE.Mesh(g,flashPatch(new THREE.MeshLambertMaterial({map:groundTex,vertexColors:true})));m.receiveShadow=true;scene.add(m);return m;})();
 
@@ -154,14 +156,18 @@ function deadTree(seed){const r=mulberry32(seed),parts=[],c=rgb(0x4a4038),c2=rgb
   return merge(parts);}
 
 const pines=[],birches=[],deads=[],logs=[],giants=[];
+/* a faluban fix helyen állnak a mászható óriásfák és a bokrok (a próbák ezekre épülnek) */
+const FALU_GIANTS=[[-6,-10,1.0],[5,-20,1.0],[-7,-33,1.0],[-11,17,0.95],[-12,-86,1.05],[12,-88,1.0]];
+const FALU_BUSHES=[[-10,44,0.9],[11,42,0.9],[3,20,0.9],[-5,15,1.0],[6,11.5,0.9],[-3,9,1.0],[-12,8,0.8],[11,-32,0.9],[-11,-45,1.0],[11,-47,1.0],
+  [-11,-55,1.0],[9,-61,1.0],[-4,-63.5,0.9],[-9,-71,1.0],[8,-74,1.0],[-13,-81,1.0],[13,-81,1.0],[-6,-89,0.9],[6,-91,0.9],[0,-84,0.8]];
 /* Ahová nem kerülhet fa: rajt (dél), kijárat és út (észak), rendőrautó. */
-function keepClear(x,z,m){return Math.hypot(x,z-96)<8+m||Math.hypot(x*0.7,z+106)<8+m||(Math.abs(x)<6+m&&z<-98)||Math.hypot(x-8,z-98)<5+m;}
+function keepClear(x,z,m){if(LV==='falu')return (Math.abs(x)<27+m&&z<51+m&&z>-105-m);return Math.hypot(x,z-96)<8+m||Math.hypot(x*0.7,z+106)<8+m||(Math.abs(x)<6+m&&z<-98)||Math.hypot(x-8,z-98)<5+m;}
 const inField=(x,z,m)=>Math.abs(x)<XW-m&&z<ZS-m&&z>-ZN+m;
 (function forest(){
   const r=mulberry32(1337);
   /* mászható óriásfák: sűrű lomb, vastag ágak, legalább 15 m-re egymástól */
-  const fixed=[[-9,79],[11,73]];let tries=0;while(giants.length<26&&tries<4000){tries++;const fx=fixed[giants.length];const x=fx?fx[0]:(r()*2-1)*46,z=fx?fx[1]:-94+r()*182;if(!fx&&keepClear(x,z,4))continue;
-    if(giants.some(g=>Math.hypot(g.x-x,g.z-z)<15))continue;const s=0.92+r()*0.22;
+  const fixed=LV==='falu'?FALU_GIANTS:[[-9,79],[11,73]];let tries=0;while(giants.length<(LV==='falu'?FALU_GIANTS.length:26)&&tries<4000){tries++;const fx=fixed[giants.length];const x=fx?fx[0]:(r()*2-1)*46,z=fx?fx[1]:-94+r()*182;if(!fx&&keepClear(x,z,4))continue;
+    if(!fx&&giants.some(g=>Math.hypot(g.x-x,g.z-z)<15))continue;const s=fx&&fx[2]?fx[2]:0.92+r()*0.22;
     const t={kind:'giant',x,z,s,c:r(),r:1.05*s,col:1.6*s,cr:3.4*s,h:21*s,py:8.6*s,climb:true,i:giants.length};giants.push(t);trees.push(t);addTo(grid,t);}
   for(let i=0;i<1250;i++){const x=(r()*2-1)*82,z=-132+r()*262;const inside=inField(x,z,-3);if(!inside&&r()<0.45)continue;if(keepClear(x,z,0))continue;
     const kind=r();const t={x,z,c:r(),v:Math.floor(r()*3)};
@@ -171,7 +177,8 @@ const inField=(x,z,m)=>Math.abs(x)<XW-m&&z<ZS-m&&z>-ZN+m;
     trees.push(t);addTo(grid,t);}
   for(let i=0;i<40;i++){const x=(r()*2-1)*48,z=-96+r()*188,a=r()*Math.PI,L=3.5+r()*3.5;if(keepClear(x,z,2))continue;
     const lg={x,z,a,L,rad:0.32+r()*0.15};logs.push(lg);for(let k=-L/2+0.6;k<=L/2-0.6;k+=1.1){const o={x:x+Math.cos(a)*k,z:z+Math.sin(a)*k,r:lg.rad+0.15,low:true};trees.push(o);addTo(grid,o);}}
-  for(let i=0;i<240;i++){const x=(r()*2-1)*51,z=-100+r()*198;if(keepClear(x,z,-2))continue;const s=0.8+r()*0.7;const b={x,z,r:1.45*s,s,c:r()};bushes.push(b);addTo(bgrid,b);}
+  if(LV==='falu')FALU_BUSHES.forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()};bushes.push(b);addTo(bgrid,b);});
+  else for(let i=0;i<240;i++){const x=(r()*2-1)*51,z=-100+r()*198;if(keepClear(x,z,-2))continue;const s=0.8+r()*0.7;const b={x,z,r:1.45*s,s,c:r()};bushes.push(b);addTo(bgrid,b);}
 })();
 /* példányok */
 const crownGeos=[pineCrown(1),pineCrown(7),pineCrown(13)];const crownMat=vcMat();
@@ -273,7 +280,7 @@ const falling=(function(){const N=50,g=new THREE.PlaneGeometry(0.12,0.12),m=new 
 /* ---------- Kijárat északon: hegyi út, korlát, utcai lámpa, italautomata ---------- */
 const EXIT={x:0,z:-108};
 const exitGroup=new THREE.Group();scene.add(exitGroup);
-{const asph=flashPatch(new THREE.MeshLambertMaterial({color:0x2a2c2e})),line=new THREE.MeshBasicMaterial({color:0x8a8a78});
+if(LV==='erdo'){const asph=flashPatch(new THREE.MeshLambertMaterial({color:0x2a2c2e})),line=new THREE.MeshBasicMaterial({color:0x8a8a78});
   const rg=new THREE.PlaneGeometry(7,52,4,26);rg.rotateX(-Math.PI/2);const p=rg.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),z=p.getZ(i)-124;p.setZ(i,z);p.setY(i,H(x,z)+0.05);}rg.computeVertexNormals();
   const road=new THREE.Mesh(rg,asph);road.receiveShadow=true;exitGroup.add(road);
   for(let z=-100;z>-148;z-=4){const d=new THREE.Mesh(new THREE.PlaneGeometry(0.14,1.8),line);d.rotation.x=-Math.PI/2;d.position.set(0,H(0,z)+0.07,z);exitGroup.add(d);}
@@ -298,7 +305,7 @@ const exitGroup=new THREE.Group();scene.add(exitGroup);
   [{x:4.9,z:-103,r:0.8},{x:-4.6,z:-104,r:0.3}].forEach(o=>{o.kind='prop';trees.push(o);addTo(grid,o);});}
 /* ---------- Rendőrautó a rajtnál, forgó villogóval ---------- */
 const patrolCar=new THREE.Group();scene.add(patrolCar);
-{const wht=flashPatch(new THREE.MeshLambertMaterial({color:0xe6e8ea})),blk=flashPatch(new THREE.MeshLambertMaterial({color:0x15171a})),glass=new THREE.MeshLambertMaterial({color:0x1c2834});
+if(LV==='erdo'){const wht=flashPatch(new THREE.MeshLambertMaterial({color:0xe6e8ea})),blk=flashPatch(new THREE.MeshLambertMaterial({color:0x15171a})),glass=new THREE.MeshLambertMaterial({color:0x1c2834});
   const low=new THREE.Mesh(new THREE.BoxGeometry(1.75,0.62,4.4),blk);low.position.y=0.62;patrolCar.add(low);
   const mid=new THREE.Mesh(new THREE.BoxGeometry(1.76,0.22,4.42),wht);mid.position.y=1.04;patrolCar.add(mid);
   const cab=new THREE.Mesh(new THREE.BoxGeometry(1.55,0.55,2.2),wht);cab.position.set(0,1.42,0.15);patrolCar.add(cab);
@@ -310,8 +317,8 @@ const patrolCar=new THREE.Group();scene.add(patrolCar);
   patrolCar.position.set(8,H(8,98)+0.02,98);
 [-1.45,0,1.45].forEach(k=>{const o={x:8+Math.sin(0.5)*k,z:98+Math.cos(0.5)*k,r:1.05,kind:'prop'};trees.push(o);addTo(grid,o);});patrolCar.rotation.y=0.5;patrolCar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
   patrolCar.userData={red,rs};}
-function stepScenery(t){const u=patrolCar.userData,k=Math.max(0,Math.sin(t*7.5));u.red.intensity=0.25+k*1.6;u.rs.material.opacity=0.25+k*0.7;}
+function stepScenery(t){const u=patrolCar.userData;if(!u.red)return;const k=Math.max(0,Math.sin(t*7.5));u.red.intensity=0.25+k*1.6;u.rs.material.opacity=0.25+k*0.7;}
 
-window.AE={$,clamp,mulberry32,hash3,lerp,H,GLSL_H,normalAt,renderer,scene,camera,resize,MOON_DIR,moonLight,hemi,FOG_COL,canvasTex,radial,glowTex,softTex,merge,jitter,rgb,mixc,vcMat,
+window.AE={LV,$,clamp,mulberry32,hash3,lerp,H,GLSL_H,normalAt,renderer,scene,camera,resize,MOON_DIR,moonLight,hemi,FOG_COL,canvasTex,radial,glowTex,softTex,merge,jitter,rgb,mixc,vcMat,
   sky,moonSpr,moonHalo,stars,ring1,ring2,ring3,terrain,grid,bgrid,trees,bushes,near,shafts,fogSheets,grass,flies,falling,glowSprites,CELL,addTo,XW,ZS,ZN,rdg,EXIT,exitGroup,patrolCar,stepScenery,giants,shakeBush,glowGiant,FLU,NFL,flashPatch,freeSpot,keepClear,inField,setPR:(v)=>{PR=v;renderer.setPixelRatio(v);resize();}};
 })();

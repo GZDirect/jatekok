@@ -48,6 +48,30 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
   - Telefonon és tableten csak fekvő helyzetben játszható. Az első érintésre teljes képernyőre vált, és fekvőre rögzít (Androidon). Álló helyzetben a „Fordítsd el a telefont” jelzés takarja, és a játék megáll. iPhone-on a Safari ezt nem engedi; ott a „Hozzáadás a főképernyőhöz” után indítva teljes képernyős (`manifest.webmanifest`, ikonok, `apple-mobile-web-app-capable`).
 - **A régi ellenfelek** (szörny, nindzsa, szellem) beállításai és viselkedése az `src/parkolt.js`-ben vannak félretéve. A modelljeik az `actors.js`-ben maradtak, később visszakapcsolhatók.
 
+## 2b. Második pálya: kiképzés a mester falujában (`?palya=falu`)
+
+Történetben a rendőrös küldetés után jön: az idős mester rejtett hegyi falujába viszi a játékost, és ott tanítja meg rendesen az eszközöket. A kezdőképernyőn két gomb választ pályát (1 · Rendőrkordon, 2 · A mester faluja); a falu a `?palya=falu` címmel töltődik be. A `world.js` a `LV` változóból tudja, melyik pálya fut (kisebb, laposabb terep, nincs kijárati út és rendőrautó, a falu területén nincsenek véletlen fák és kövek).
+
+Mintának a Tenchu kiképző küldetését (szobáról szobára, egy ötlet egy helyen, a végén rang), a Mark of the Ninja egyértelmű visszajelzéseit és vállalható pecsétjeit, a Sekiro Hanbeijét (gyakorlótárs, akihez vissza lehet menni) és a Shadow Tactics fokozatos, egyszerre egy eszközt bevezető pályáit vettük.
+
+- **Felépítés:** a falu délről északra tíz udvarra oszlik (`ROOMS` a `falu.js`-ben), bambuszkerítésekkel és kapukkal. Az első kapu tórii. A kampós udvarban 3,3 m-es vakolt fal áll, kapu nélkül. Az északi végén a dódzsó (影道場), mellette kőlámpások, a kerítésen kívül falusi házak.
+- **A mester** (`buildPolice(…,{master:true})`) minden próbánál máshol áll, a játékos felé fordul. Japánul beszél beszédszintézissel (`sayLine`, ja-JP), magyar felirattal. A feladat a felső panelen olvasható. Az iránytű és a térkép a mestert mutatja.
+- **A tíz próba** (`ST` a `falu_game.js`-ben):
+  1. Érkezés: odamenni a mesterhez. Bemutatkozik, és kinyitja a tóriit.
+  2. Csend: egy háttal álló tanítvány mellett guggolva elosonni. Ha járva megy el mellette, meghallja.
+  3. Bokor: lámpás járőr; bokorban guggolva, a ? jelet figyelve átjutni.
+  4. Bábuk: három szalmabábu, csak hátulról lehet eltalálni őket (tantóval és tekkóval is). Szemből ütve a mester szól.
+  5. Kampó: a falon fáról fára (A → B) jutni át, majd leugrani.
+  6. Karmok: felmászni egy óriásfára, és a járőrre felülről ráugrani. A földről indított ütés nem számít.
+  7. Kavics (3 db): elcsalni a kaput figyelő őrt.
+  8. Test: egy földön fekvő tanítványt bokorba húzni, mielőtt a járőr (14 mp múlva indul) meglátja.
+  9. Füst (2 db): két idősebb tanítvány azonnal rátámad. Meg kell várni, hogy közel érjenek, füstöt dobni, és közöttük a kapuig futni.
+  10. Vizsga: három járőr között eljutni a mesterhez a dódzsó elé.
+- **Hiba esetén** (meghallották, meglátták, elkapták, megtalálták a testet) a mester megszólal, és a játékos az udvar elejéről kezdi újra. Az udvar tanítványai is visszaállnak.
+- **Értékelés:** három pecsét jár. Árnyék, ha a vizsgán nem volt riasztás; Türelmes, ha egyszer sem kellett újrakezdeni; Gyors, ha 10 percen belül végzett. A rang a pecsétek számától függ: Tanítvány, Nindzsa, Mester, Árnyékmester.
+- **Kapcsolat a játékkal:** a `game.js` a `window.AE.G` objektumon ad horgokat (`setup`, `newRound`, `update`, `caught`, `melee`, `rank`) és belső függvényeket. A falu nem öl: a tantó is csak leüt. A tanítványoknál a `c.active` jelző dönti el, hogy figyelnek-e; csak az aktuális udvar tanítványai aktívak.
+- **Tesztelés:** `?palya=falu&aetest`, a `window.AE_FALU` horoggal (`startStation(i)`, `T`, `fail`). Headless teszttel mind a tíz próba végigment, a csend próbája járva elbukik, guggolva sikerül.
+
 ## 3. Fájlok
 
 A `GZDirect/jatekok` repóban minden játék külön mappában van. A GitHub Pages a `main` ágból közvetlenül szolgálja ki őket.
@@ -65,11 +89,14 @@ arnyekerdo/
                     Mindent a window.AE objektumon ad tovább.
     actors.js     ← modellek és animációk: japán rendőr (zseblámpa, revolver), a régi ellenfelek
                     (nindzsa, szörny, szellem), füst, kötél, a játékos kezei és eszközei. A window.AE-t bővíti.
+    falu.js       ← a 2. pálya díszlete: kerítések, kapuk, fal, házak, dódzsó, kőlámpások, szalmabábuk,
+                    a mester és a tanítványok helye (AE.FALU). Csak ?palya=falu címmel fut.
     parkolt.js    ← a régi ellenfelek félretett beállításai és viselkedése (most nem fut)
     game.js       ← rendőrök érzékelése és viselkedése, eszközök, kampó, mászás, leugrás, irányítás,
                     feliratok és hangok, HUD, értékelés, képernyőeffektek, minőség-visszaszabályozás, fő ciklus.
                     Tesztelési horog: ?aetest címparaméterrel window.AE_TEST.
-    build.py      ← összeállítja az index.html-t
+    falu_game.js  ← a 2. pálya próbái, a mester szövegei, hiba és újrakezdés, pecsétek
+    build.py      ← összeállítja az index.html-t (sorrend: world, actors, falu, parkolt, game, falu_game)
 ```
 
 Összeállítás a repó gyökeréből:
@@ -129,7 +156,7 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 
 - Valódi telefonos és tabletes teljesítményteszt, és ha kell, finomhangolás (a 8 rendőrös Nehéz szint a legterhelőbb).
 - A régi ellenfelek (`parkolt.js`) visszahozása külön küldetésként.
-- Több küldetés vagy pálya egymás után, pontszám és legjobb idő mentése.
+- Harmadik pálya a kiképzés után, pontszám és legjobb idő mentése, a pecsétek megőrzése.
 - Időjárás (eső, sűrűbb köd), ami a látást és a hallást is befolyásolja.
 - Többféle rejtekhely: magas fű, víz, barlang.
 

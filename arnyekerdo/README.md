@@ -2,6 +2,8 @@
 
 Belső nézetes, Tenchu-stílusú lopakodó küldetés telefonra és számítógépre. Éjszaka van a japán hegyekben, a rendőrség körbezárta a völgyet: rendőrök fésülik át az erdőt zseblámpával és pisztollyal (nehézségtől függően 4, 6 vagy 8). A völgy déli végéből kell eljutnod az északi útig, az iránytű mutatja az irányt. Árnyékként surransz át, vagy egyenként tünteted el őket: tantó, tekko, kampó az óriásfákra, mászókarmok, elcsaló kavics, füstbomba, a testek bokorba rejtése, és támadás felülről a lombok közül. Prototípus.
 
+A második pálya (**A mester faluja**) kiképzés: egy idős mester rejtett hegyi falujában tíz próbán tanulod meg az eszközöket. A mester japánul szól, magyar felirattal. A végén pecsétek és rang jár.
+
 **Játék:** https://gzdirect.github.io/jatekok/arnyekerdo/
 
 Fejlesztéshez: [FEJLESZTES.md](FEJLESZTES.md). A forrás az `src/` mappában van, az `index.html` generált (`python3 arnyekerdo/src/build.py`).
