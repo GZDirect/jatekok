@@ -20,6 +20,7 @@ body{background:var(--night);color:var(--moon);font-family:var(--ui);overflow:hi
 #fxDanger{background:radial-gradient(ellipse at 50% 50%,rgba(120,0,0,0) 42%,rgba(150,12,10,0.6) 100%);opacity:0;}
 #fxLeaf{background:radial-gradient(ellipse at 50% 50%,rgba(6,20,8,0) 38%,rgba(6,24,10,0.82) 92%);opacity:0;transition:opacity .5s;}
 #fxGrain{opacity:0.06;mix-blend-mode:overlay;}
+body.day #fxVig{opacity:0.35;}
 .hud{position:fixed;pointer-events:none;}
 #ki{top:calc(env(safe-area-inset-top,0px) + 14px);left:calc(env(safe-area-inset-left,0px) + 16px);display:flex;gap:10px;align-items:center;}
 #kiRing{width:62px;height:62px;border-radius:50%;border:3px solid var(--calm);background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color .3s;}
@@ -51,7 +52,7 @@ body{background:var(--night);color:var(--moon);font-family:var(--ui);overflow:hi
 .tool{width:64px;height:40px;border-radius:6px;border:1.5px solid rgba(236,229,211,0.3);background:var(--panel);color:var(--mist);font-family:var(--ui);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:4px;touch-action:none;}
 .tool kbd{font-family:var(--ui);font-size:10px;opacity:0.6;}
 .tool.on{border-color:var(--goal);color:var(--goal);}
-@media (max-height:520px){#tools{flex-direction:row;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);right:calc(env(safe-area-inset-right,0px) + 172px);}#sub{bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}}
+@media (max-height:520px){.tool{width:56px;font-size:10px;}.tool kbd{display:none!important;}#tools{flex-direction:row;gap:4px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);right:calc(env(safe-area-inset-right,0px) + 172px);}#sub{bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}}
 @media (max-width:560px){#top{top:calc(env(safe-area-inset-top,0px) + 90px);}}
 @media (pointer:fine){.tool kbd{display:inline;}}
 @media (pointer:coarse){.tool kbd{display:none;}}
@@ -91,6 +92,8 @@ body.menu .hud,body.menu #btns,body.menu #tools,body.menu #bDrag{visibility:hidd
 #tut[hidden]{display:none;}
 .lvl{display:flex;gap:6px;margin:2px 0 10px;}.lvl a{flex:1;text-align:center;padding:7px 8px;border:1px solid var(--line);border-radius:6px;color:var(--mist);text-decoration:none;font-size:13px;}
 .lvl a.on{border-color:var(--goal);color:var(--moon);background:rgba(127,211,230,0.08);}
+#dayFade{position:fixed;inset:0;z-index:40;background:#05080a;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:none;}
+#dayFade div{text-align:center;color:var(--moon);}#dayFade small{display:block;font:500 13px var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--mist);margin-bottom:8px;}#dayFade b{font:600 44px var(--display);}
 body.falu #diff,body.falu label.opt,body.falu .tutB{display:none;}
 #tutStep{font-size:11px;letter-spacing:1.5px;color:var(--goal);grid-column:1;}
 #tutText{grid-column:1;font-size:14px;line-height:1.45;color:var(--moon);}
@@ -162,6 +165,8 @@ body.falu #diff,body.falu label.opt,body.falu .tutB{display:none;}
   <button class="tool" type="button" data-i="2">Kampó<kbd>3</kbd></button>
   <button class="tool" type="button" data-i="3">Karmok<kbd>4</kbd></button>
   <button class="tool" type="button" data-i="4">Kavics<small id="stoneN">×6</small><kbd>5</kbd></button>
+  <button class="tool" type="button" data-i="5">Tüskék<small id="spikeN">×2</small><kbd>6</kbd></button>
+  <button class="tool" type="button" data-i="6">Köpőcső<small id="dartN">×3</small><kbd>7</kbd></button>
 </div>
 <div id="btns">
   <button class="b" id="bCrouch" type="button">Guggol</button>
@@ -193,10 +198,12 @@ body.falu #diff,body.falu label.opt,body.falu .tutB{display:none;}
       <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol (C)</dd>
       <dt>Tantó, tekko</dt><dd>hátulról egy csapás: a tantó öl, a tekko csak leüt (kattintás vagy E)</dd>
       <dt>Kampó</dt><dd>célozz egy sűrű lombú óriásfára: ha halványan felderül, fel tudsz kapaszkodni</dd>
-      <dt>Karmok</dt><dd>az óriásfa törzsén felmászhatsz (1–5: eszközváltás)</dd>
+      <dt>Karmok</dt><dd>az óriásfa törzsén felmászhatsz (1–7: eszközváltás)</dd>
       <dt>A fán</dt><dd>csak akkor látnak meg, ha rád világítanak; leugrással felülről támadhatsz (szóköz)</dd>
       <dt>Kavics</dt><dd>a koppanása odacsalja a közeli rendőröket (5)</dd>
       <dt>Test</dt><dd>a leütött rendőrt bokorba húzhatod, ott nem találják meg (Húz gomb, G)</dd>
+      <dt>Tüskék</dt><dd>előre dobod, futás közben magad mögé szórod; aki belelép, megáll (6)</dd>
+      <dt>Köpőcső</dt><dd>altatónyíl: akit eltalálsz, elalszik (7)</dd>
       <dt>Füst</dt><dd>elvakítja a közeli rendőröket, és eltakar (F)</dd>
       <dt>? és !</dt><dd>a rendőr feje fölött: a kérdőjel a gyanúval telik, a vörös felkiáltójel riadó</dd>
     </dl>

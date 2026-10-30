@@ -215,7 +215,7 @@ const hands=new THREE.Group();camera.add(hands);
     const fa=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.05,0.42,8),sleeve);fa.rotation.x=Math.PI/2-0.4;fa.position.set(0,-0.08,0.2);G.add(fa);
     const band=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.044,0.08,8),wrap);band.position.set(0,-0.02,0.06);band.rotation.x=Math.PI/2-0.4;G.add(band);return G;}
   const R=arm(),Lh=arm();
-  const items={tanto:new THREE.Group(),tekko:new THREE.Group(),kampo:new THREE.Group(),karom:new THREE.Group(),kavics:new THREE.Group()},itemsL={kampo:new THREE.Group(),karom:new THREE.Group()};
+  const items={tanto:new THREE.Group(),tekko:new THREE.Group(),kampo:new THREE.Group(),karom:new THREE.Group(),kavics:new THREE.Group(),tuske:new THREE.Group(),fukiya:new THREE.Group()},itemsL={kampo:new THREE.Group(),karom:new THREE.Group()};
   {const G=items.tanto;const h=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,0.12,6),grip);h.rotation.x=Math.PI/2;h.position.set(0,0.005,-0.02);G.add(h);
     const gd=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.04,0.008),L(0x6a5a3a));gd.position.set(0,0.005,-0.085);G.add(gd);
     const bl=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.024,0.3),steel);bl.position.set(0,0.008,-0.24);G.add(bl);
@@ -230,6 +230,14 @@ const hands=new THREE.Group();camera.add(hands);
   [items.karom,itemsL.karom].forEach(G=>{const bandC=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,0.025,10,1,true),iron);bandC.rotation.x=Math.PI/2-0.4;bandC.position.set(0,-0.005,0.02);G.add(bandC);
     for(let i=0;i<4;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(0.006,0.04,4),steel);c.position.set(-0.024+i*0.016,-0.03,-0.03);c.rotation.x=-2.2;G.add(c);}});
   {const G=items.kavics;const st=new THREE.Mesh(jitterStone(),L(0x7a7c78,{flatShading:true}));st.scale.setScalar(0.03);st.position.set(0,0.03,-0.03);G.add(st);}
+  {/* tüskék (makibishi): kis vászonzacskó, a tenyérben néhány négyágú tüske */
+    const G=items.tuske;const bag=new THREE.Mesh(new THREE.SphereGeometry(0.032,9,7),L(0x4a4034));bag.scale.set(1,0.8,1.1);bag.position.set(0,0.02,-0.03);G.add(bag);
+    const tie=new THREE.Mesh(new THREE.TorusGeometry(0.014,0.004,5,10),rope);tie.rotation.x=Math.PI/2;tie.position.set(0,0.045,-0.03);G.add(tie);
+    [[-0.018,0.05,-0.06],[0.02,0.048,-0.07]].forEach(q=>{const m=new THREE.Mesh(spikeGeo(),steel);m.scale.setScalar(0.014);m.position.set(q[0],q[1],q[2]);m.rotation.set(q[0]*40,q[2]*30,0.4);G.add(m);});}
+  {/* köpőcső (fukiya): bambuszcső, a szájhoz emelve */
+    const G=items.fukiya,bam=L(0x9a8a4a),node=L(0x6a5a2a);const tb=new THREE.Mesh(new THREE.CylinderGeometry(0.011,0.013,0.62,8),bam);tb.rotation.x=Math.PI/2;tb.position.set(-0.05,0.07,-0.2);G.add(tb);
+    [-0.02,-0.2,-0.38].forEach(z=>{const n=new THREE.Mesh(new THREE.TorusGeometry(0.0125,0.003,5,10),node);n.position.set(-0.05,0.07,z);G.add(n);});
+    G.rotation.set(0.05,0.12,0);}
   Object.values(items).forEach(G=>R.add(G));Object.values(itemsL).forEach(G=>Lh.add(G));
   R.position.set(0.24,-0.25,-0.42);R.rotation.set(0.12,-0.18,-0.25);hands.add(R);
   Lh.position.set(-0.3,-0.31,-0.45);Lh.rotation.set(0.25,0.35,0.3);hands.add(Lh);
@@ -244,6 +252,12 @@ function stepHands(t,dt,bob,moving,running,crouch,lookDX,atk,climb){const u=hand
   u.R.position.set(0.24-k*0.12,-0.25+(running?-0.04:0)+(crouch?0.02:0)+k*0.06,-0.42-k*0.2);
   u.Lh.position.set(-0.3,-0.31+(running?-0.03:0)+Math.sin(bob*0.5+Math.PI)*0.01*a,-0.45);
   if(climb){const c=Math.sin(t*9);u.R.position.y+=0.08+c*0.06;u.Lh.position.y+=0.08-c*0.06;u.R.position.z-=0.06;u.Lh.position.z-=0.06;}}
+/* négyágú tüske (makibishi): bárhogy esik le, egy ága mindig felfelé áll */
+function spikeGeo(){const g=[];const v=[[0,1,0],[0.943,-0.333,0],[-0.471,-0.333,0.816],[-0.471,-0.333,-0.816]];
+  v.forEach(d=>{const c=new THREE.ConeGeometry(0.22,1,4);c.translate(0,0.5,0);const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(d[0],d[1],d[2]));c.applyMatrix4(new THREE.Matrix4().makeRotationFromQuaternion(q));g.push(c);});
+  return A_mergeGeos(g);}
+function A_mergeGeos(list){let pos=[],nor=[];list.forEach(g=>{const ng=g.index?g.toNonIndexed():g;pos.push(...ng.attributes.position.array);nor.push(...ng.attributes.normal.array);});
+  const o=new THREE.BufferGeometry();o.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));o.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));return o;}
 function jitterStone(){const g=new THREE.DodecahedronGeometry(1,0),p=g.attributes.position;for(let i=0;i<p.count;i++){const k=0.8+0.4*hash3(Math.round(p.getX(i)*7),Math.round(p.getY(i)*7),Math.round(p.getZ(i)*7));p.setXYZ(i,p.getX(i)*k,p.getY(i)*k*0.8,p.getZ(i)*k);}g.computeVertexNormals();return g;}
 /* kötélkampó: repülő kampó + kötél a kéztől */
 const hookFly=new THREE.Group();scene.add(hookFly);hookFly.visible=false;
@@ -252,5 +266,5 @@ const ropeGeo=new THREE.BufferGeometry();ropeGeo.setAttribute('position',new THR
 const rope=new THREE.Line(ropeGeo,new THREE.LineBasicMaterial({color:0x9a8260}));rope.frustumCulled=false;rope.visible=false;scene.add(rope);
 function setRope(ax,ay,az,bx,by,bz,on){rope.visible=hookFly.visible=on;if(!on)return;const p=ropeGeo.attributes.position;p.setXYZ(0,ax,ay,az);p.setXYZ(1,bx,by,bz);p.needsUpdate=true;hookFly.position.set(bx,by,bz);hookFly.lookAt(ax,ay,az);}
 
-Object.assign(window.AE,{beamU,makePool,beamHit,jitterStone,buildEnemy,buildPolice,makeBeam,dropPrint,stepPrints,clearPrints,beacon,stepBeacon,puffSmoke,stepSmoke,hands,stepHands,setHandItem,setRope});
+Object.assign(window.AE,{beamU,makePool,beamHit,jitterStone,spikeGeo,buildEnemy,buildPolice,makeBeam,dropPrint,stepPrints,clearPrints,beacon,stepBeacon,puffSmoke,stepSmoke,hands,stepHands,setHandItem,setRope});
 })();

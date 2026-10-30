@@ -28,12 +28,15 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
   - **Riasztásjelző a fejük fölött:** kérdőjel, ami a gyanúval narancsra telik; keresés közben teli; riadóban vörös felkiáltójel (`makeMark`, `drawMark`).
   - **Zseblámpa:** látható fénykúp sodródó porszemekkel, és fénykör a talajon, ahol a tengelye földet ér (`makePool`, `beamHit` az actors.js-ben). A fény a talajt és a tárgyakat is megvilágítja (a legközelebbi 6 rendőr lámpája a shaderben).
   - **Ütközés:** a rendőrök és a játékos sem mehet át fán, óriásfa gyökerén (`col`), sziklán (0,42 m-től), farönkön, a rendőrautón, a lámpaoszlopon és az italautomatán; a rendőrök egymáson és a játékoson sem.
-- **Eszközök** (váltás: 1–5):
+- **Eszközök** (váltás: 1–7):
   - *Tantó*: hátulról egy csapással öl.
   - *Tekko*: hátulról csak leüt.
   - *Kampó*: célozz egy sűrű lombú óriásfára. Ha a lomb halványan felderül, fel tudsz kapaszkodni.
   - *Karmok*: az óriásfa törzsén felmászhatsz.
   - *Kavics* (Normálon 6 db): a koppanása 16 m-en belül odacsalja a nem riasztott rendőröket (`throwStone`, `stoneLand`).
+  - Tüskék (makibishi, 6): állva előre dobod (ív, mint a kavics), futás közben magad mögé szórod. Aki belelép, 4,5 mp-re megáll, és addig nem is kap el (`useSpikes`, `stepSpikes`, `SPK`).
+  - Köpőcső (fukiya, 7): altatónyíl, egyenes, gyors lövedék 30 m-ig. Akit eltalál, 1,3 mp múlva elalszik (nem öl; a rendőr 55 mp-ig alszik). Ha a célkereszt felderül, talál (`blowDart`, `stepDart`, `dartTarget`, `DART`).
+  - Készlet nehézségenként: tüske 3/2/2, nyíl 4/3/2 (`DIFF`).
 - **Test elrejtése:** a leütött vagy megölt rendőrt el lehet húzni (Húz gomb, G); ha bokorban engeded el, a társai nem találják meg (`hiddenBody`). Húzás közben lassú vagy.
 - **Fán:** csak akkor látnak meg, ha rád világítanak. Leugrással felülről is támadhatsz (szóköz), ez erősebb csapás.
 - **Füst** (2 db): elvakítja a közeli rendőröket, és eltakar.
@@ -44,7 +47,7 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
 - **Felület (HUD):** iránytű, ki-gyűrű, élet- és zajsávok, célkereszt felirattal, a kijárat jelölője, képernyőeffektek (vignetta, vörös veszély- és sérülésjelzés, zöld bokorkeret).
 - **Irányítás:**
   - Telefon: bal hüvelykujj mozgás, jobb hüvelykujj körülnézés, gombok.
-  - Számítógép: W A S D, egérrel húzva körülnézés, C guggolás, kattintás vagy E a használat, 1–5 eszközváltás, G húzás, szóköz leugrás, F füst.
+  - Számítógép: W A S D, egérrel húzva körülnézés, C guggolás, kattintás vagy E a használat, 1–7 eszközváltás, G húzás, szóköz leugrás, F füst.
   - Telefonon és tableten csak fekvő helyzetben játszható. Az első érintésre teljes képernyőre vált, és fekvőre rögzít (Androidon). Álló helyzetben a „Fordítsd el a telefont” jelzés takarja, és a játék megáll. iPhone-on a Safari ezt nem engedi; ott a „Hozzáadás a főképernyőhöz” után indítva teljes képernyős (`manifest.webmanifest`, ikonok, `apple-mobile-web-app-capable`).
 - **A régi ellenfelek** (szörny, nindzsa, szellem) beállításai és viselkedése az `src/parkolt.js`-ben vannak félretéve. A modelljeik az `actors.js`-ben maradtak, később visszakapcsolhatók.
 
@@ -54,9 +57,9 @@ Történetben a rendőrös küldetés után jön: az idős mester rejtett hegyi 
 
 Mintának a Tenchu kiképző küldetését (szobáról szobára, egy ötlet egy helyen, a végén rang), a Mark of the Ninja egyértelmű visszajelzéseit és vállalható pecsétjeit, a Sekiro Hanbeijét (gyakorlótárs, akihez vissza lehet menni) és a Shadow Tactics fokozatos, egyszerre egy eszközt bevezető pályáit vettük.
 
-- **Felépítés:** a falu délről északra tíz udvarra oszlik (`ROOMS` a `falu.js`-ben), bambuszkerítésekkel és kapukkal. Az első kapu tórii. A kampós udvarban 3,3 m-es vakolt fal áll, kapu nélkül. Az északi végén a dódzsó (影道場), mellette kőlámpások, a kerítésen kívül falusi házak.
+- **Felépítés:** a falu délről északra tizenkét udvarra oszlik (`ROOMS` a `falu.js`-ben), bambuszkerítésekkel és kapukkal. Az első kapu tórii. A kampós udvarban 3,3 m-es vakolt fal áll, kapu nélkül. Az északi végén a dódzsó (影道場), mellette kőlámpások, a kerítésen kívül falusi házak.
 - **A mester** (`buildPolice(…,{master:true})`) minden próbánál máshol áll, a játékos felé fordul. Japánul beszél beszédszintézissel (`sayLine`, ja-JP), magyar felirattal. A feladat a felső panelen olvasható. Az iránytű és a térkép a mestert mutatja.
-- **A tíz próba** (`ST` a `falu_game.js`-ben):
+- **A tizenkét próba** (`ST` a `falu_game.js`-ben):
   1. Érkezés: odamenni a mesterhez. Bemutatkozik, és kinyitja a tóriit.
   2. Csend: egy háttal álló tanítvány mellett guggolva elosonni. Ha járva megy el mellette, meghallja.
   3. Bokor: lámpás járőr; bokorban guggolva, a ? jelet figyelve átjutni.
@@ -66,11 +69,13 @@ Mintának a Tenchu kiképző küldetését (szobáról szobára, egy ötlet egy 
   7. Kavics (3 db): elcsalni a kaput figyelő őrt.
   8. Test: egy földön fekvő tanítványt bokorba húzni, mielőtt a járőr (14 mp múlva indul) meglátja.
   9. Füst (2 db): két idősebb tanítvány azonnal rátámad. Meg kell várni, hogy közel érjenek, füstöt dobni, és közöttük a kapuig futni.
-  10. Vizsga: három járőr között eljutni a mesterhez a dódzsó elé.
+  10. Köpőcső (3 nyíl): a kaput figyelő őrt távolról elaltatni. Ha máshogy teszed ártalmatlanná, a mester újrakezdeti.
+  11. Tüskék (2 db): egy idősebb tanítvány rátámad, a kapu zárva. Ha belelép a tüskékbe, kinyílik a kapu.
+  12. Vizsga, nappal: elsötétül a kép („Másnap délben”), nappali fények (`setDay`), a tanítványoknál nincs lámpafény, de 1,45-ször messzebbre látnak (`G.day`). Három járőr között kell eljutni a mesterhez a dódzsó elé.
 - **Hiba esetén** (meghallották, meglátták, elkapták, megtalálták a testet) a mester megszólal, és a játékos az udvar elejéről kezdi újra. Az udvar tanítványai is visszaállnak.
 - **Értékelés:** három pecsét jár. Árnyék, ha a vizsgán nem volt riasztás; Türelmes, ha egyszer sem kellett újrakezdeni; Gyors, ha 10 percen belül végzett. A rang a pecsétek számától függ: Tanítvány, Nindzsa, Mester, Árnyékmester.
 - **Kapcsolat a játékkal:** a `game.js` a `window.AE.G` objektumon ad horgokat (`setup`, `newRound`, `update`, `caught`, `melee`, `rank`) és belső függvényeket. A falu nem öl: a tantó is csak leüt. A tanítványoknál a `c.active` jelző dönti el, hogy figyelnek-e; csak az aktuális udvar tanítványai aktívak.
-- **Tesztelés:** `?palya=falu&aetest`, a `window.AE_FALU` horoggal (`startStation(i)`, `T`, `fail`). Headless teszttel mind a tíz próba végigment, a csend próbája járva elbukik, guggolva sikerül.
+- **Tesztelés:** `?palya=falu&aetest`, a `window.AE_FALU` horoggal (`startStation(i)`, `T`, `fail`). Headless teszttel mind a tizenkét próba végigment, a csend próbája járva elbukik, guggolva sikerül.
 
 ## 3. Fájlok
 

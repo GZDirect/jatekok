@@ -6,7 +6,7 @@
 const A=window.AE;if(A.LV!=='falu')return;
 const {scene,H,grid,addTo,trees,canvasTex,glowTex,flashPatch,mulberry32,clamp}=A;
 const lam=(c,o)=>flashPatch(new THREE.MeshLambertMaterial(Object.assign({color:c},o||{})));
-const XF=16.5;/* a falu oldalkerítése */
+const XF=16.5,LIGHTS=[];/* a falu oldalkerítése */
 /* udvarok: déli (top) és északi (bot) határ; a kapu az északi határon áll */
 const ROOMS=[
   {id:'erkezes',top:48,bot:36,gx:0,gate:'torii'},
@@ -18,7 +18,9 @@ const ROOMS=[
   {id:'kavics',top:-40,bot:-52,gx:0,gate:'open'},
   {id:'test',top:-52,bot:-66,gx:0},
   {id:'fust',top:-66,bot:-78,gx:0},
-  {id:'vizsga',top:-78,bot:-103,gx:null}];
+  {id:'kopocso',top:-78,bot:-90,gx:-10},
+  {id:'tuske',top:-90,bot:-102,gx:0},
+  {id:'vizsga',top:-102,bot:-127,gx:null}];
 
 /* ---------- ütköző pontok ---------- */
 function wallCol(x0,z0,x1,z1,r,step,low,list){const L=Math.hypot(x1-x0,z1-z0),n=Math.max(1,Math.ceil(L/step));for(let i=0;i<=n;i++){const o={x:x0+(x1-x0)*i/n,z:z0+(z1-z0)*i/n,r,low,kind:'prop'};trees.push(o);addTo(grid,o);if(list)list.push(o);}}
@@ -31,7 +33,7 @@ function fence(x0,z0,x1,z1){const L=Math.hypot(x1-x0,z1-z0);if(L<0.3)return;cons
   const m=Math.round(L/0.16);for(let i=0;i<m;i++){const t=(i+0.5)/m;fenceParts.push({x:x0+(x1-x0)*t,z:z0+(z1-z0)*t,y:0.62,sx:0.06,sy:1.18+((i*7)%5)*0.03,sz:0.06,a,c:i%3?0x7a7440:0x6a6638});}
   wallCol(x0,z0,x1,z1,0.28,0.6,true);}
 /* határkerítések */
-fence(-XF,48,-XF,-103);fence(XF,48,XF,-103);fence(-XF,48,XF,48);fence(-XF,-103,XF,-103);
+fence(-XF,48,-XF,-127);fence(XF,48,XF,-127);fence(-XF,48,XF,48);fence(-XF,-127,XF,-127);
 ROOMS.forEach(r=>{if(r.gx===null)return;const z=r.bot;fence(-XF,z,r.gx-1.4,z);fence(r.gx+1.4,z,XF,z);});
 {const D=new THREE.Object3D(),C=new THREE.Color(),m=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),lam(0xffffff),fenceParts.length);
   fenceParts.forEach((f,i)=>{D.position.set(f.x,H(f.x,f.z)+f.y,f.z);D.rotation.set(0,f.a,0);D.scale.set(f.sx,f.sy,f.sz);D.updateMatrix();m.setMatrixAt(i,D.matrix);m.setColorAt(i,C.setHex(f.c));});
@@ -75,9 +77,9 @@ function house(x,z,ry,w,d,lit){const g=new THREE.Group();g.position.set(x,H(x,z)
   const beam=new THREE.Mesh(new THREE.BoxGeometry(w+0.1,0.18,d+0.1),timberM);beam.position.y=2.75;g.add(beam);
   const roof=prismRoof(w+1.4,d+1.2,2.4,thatchM);roof.position.y=2.8;roof.rotation.y=Math.PI/2;roof.castShadow=true;g.add(roof);
   if(lit){const sh=new THREE.Mesh(new THREE.PlaneGeometry(w*0.5,1.4),shojiM);sh.position.set(0,1.2,d/2+0.02);g.add(sh);}}
-[[-21.5,38,Math.PI/2,6,5,1],[21.5,30,-Math.PI/2,6,5,1],[-21.5,10,Math.PI/2,7,5,0],[21.5,-2,-Math.PI/2,6,5,1],[-21.5,-30,Math.PI/2,6,5,1],[21.5,-42,-Math.PI/2,7,5,0],[-21.5,-62,Math.PI/2,6,5,1],[21.5,-74,-Math.PI/2,6,5,1]].forEach(q=>house(...q));
+[[-21.5,38,Math.PI/2,6,5,1],[21.5,30,-Math.PI/2,6,5,1],[-21.5,10,Math.PI/2,7,5,0],[21.5,-2,-Math.PI/2,6,5,1],[-21.5,-30,Math.PI/2,6,5,1],[21.5,-42,-Math.PI/2,7,5,0],[-21.5,-62,Math.PI/2,6,5,1],[21.5,-74,-Math.PI/2,6,5,1],[-21.5,-86,Math.PI/2,6,5,0],[21.5,-98,-Math.PI/2,7,5,1],[-21.5,-110,Math.PI/2,6,5,1],[21.5,-120,-Math.PI/2,6,5,0]].forEach(q=>house(...q));
 /* dojo az északi végén */
-{const dz=-99.5,g=new THREE.Group();g.position.set(0,H(0,dz),dz);scene.add(g);const W=15,D=6.4;
+{const dz=-123.5,g=new THREE.Group();g.position.set(0,H(0,dz),dz);scene.add(g);const W=15,D=6.4;
   const floor=new THREE.Mesh(new THREE.BoxGeometry(W+2,0.7,D+2),timberM);floor.position.y=0.35;floor.receiveShadow=true;g.add(floor);
   const body=new THREE.Mesh(new THREE.BoxGeometry(W,3.2,D),plasterM);body.position.y=2.3;body.castShadow=true;g.add(body);
   for(let i=0;i<6;i++){const sh=new THREE.Mesh(new THREE.PlaneGeometry(2.0,2.4),shojiM);sh.position.set(-6.2+i*2.48,2.0,D/2+0.02);g.add(sh);
@@ -86,7 +88,7 @@ function house(x,z,ry,w,d,lit){const g=new THREE.Group();g.position.set(x,H(x,z)
   const roof=prismRoof(W+3.5,D+4,3.4,lam(0x2e3034));roof.position.y=3.9;roof.rotation.y=Math.PI/2;roof.castShadow=true;g.add(roof);
   const sign=new THREE.Mesh(new THREE.PlaneGeometry(2.2,0.7),new THREE.MeshBasicMaterial({map:canvasTex(256,80,(c,w,h)=>{c.fillStyle='#2a1d14';c.fillRect(0,0,w,h);c.fillStyle='#e8dcc0';c.font='700 56px "Noto Serif JP",serif';c.textAlign='center';c.textBaseline='middle';c.fillText('影道場',w/2,h/2+3);})}));
   sign.position.set(0,4.15,D/2+1.05);g.add(sign);
-  const light=new THREE.PointLight(0xffb070,1.4,22,1.6);light.position.set(0,2.6,D/2+2.2);g.add(light);
+  const light=new THREE.PointLight(0xffb070,1.4,22,1.6);light.position.set(0,2.6,D/2+2.2);g.add(light);LIGHTS.push(light);
   wallCol(-W/2-1,dz+D/2+1.05,W/2+1,dz+D/2+1.05,0.45,0.6,false);}
 
 /* ---------- kőlámpások (tōrō) ---------- */
@@ -98,9 +100,9 @@ function toro(x,z){const g=new THREE.Group();g.position.set(x,H(x,z),z);scene.ad
   const cap=new THREE.Mesh(new THREE.ConeGeometry(0.42,0.32,4),stoneM);cap.rotation.y=Math.PI/4;cap.position.y=1.57;g.add(cap);
   const s=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,color:0xffa850,transparent:true,opacity:0.6,depthWrite:false,blending:THREE.AdditiveBlending}));s.scale.setScalar(2.2);s.position.y=1.23;g.add(s);lampGlow.push(s);
   const o={x,z,r:0.38,kind:'prop'};trees.push(o);addTo(grid,o);}
-[[-3,44],[3,44],[13,26],[-13,22],[-13,7],[13,-4],[3,-24],[-13,-28],[-3,-50],[3,-50],[13,-54],[-13,-64],[-3,-76],[3,-76],[-4,-94],[4,-94]].forEach(q=>toro(q[0],q[1]));
+[[-3,44],[3,44],[13,26],[-13,22],[-13,7],[13,-4],[3,-24],[-13,-28],[-3,-50],[3,-50],[13,-54],[-13,-64],[-3,-76],[3,-76],[13,-88],[-13,-92],[13,-100],[-4,-118],[4,-118]].forEach(q=>toro(q[0],q[1]));
 {const l=new THREE.PointLight(0xffb070,1.0,18,1.6);l.position.set(0,H(0,40)+2.5,40);scene.add(l);
- const l2=new THREE.PointLight(0xffb070,0.9,16,1.6);l2.position.set(2,H(2,0)+2.6,0);scene.add(l2);}
+ const l2=new THREE.PointLight(0xffb070,0.9,16,1.6);l2.position.set(2,H(2,0)+2.6,0);scene.add(l2);LIGHTS.push(l,l2);}
 
 /* ---------- szalmabábuk (makiwara): az arcuk felől nem szabad ütni ---------- */
 const straw=lam(0xb89a5a),strawD=lam(0x8a6e3a),rope=lam(0x5a4632),post=lam(0x4a3a2a);
@@ -136,9 +138,11 @@ const students=[
   {room:'test',route:[P2(1,-58.5)],ry:0,body:true},
   {room:'fust',route:[P2(-4,-75)],ry:Math.PI,senior:true},
   {room:'fust',route:[P2(4,-75)],ry:Math.PI,senior:true},
-  {room:'vizsga',route:[P2(-14,-81.5),P2(14,-81.5)],ry:-Math.PI/2},
-  {room:'vizsga',route:[P2(-13,-93),P2(-13,-85),P2(13,-85),P2(13,-93)],ry:0},
-  {room:'vizsga',route:[P2(10,-90),P2(-10,-90)],ry:Math.PI/2}];
+  {room:'kopocso',route:[P2(-9,-88.3)],ry:Math.PI*0.85},
+  {room:'tuske',route:[P2(3,-99.5)],ry:Math.PI*0.8,senior:true},
+  {room:'vizsga',route:[P2(-14,-108.5),P2(14,-108.5)],ry:-Math.PI/2},
+  {room:'vizsga',route:[P2(-13,-117),P2(-13,-109),P2(13,-109),P2(13,-117)],ry:0},
+  {room:'vizsga',route:[P2(10,-114),P2(-10,-114)],ry:Math.PI/2}];
 
-A.FALU={ROOMS,GATES,DUMMIES,master,students,stepGates,stepDummies,lampGlow,XF};
+A.FALU={LIGHTS,shojiM,ROOMS,GATES,DUMMIES,master,students,stepGates,stepDummies,lampGlow,XF};
 })();
