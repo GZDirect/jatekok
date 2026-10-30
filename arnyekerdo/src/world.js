@@ -220,8 +220,11 @@ function glowGiant(i,k){if(i<0)return;TC.copy(GLEAF_BASE[i]).multiplyScalar(1+k*
   const cap=new THREE.CircleGeometry(1,10);const capM=new THREE.MeshLambertMaterial({color:0x9a8260});const caps=[];logs.forEach(l=>{caps.push({l,s:1},{l,s:-1});});
   inst(cap,capM,caps,c=>{const l=c.l,ex=l.x+Math.cos(l.a)*l.L/2*c.s,ez=l.z+Math.sin(l.a)*l.L/2*c.s;D.position.set(ex,H(l.x,l.z)+l.rad*0.6+(H(ex,ez)-H(l.x,l.z))*0.9,ez);D.rotation.set(0,-l.a+(c.s>0?Math.PI/2:-Math.PI/2),0);D.scale.set(l.rad*0.95,l.rad*0.95,1);});}
 /* bokrok */
-{const parts=[],r=mulberry32(31),dk=rgb(0x16261a),lt=rgb(0x35503a);for(let i=0;i<8;i++){const g=new THREE.IcosahedronGeometry(0.45+r()*0.35,0);jitter(g,0.3,i);const a=r()*6.28,rr=r()*0.75;g.translate(Math.cos(a)*rr,0.3+r()*0.55,Math.sin(a)*rr);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>mixc(dk,lt,clamp(ny*0.6+y*0.35,0,1))});}
-  const g=merge(parts);bushes.forEach(b=>b._col=TC.setHSL(0.3+b.c*0.06,0.3,0.5+b.c*0.35).clone());
+{const parts=[],r=mulberry32(31),dk=rgb(0x16261a),lt=rgb(0x35503a);
+  /* a városban nyírt sövény (puszpáng) virágládában */
+  if(VR){const g=jitter(new THREE.BoxGeometry(1.5,0.8,1.5,4,2,4),0.16,3);g.translate(0,0.82,0);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>mixc(rgb(0x2a4a22),rgb(0x5c8a3a),clamp(ny*0.5+(y-0.4)*0.6,0,1))});}
+  else for(let i=0;i<8;i++){const g=new THREE.IcosahedronGeometry(0.45+r()*0.35,0);jitter(g,0.3,i);const a=r()*6.28,rr=r()*0.75;g.translate(Math.cos(a)*rr,0.3+r()*0.55,Math.sin(a)*rr);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>mixc(dk,lt,clamp(ny*0.6+y*0.35,0,1))});}
+  const g=merge(parts);bushes.forEach(b=>b._col=VR?TC.setHSL(0.27+b.c*0.04,0.35,0.75+b.c*0.2).clone():TC.setHSL(0.3+b.c*0.06,0.3,0.5+b.c*0.35).clone());
   bushes.forEach((b,i)=>b.i=i);bushMesh=inst(g,vcMat(),bushes,b=>{D.position.set(b.x,H(b.x,b.z)-0.1,b.z);D.rotation.set(0,b.c*9,0);D.scale.set(1.5*b.s,1.05*b.s,1.5*b.s);},true);}
 function shakeBush(b,k,t){if(!bushMesh||!b)return;D.position.set(b.x,H(b.x,b.z)-0.1,b.z);D.rotation.set(Math.sin(t*23+b.c*9)*0.07*k,b.c*9+Math.sin(t*17)*0.05*k,Math.cos(t*19+b.c)*0.07*k);D.scale.set(1.5*b.s,1.05*b.s*(1-0.03*k),1.5*b.s);D.updateMatrix();bushMesh.setMatrixAt(b.i,D.matrix);bushMesh.instanceMatrix.needsUpdate=true;}
 /* páfrányok */
