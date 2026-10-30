@@ -80,10 +80,10 @@ parapet(-22.5,8.3,22.5,8.3);parapet(-22.5,-62.3,22.5,-62.3);parapet(-22.3,-62.5,
 parapet(22.3,8.5,22.3,6.9);parapet(22.3,3.3,22.3,-26.5);/* a keleti oldalon a penthouse homlokzata a mellvéd */
 
 /* ---------- a város a mélyben ---------- */
-{const r=mulberry32(77),parts=[[],[],[],[]],crowns=[];let n=0,tries=0;
+const NEAR=[],CARS=[];{const r=mulberry32(77),parts=[[],[],[],[]],crowns=[];let n=0,tries=0;
   while(n<170&&tries<3000){tries++;const a=r()*Math.PI*2,d=48+Math.pow(r(),0.8)*380,x=Math.cos(a)*d,z=Math.sin(a)*d;
     if(Math.abs(x)<34&&z>-80&&z<75)continue;const w=14+r()*26,dd=14+r()*26,top=-135+Math.pow(r(),0.7)*(d<120?165:230);const h=top-DEEP,ty=n%4;
-    const g=boxUV(w,h,dd,SU,SV);g.translate(x,DEEP+h/2,z);parts[ty].push(g);
+    const g=boxUV(w,h,dd,SU,SV);g.translate(x,DEEP+h/2,z);parts[ty].push(g);if(d<140)NEAR.push({x,z,w,d:dd,top,dist:d});
     /* lépcsőzetes felső szint és gépház a tetőn */
     if(r()<0.55&&h>60){const w2=w*(0.55+r()*0.25),d2=dd*(0.55+r()*0.25),h2=8+r()*22;const g2=boxUV(w2,h2,d2,SU,SV);g2.translate(x+(r()-0.5)*(w-w2)*0.6,top+h2/2,z+(r()-0.5)*(dd-d2)*0.6);parts[ty].push(g2);
       if(r()<0.6)crowns.push({x,z,y:top+h2,s:2+r()*3});}
@@ -97,9 +97,11 @@ parapet(22.3,8.5,22.3,6.9);parapet(22.3,3.3,22.3,-26.5);/* a keleti oldalon a pe
   /* utca és járda */
   const street=new THREE.Mesh(new THREE.PlaneGeometry(1400,1400),new THREE.MeshLambertMaterial({color:0x4a4c4e}));street.rotation.x=-Math.PI/2;street.position.y=DEEP;scene.add(street);
   const lineM=new THREE.MeshBasicMaterial({color:0xd8d4c4});[[0,25,1400,0.4],[34,0,0.4,1400],[-38,0,0.4,1400]].forEach(q=>{const l=new THREE.Mesh(new THREE.PlaneGeometry(q[2],q[3]),lineM);l.rotation.x=-Math.PI/2;l.position.set(q[0],DEEP+0.05,q[1]);scene.add(l);});
-  /* autók az utcán (apró dobozok) */
-  const carM=[0xc8302a,0xe8e8e2,0x2a2c30,0x3a6ab0,0xe0b030].map(c=>new THREE.MeshLambertMaterial({color:c}));
-  for(let i=0;i<40;i++){const c=new THREE.Mesh(new THREE.BoxGeometry(1.8,1.4,4.4),carM[i%5]);const onX=i%2;c.position.set(onX?(r()*2-1)*300:(i%4<2?32:-36),DEEP+0.7,onX?23+(r()<0.5?-2:2):(r()*2-1)*300);if(onX)c.rotation.y=Math.PI/2;scene.add(c);}
+  /* autók az utcán: mozognak a sávokban */
+  const carM=[0xc8302a,0xe8e8e2,0x2a2c30,0x3a6ab0,0xe0b030,0x8a8e92].map(c=>lam(c)),glassC=lam(0x1a2430);
+  for(let i=0;i<46;i++){const g=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(1.8,0.8,4.4),carM[i%6]);b.position.y=0.55;g.add(b);const c=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.6,2.2),glassC);c.position.set(0,1.2,-0.2);g.add(c);
+    const lane=i%4,axisX=lane<2;const pos=(r()*2-1)*320,sp=(9+r()*7)*(lane%2?1:-1);CARS.push({g,axisX,lane,pos,sp});
+    if(axisX)g.rotation.y=Math.PI/2;g.position.y=DEEP;scene.add(g);}
   /* az alacsonyabb háztető, ahová a kábel vezet */
   const low=new THREE.Mesh(boxUV(40,110,40,SU,SV),new THREE.MeshLambertMaterial({map:FAC[1]}));low.position.set(70,DEEP+55,-130);scene.add(low);}
 
@@ -251,7 +253,43 @@ camera3(-8.4,-26.6,3.3,Math.PI*0.86,0.62,9);   /* penthouse délnyugati sarka: a
 camera3(21.2,-26.6,3.3,-Math.PI*0.8,0.5,8);    /* délkeleti sarok: a keleti oldalt nézi */
 camera3(-16.3,-23.3,3.0,Math.PI*0.2,0.5,10);   /* lépcsőház: a nyugati sávot nézi */
 
-A.VAROS={rects,walkable,clampRoof,GOND,stepGondola,CAMS,ANCHOR,PH,HOOKS,DEEP,
+/* ---------- a közeli épületek részletei: erkélyek, tetőkert, reklámtábla, ablakmosó állvány ---------- */
+NEAR.sort((a,b)=>a.dist-b.dist);
+{const balc=[],r=mulberry32(83),railM=new THREE.MeshPhongMaterial({color:0xb8d0dc,transparent:true,opacity:0.5,shininess:80,depthWrite:false}),slabM=lam(0xd0ccc4);
+  NEAR.slice(0,4).forEach((b,k)=>{if(k%2)return;/* erkélysorok a felénk néző oldalon */const fx=-Math.sign(b.x)||1,fz=-Math.sign(b.z)||1,alongX=Math.abs(b.z)>Math.abs(b.x);
+    for(let y=b.top-4;y>DEEP+6&&y>-90;y-=3.6)for(let c=-1;c<=1;c+=2){const L=4.2;const x=alongX?b.x+c*b.w*0.25:b.x+fx*(b.w/2+0.6),z=alongX?b.z+fz*(b.d/2+0.6):b.z+c*b.d*0.25;balc.push({x,y,z,alongX,L});}});
+  const sg=new THREE.BoxGeometry(1,1,1),sm=new THREE.InstancedMesh(sg,slabM,balc.length),rm=new THREE.InstancedMesh(sg,railM,balc.length),D=new THREE.Object3D();
+  balc.forEach((q,i)=>{D.position.set(q.x,q.y,q.z);D.scale.set(q.alongX?q.L:1.2,0.18,q.alongX?1.2:q.L);D.updateMatrix();sm.setMatrixAt(i,D.matrix);D.position.y=q.y+0.55;D.scale.set(q.alongX?q.L:1.25,0.9,q.alongX?1.25:q.L);D.updateMatrix();rm.setMatrixAt(i,D.matrix);});
+  scene.add(sm);scene.add(rm);
+  /* tetőkert a legközelebbi alacsonyabb házakon */
+  NEAR.filter(b=>b.top<-6).slice(0,2).forEach(b=>{const lawn=new THREE.Mesh(new THREE.PlaneGeometry(b.w*0.8,b.d*0.8),lam(0x4e7a3a));lawn.rotation.x=-Math.PI/2;lawn.position.set(b.x,b.top+0.05,b.z);scene.add(lawn);
+    for(let k=0;k<5;k++){const tx=b.x+(r()-0.5)*b.w*0.6,tz=b.z+(r()-0.5)*b.d*0.6;const t=new THREE.Mesh(new THREE.IcosahedronGeometry(1+r(),0),lam(0x3e6a2e,{flatShading:true}));t.position.set(tx,b.top+1.6,tz);scene.add(t);
+      const tr=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.15,1.2,5),lam(0x5a4430));tr.position.set(tx,b.top+0.6,tz);scene.add(tr);}
+    const pool=new THREE.Mesh(new THREE.PlaneGeometry(b.w*0.25,b.d*0.15),new THREE.MeshPhongMaterial({color:0x3aa0c8,shininess:120}));pool.rotation.x=-Math.PI/2;pool.position.set(b.x+b.w*0.2,b.top+0.07,b.z-b.d*0.2);scene.add(pool);});
+  /* reklámtáblák (felirat nélküli, színes grafika) a magasabb házak tetején */
+  const adTex=[canvasTex(256,128,(g,w,h)=>{const gr=g.createLinearGradient(0,0,w,h);gr.addColorStop(0,'#e83a5a');gr.addColorStop(1,'#f0a030');g.fillStyle=gr;g.fillRect(0,0,w,h);g.fillStyle='#fff';g.beginPath();g.arc(70,64,40,0,Math.PI*2);g.fill();g.fillStyle='#e83a5a';g.beginPath();g.arc(70,64,22,0,Math.PI*2);g.fill();g.fillStyle='rgba(255,255,255,0.85)';g.fillRect(130,40,100,14);g.fillRect(130,66,70,10);}),
+    canvasTex(256,128,(g,w,h)=>{g.fillStyle='#1e3a6a';g.fillRect(0,0,w,h);g.fillStyle='#3ac0e8';for(let i=0;i<5;i++){g.beginPath();g.moveTo(20+i*44,110);g.lineTo(40+i*44,20+i*8);g.lineTo(60+i*44,110);g.fill();}g.fillStyle='#fff';g.fillRect(16,14,90,10);})];
+  NEAR.filter(b=>b.top>-40).slice(0,2).forEach((b,k)=>{const W=Math.min(b.w*0.8,14),Hh=W*0.5,face=new THREE.Mesh(new THREE.PlaneGeometry(W,Hh),new THREE.MeshBasicMaterial({map:adTex[k%2],side:THREE.DoubleSide}));
+    const ry=Math.atan2(-b.x,-b.z);face.position.set(b.x,b.top+2+Hh/2,b.z);face.rotation.y=ry;scene.add(face);
+    [-1,1].forEach(s2=>{const leg=new THREE.Mesh(new THREE.BoxGeometry(0.25,2+Hh,0.25),metalD);leg.position.set(b.x+Math.cos(ry)*s2*W*0.4,b.top+(2+Hh)/2,b.z-Math.sin(ry)*s2*W*0.4);scene.add(leg);});});
+  /* ablakmosó állvány egy szomszéd torony oldalán */
+  {const b=NEAR[0];if(b){const fx=b.x+(-Math.sign(b.x)||1)*(b.w/2+0.9),y=b.top-25;const pl=new THREE.Group();pl.position.set(fx,y,b.z);scene.add(pl);
+    const fl=new THREE.Mesh(new THREE.BoxGeometry(1.2,0.12,4),metal);pl.add(fl);const rl=new THREE.Mesh(new THREE.BoxGeometry(1.2,1,0.08),metalD);rl.position.set(0,0.5,2);pl.add(rl);const rl2=rl.clone();rl2.position.z=-2;pl.add(rl2);
+    [-1.8,1.8].forEach(o=>{const c=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,25,4),metalD);c.position.set(0,12.5,o);pl.add(c);});NEAR.rig=pl;NEAR.rigY=y;}}}
+
+/* ---------- élet a városban: autók, madárraj, helikopter ---------- */
+const BIRDS=[],HELI={t:-20};
+{const bm=new THREE.MeshBasicMaterial({color:0x2a2c30,side:THREE.DoubleSide,fog:true});const wg=new THREE.BufferGeometry();wg.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0.18,-0.55,0.05,-0.1,0,0,-0.18, 0,0,0.18,0.55,0.05,-0.1,0,0,-0.18],3));wg.computeVertexNormals();
+  const r=mulberry32(91);for(let i=0;i<14;i++){const m=new THREE.Mesh(wg.clone(),bm);m.scale.setScalar(1.4);scene.add(m);BIRDS.push({m,ox:(r()-0.5)*14,oy:(r()-0.5)*4,oz:(r()-0.5)*14,ph:r()*6});}
+  const hg=new THREE.Group();const hb=new THREE.Mesh(new THREE.SphereGeometry(1.4,10,8),lam(0x2a3a4a));hb.scale.set(1,0.9,1.9);hg.add(hb);const tail=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.35,5,6),lam(0x2a3a4a));tail.rotation.x=Math.PI/2;tail.position.z=3.6;hg.add(tail);
+  const rot=new THREE.Mesh(new THREE.BoxGeometry(9,0.06,0.35),lam(0x18191b));rot.position.y=1.4;hg.add(rot);const sk=new THREE.Mesh(new THREE.BoxGeometry(2,0.08,3),lam(0x18191b));sk.position.y=-1.3;hg.add(sk);hg.visible=false;scene.add(hg);HELI.g=hg;HELI.rot=rot;}
+function stepLife(dt,t){CARS.forEach(c=>{c.pos+=c.sp*dt;if(c.pos>330)c.pos=-330;if(c.pos<-330)c.pos=330;
+    if(c.axisX){c.g.position.x=c.pos;c.g.position.z=c.lane===0?22.5:27.5;c.g.rotation.y=c.sp>0?Math.PI/2:-Math.PI/2;}else{c.g.position.z=c.pos;c.g.position.x=c.lane===2?31.5:36.5;c.g.rotation.y=c.sp>0?0:Math.PI;}});
+  const a=t*0.12,cx=Math.cos(a)*70-10,cz=Math.sin(a)*70-20,cy=24+Math.sin(t*0.3)*4;BIRDS.forEach(b=>{const x=cx+b.ox+Math.sin(t*0.7+b.ph)*1.5,z=cz+b.oz+Math.cos(t*0.6+b.ph)*1.5;b.m.position.set(x,cy+b.oy,z);b.m.rotation.y=-a;b.m.rotation.z=Math.sin(t*9+b.ph)*0.6;});
+  HELI.t+=dt;if(HELI.t>45)HELI.t=-15;const k=HELI.t/45;HELI.g.visible=HELI.t>0;if(HELI.t>0){HELI.g.position.set(-260+k*520,70+Math.sin(k*3)*6,-170+k*60);HELI.g.rotation.y=-Math.PI/2+0.1;HELI.rot.rotation.y+=dt*30;}
+  if(NEAR.rig){NEAR.rig.position.y=NEAR.rigY+Math.sin(t*0.05)*8;}}
+
+A.VAROS={glassM,stepLife,rects,walkable,clampRoof,GOND,stepGondola,CAMS,ANCHOR,PH,HOOKS,DEEP,
   /* szereplők: 0 Kuroda, 1-2 személyi testőr, 3-6 járőr (nehézség szerint), 7-8 erősítés */
   actors:['boss','guard','guard','patrol','patrol','patrol','patrol','reinf','reinf'],
   stair:{x:-18.5,z:-23.6},

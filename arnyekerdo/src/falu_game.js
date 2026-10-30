@@ -37,7 +37,7 @@ const K=(t,g)=>isTouch?t:g;
 const ST=[
   {name:'Érkezés',say:null,task:'Menj oda a mesterhez a kapu előtt.'},
   {name:'Csend',say:['あの者は耳がいい。しゃがんで通れ。','Ano mono wa mimi ga ii. Shagande tōre.','Annak jó a füle. Guggolva menj el mögötte.'],
-    task:'A tanítvány háttal áll, csukott szemmel, de mindent hall. Guggolj le ('+K('Guggol gomb','jobb egérgomb')+'), és osonj el mögötte a jobb oldali kapuig: guggolva csak 3–4 méterről hall meg. Ha nem mersz, dobj kavicsot ('+K('Kavics','5')+') a túlsó sarokba: odamegy megnézni, és közben átjutsz. Három kavicsod van.',open:true,pass:true},
+    task:'A tanítvány háttal áll, csukott szemmel, de mindent hall. Guggolj le ('+K('Guggol gomb','jobb egérgomb')+'), és osonj el mögötte a jobb oldali kapuig: guggolva csak 3–4 méterről hall meg. A sarokban álló bambuszcső (shishi-odoshi) időnként koppan: utána egy pillanatig elnyomja a lépteid zaját. Ha nem mersz, dobj kavicsot ('+K('Kavics','5')+') a túlsó sarokba: odamegy megnézni, és közben átjutsz. Három kavicsod van.',open:true,pass:true},
   {name:'Bokor',say:['茂みに隠れろ。灯りを避けよ。','Shigemi ni kakurero. Akari o sakeyo.','Bújj a bokrokba, kerüld a lámpást.'],
     task:'Egy tanítvány lámpással járőrözik. Guggolva a bokorban nem látszol. Figyeld a feje fölötti jelet: a ? a gyanúval telik, ha megtelik, észrevett. Juss át a bal oldali kapun.',open:true,pass:true},
   {name:'Bábuk',say:['背後から打て。三体とも。','Haigo kara ute. Santai tomo.','Hátulról üss. Mindhármat.'],
@@ -124,8 +124,10 @@ G.hooks.newRound=()=>{Object.assign(T,{i:0,done:false,wait:0,q:[],qt:0,fails:0,s
   GOAL.x=MS.x;GOAL.z=MS.z;G.setStones(0);G.setSmoke(0);G.setDarts(0);G.setSpikes(0);G.clearSpikes();setDay(false);$('dayFade').style.opacity=0;T.fadeT=0;startStation(0);
   G.showMsg('A mester a kapu előtt vár.');};
 
+G.hooks.noiseMul=(x,z)=>(F.SHISHI.maskT>0&&Math.hypot(x-F.SHISHI.x,z-F.SHISHI.z)<18?0.25:1)*(F.gravelAt(x,z)?1.7:1);
 G.hooks.update=dt=>{
   const t=S.time;F.stepGates(dt);F.stepDummies(dt,t);
+  if(F.stepFalu(dt,t)){const d=Math.hypot(P.x-F.SHISHI.x,P.z-F.SHISHI.z);if(d<40){G.tone(0.16*Math.max(0.15,1-d/40),620,380,0.1,'triangle');G.noiseHit(0.1*Math.max(0.15,1-d/40),900,'bandpass',0.08,2);}}
   /* mester: a játékos felé fordul, nem lehet átmenni rajta */
   {const dx=P.x-MS.x,dz=P.z-MS.z,d=Math.hypot(dx,dz);MS.ry+=G.wrapA(Math.atan2(-dx,-dz)-MS.ry)*Math.min(1,dt*2);
     if(P.mode==='ground'&&d<0.9&&d>1e-4){P.x=MS.x+dx/d*0.9;P.z=MS.z+dz/d*0.9;}

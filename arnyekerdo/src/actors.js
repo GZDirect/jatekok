@@ -106,7 +106,8 @@ function buildPolice(seed,opt){opt=opt||{};const ST=!!opt.student,MA=!!opt.maste
   const collar=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.09,0.06,8),shirt);collar.position.y=0.64;chest.add(collar);
   const neck=pivot(0,0.66,0);chest.add(neck);
   const head=new THREE.Mesh(new THREE.SphereGeometry(0.12,12,10),skin);head.scale.set(0.95,1.08,1);head.position.y=0.12;head.castShadow=true;neck.add(head);
-  const hair=new THREE.Mesh(new THREE.SphereGeometry(0.124,10,8,0,Math.PI*2,0,Math.PI*0.5),MA?L(0xe6e2da):black);hair.position.set(0,0.13,0.012);neck.add(hair);
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(0.126,12,8,0,Math.PI*2,0,Math.PI*0.52),MA?L(0xe6e2da):BO?L(0x6a6662):L(0x16120e));hair.position.set(0,0.13,0.014);hair.scale.set(1,1,1.04);neck.add(hair);
+  if(!POL&&!MA){const back=new THREE.Mesh(new THREE.SphereGeometry(0.11,8,6),hair.material);back.scale.set(1,0.7,0.6);back.position.set(0,0.1,0.06);neck.add(back);}
   if(POL){const capB=new THREE.Mesh(new THREE.CylinderGeometry(0.128,0.126,0.05,14),black);capB.position.y=0.2;neck.add(capB);
   const capT=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.128,0.07,14),navy);capT.position.y=0.255;capT.rotation.x=-0.08;neck.add(capT);
   const visor=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,0.012,14,1,false,Math.PI*0.5,Math.PI),black);visor.position.set(0,0.18,-0.06);visor.rotation.x=0.18;neck.add(visor);
@@ -118,8 +119,23 @@ function buildPolice(seed,opt){opt=opt||{};const ST=!!opt.student,MA=!!opt.maste
     [-1,1].forEach(s=>{const br=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.012,0.02),L(0xece8e0));br.position.set(s*0.045,0.165,-0.11);neck.add(br);});
     const robe=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.34,0.8,12,1,true),navy);robe.position.y=-0.32;hips.add(robe);}
   const eyeM=new THREE.MeshBasicMaterial({color:0x1a1210});[-1,1].forEach(s=>{const e=new THREE.Mesh(new THREE.SphereGeometry(0.012,6,5),eyeM);e.position.set(s*0.04,0.13,-0.113);neck.add(e);});
+  /* arc: orr, fülek, szemöldök, száj, áll; nyak */
+  {const skinD=L(0xb88e6c);const nose=new THREE.Mesh(new THREE.ConeGeometry(0.018,0.05,5),skinD);nose.rotation.x=-Math.PI/2-0.25;nose.position.set(0,0.1,-0.126);neck.add(nose);
+    [-1,1].forEach(s=>{const ear=new THREE.Mesh(new THREE.SphereGeometry(0.026,6,5),skinD);ear.scale.set(0.45,1,0.8);ear.position.set(s*0.116,0.12,0.0);neck.add(ear);
+      if(!MA){const b=new THREE.Mesh(new THREE.BoxGeometry(0.042,0.01,0.012),black);b.position.set(s*0.042,0.158,-0.112);b.rotation.z=-s*0.12;neck.add(b);}});
+    const mouth=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.006,0.008),L(0x6a3e30));mouth.position.set(0,0.062,-0.114);neck.add(mouth);
+    const nk=new THREE.Mesh(new THREE.CylinderGeometry(0.048,0.055,0.09,8),skin);nk.position.y=0.0;neck.add(nk);}
+  /* ruha részletei: gombsor, zsebek, cipőtalp */
+  if(POL){[0.18,0.3,0.42].forEach(y=>{const b=new THREE.Mesh(new THREE.SphereGeometry(0.009,5,4),gold);b.position.set(0,y,-0.212);chest.add(b);});
+    [-1,1].forEach(s=>{const pk=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.06,0.015),L(0x1a2440));pk.position.set(s*0.09,0.47,-0.2);chest.add(pk);});}
+  if(SU){[-1,1].forEach(s=>{const lap=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.24,0.015),L(BO?0x3a3e46:0x0e0f12));lap.position.set(s*0.075,0.46,-0.205);lap.rotation.z=s*0.32;lap.rotation.x=0.1;chest.add(lap);});
+    [0.2,0.3].forEach(y=>{const b=new THREE.Mesh(new THREE.SphereGeometry(0.009,5,4),black);b.position.set(0,y,-0.185);chest.add(b);});
+    const pocket=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.012,0.012),L(0xeeeeea));pocket.position.set(0.11,0.47,-0.2);chest.add(pocket);}
+  if(ST){const obi=new THREE.Mesh(new THREE.CylinderGeometry(0.19,0.19,0.09,10),L(0x1a1a22));obi.position.y=0.06;hips.add(obi);
+    const lap=new THREE.Mesh(new THREE.BoxGeometry(0.03,0.3,0.015),L(0xd9d4c8));lap.position.set(0.03,0.42,-0.2);lap.rotation.z=0.45;chest.add(lap);}
   const arms=[-1,1].map(s=>{const shp=pivot(s*0.26,0.55,0);chest.add(shp);shp.add(limb(0.3,0.06,0.07,navy));const el=pivot(0,-0.3,0);shp.add(el);el.add(limb(0.27,0.05,0.06,navy));
-    const hand=new THREE.Mesh(new THREE.SphereGeometry(0.048,7,6),glove);hand.position.y=-0.3;el.add(hand);return{sh:shp,el};});
+    const hand=new THREE.Mesh(new THREE.SphereGeometry(0.048,7,6),POL?glove:skin);hand.scale.set(0.85,1.15,0.7);hand.position.y=-0.3;el.add(hand);
+    const th=new THREE.Mesh(new THREE.SphereGeometry(0.018,5,4),POL?glove:skin);th.position.set(-s*0.035,-0.29,-0.02);el.add(th);return{sh:shp,el};});
   /* revolver a jobb kézben: a cső az alkar irányába mutat */
   const gun=new THREE.Group();gun.position.set(0,-0.31,0);arms[1].el.add(gun);
   if(ST){const bk=new THREE.Mesh(new THREE.CylinderGeometry(0.016,0.02,0.95,7),L(0x8a6a44));bk.position.set(0,-0.42,-0.02);gun.add(bk);}
@@ -146,7 +162,10 @@ function buildPolice(seed,opt){opt=opt||{};const ST=!!opt.student,MA=!!opt.maste
     hips.position.y=0.98-Math.abs(Math.sin(ph))*0.04*k;hips.rotation.x=-0.05*k-o.stagger*0.35;chest.rotation.y=o.sweep*(1-o.fall);neck.rotation.x=-o.bp*0.5*(1-o.fall);
     const alert=o.st==='alert'?1:0,lo=(1-o.fall);
     arms[1].sh.rotation.x=lo*(alert?Math.PI/2-0.06+o.bp*0.5:0.25+sw*0.3)+o.fall*0.3;arms[1].el.rotation.x=alert?0:0.55*lo;arms[1].sh.rotation.z=alert?0.12:-0.06;
-    arms[0].sh.rotation.x=lo*(Math.PI/2-0.15+o.bp)+o.fall*0.2;arms[0].el.rotation.x=0.12*lo;arms[0].sh.rotation.z=0.1*lo;
+    if(SU||MA){arms[0].sh.rotation.x=lo*(alert&&!BO?0.3:-sw*0.55)+o.fall*0.2;arms[0].el.rotation.x=(0.25+Math.max(0,-sw)*0.3)*lo;arms[0].sh.rotation.z=0.08*lo;}
+    else{arms[0].sh.rotation.x=lo*(Math.PI/2-0.15+o.bp)+o.fall*0.2;arms[0].el.rotation.x=0.12*lo;arms[0].sh.rotation.z=0.1*lo;}
+    if(BO&&!alert){arms[1].sh.rotation.x=lo*(sw*0.5);arms[1].el.rotation.x=0.3*lo;}
+    chest.rotation.y+=sw*0.12*lo;chest.rotation.z=Math.sin(ph)*0.03*k;hips.rotation.y=-sw*0.08;
     body.rotation.x=o.fall*1.48;body.position.y=o.fall*0.12;body.position.z=o.fall*0.15;
     muzzle.material.opacity=o.shoot;muzzle.scale.setScalar(0.4+o.shoot*0.5);};
   return g;}

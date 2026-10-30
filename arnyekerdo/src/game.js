@@ -52,6 +52,11 @@ function genRoute(i,n){const z0=64,z1=-96,band=(z0-z1)/n,zc=z0-(i+0.5)*band,xc=r
 for(let i=0;i<MAXCOPS;i++){const mesh=A.buildPolice(i+3,LV==='falu'?{student:true}:LV==='varos'?{suit:true,boss:A.VAROS.actors[i]==='boss'}:null);scene.add(mesh);
   ALLCOPS.push({id:i,mesh,beam:A.makeBeam(),pool:A.makePool(),mark:makeMark(),route:[],ri:0,x:0,z:0,ry:0,st:'patrol',tx:0,tz:0,wait:0,aw:0,bp:-0.2,sweep:0,hp:3,down:false,dead:false,koT:0,fall:0,stagger:0,
     shootCd:0,aimT:0,shoot:0,lostT:0,searchT:0,spd:0,sees:false,saidT:0,found:false,lookUpT:0,blind:0,lens:new THREE.Vector3(),dir:new THREE.Vector3(0,0,-1),seenBody:new Set(),stuck:0,hiddenBody:false,stepT:0,radioT:null});}
+/* puha talpárnyék a szereplők alatt (olcsó, a valódi árnyék mellé) */
+const BLOB=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(0,0,0,0.55)');gr.addColorStop(0.6,'rgba(0,0,0,0.25)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);
+  const m=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false});return m;})();
+ALLCOPS.forEach(c=>{const b=new THREE.Mesh(new THREE.PlaneGeometry(1.1,1.1),BLOB);b.rotation.x=-Math.PI/2;b.renderOrder=2;scene.add(b);c.blob=b;});
+if(!isTouch){moonLight.shadow.mapSize.set(2048,2048);}
 function setupCops(){COPS.length=0;if(LV!=='erdo'){ALLCOPS.forEach(c=>COPS.push(c));if(G.hooks.setup)G.hooks.setup();return;}ALLCOPS.forEach((c,i)=>{const on=i<D.n;c.mesh.visible=on;c.beam.visible=on;c.pool.visible=on;c.mark.visible=false;if(on)COPS.push(c);});
   COPS.forEach((c,i)=>{c.route=genRoute(i,COPS.length);resetCop(c);});}
 function resetCop(c){const k=Math.floor(Math.random()*c.route.length);c.ri=k;c.x=c.route[k].x+rnd(-2,2);c.z=c.route[k].z+rnd(-2,2);pushOut(c,0.5);
@@ -234,9 +239,10 @@ function dest(pan){try{if(ac.createStereoPanner){const p=ac.createStereoPanner()
 function panOf(x,z){const ang=Math.atan2(x-P.x,z-P.z);return clamp(-Math.sin(wrapA(ang-(P.yaw+Math.PI))),-1,1);}
 function noisePan(vol,freq,type,dec,q,pan){if(!ac)return;try{const t=ac.currentTime,s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=noiseBuf;f.type=type;f.frequency.value=freq;f.Q.value=q||0.7;
   env(g,t,0.004,vol,dec);s.connect(f);f.connect(g);g.connect(dest(pan));s.start(t,Math.random()*0.3);s.stop(t+dec+0.05);}catch(e){}}
-function surfAt(x,z){if(LV==='varos')return bushAt(x,z)?'bush':'road';if(z<-ZN+1&&Math.abs(x)<4)return 'road';if(bushAt(x,z))return 'bush';const n=0.5+0.5*Math.sin(x*0.08+Math.cos(z*0.06)*2)*Math.cos(z*0.07);return n>0.55?'leaves':'grass';}
+function surfAt(x,z){if(A.FALU&&A.FALU.gravelAt(x,z))return 'gravel';if(LV==='varos')return bushAt(x,z)?'bush':'road';if(z<-ZN+1&&Math.abs(x)<4)return 'road';if(bushAt(x,z))return 'bush';const n=0.5+0.5*Math.sin(x*0.08+Math.cos(z*0.06)*2)*Math.cos(z*0.07);return n>0.55?'leaves':'grass';}
 function footstep(){const v=P.drag?0.5:P.crouch?0.3:P.running?1:0.6,s=surfAt(P.x,P.z),r=0.85+Math.random()*0.3;
   if(s==='road'){noisePan(0.06*v*r,900,'lowpass',0.05,0.7,0);noisePan(0.03*v,4200,'bandpass',0.03,2,0);}
+  else if(s==='gravel'){noisePan(0.09*v*r,3200*r,'bandpass',0.08,1.2,0);noisePan(0.06*v,5200,'highpass',0.06,0.8,0);noisePan(0.04*v,1800,'bandpass',0.05,1,0);}
   else if(s==='bush')noisePan(0.1*v*r,1700,'bandpass',0.3,0.8,0);
   else if(s==='leaves'){noisePan(0.07*v*r,2600*r,'bandpass',0.09,1.4,0);noisePan(0.035*v,3800,'highpass',0.05,0.7,(Math.random()-0.5)*0.4);}
   else noisePan(0.045*v*r,1100*r,'bandpass',0.12,0.9,0);}
@@ -486,6 +492,7 @@ function fire(c,dh){c.shootCd=rnd(1.0,1.5);c.shoot=1;S.shots++;gunshot(dh);P.noi
   else{noiseHit(0.15,5000,'highpass',0.08);}
   COPS.forEach(o=>{if(o===c||o.down)return;if(Math.hypot(o.x-c.x,o.z-c.z)<60&&o.st!=='alert'){o.st='search';o.searchT=26;o.tx=S.lastKnown.x+rnd(-5,5);o.tz=S.lastKnown.z+rnd(-5,5);}});}
 function syncCop(c,dt){const m=c.mesh,y=H(c.x,c.z);m.position.set(c.x,y,c.z);m.rotation.y=c.ry;
+  c.blob.visible=m.visible;c.blob.position.set(c.x-Math.sin(c.ry)*c.fall*0.7,y+0.035,c.z-Math.cos(c.ry)*c.fall*0.7);c.blob.scale.set(1+c.fall*0.4,1+c.fall*1.2,1);c.blob.rotation.z=c.ry;
   m.userData.anim(S.time,c.spd,dt,{st:c.st,bp:c.bp,sweep:c.sweep,shoot:c.shoot,fall:c.fall,stagger:c.stagger>0?Math.sin(c.stagger*12)*0.6:0});
   m.updateMatrixWorld(true);const R=m.userData.R;R.lensP.getWorldPosition(c.lens);c.dir.set(0,-1,0).transformDirection(R.lensP.matrixWorld);
   /* fénycsóva */
@@ -546,7 +553,7 @@ function update(dt){
     const f=-jy,s=jx,sy=Math.sin(P.yaw),cy=Math.cos(P.yaw);
     P.x+=(-sy*f+cy*s)*speed*dt;P.z+=(-cy*f-sy*s)*speed*dt;pushOut(P,0.45);
     P.moving=mag>0.12;P.stam=clamp(P.stam+(running?-20:11)*dt,0,100);if(P.stam<=1&&P.run){P.run=false;updateButtons();}
-    P.noise=P.moving?(P.drag?6:P.crouch?4:running?27:12)*mag:0;if(P.moving)P.bob+=dt*speed*2.2;
+    P.noise=P.moving?(P.drag?6:P.crouch?4:running?27:12)*mag:0;if(G.hooks.noiseMul&&P.noise>0)P.noise*=G.hooks.noiseMul(P.x,P.z);if(P.moving)P.bob+=dt*speed*2.2;
     {const ph=Math.floor(P.bob/Math.PI);if(ph!==P.stepPh){P.stepPh=ph;if(P.moving)footstep();}}
     {const b=P.moving?bushAt(P.x,P.z):null;BR.in=!!b;if(b){if(BR.b&&BR.b!==b)A.shakeBush(BR.b,0,0);BR.b=b;BR.k=1;}}
     if(P.drag){const c=P.drag;if(!c.down){P.drag=null;updateButtons();}else{const f=fwd(),tx=P.x+f.x*1.0,tz=P.z+f.z*1.0,k=Math.min(1,dt*8);c.x+=(tx-c.x)*k;c.z+=(tz-c.z)*k;pushOut(c,0.35);c.ry=P.yaw+Math.PI;/* a rendőr hanyatt fekszik, a lábánál fogva húzod: a teste előtted látszik */}}

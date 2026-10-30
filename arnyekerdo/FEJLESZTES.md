@@ -103,6 +103,12 @@ A tervezésnél ezekre figyeltünk: Hitman (rövid, kiszámítható célpont-kö
 - **Nappal:** a közös `G.setDaylight(on)` kapcsolja (a falu vizsgája is ezt használja).
 - **Teszt:** `?palya=varos&aetest`, `window.AE_VAROS`.
 
+## 2d. Grafikai részletek (falu és város)
+
+- **Szereplők:** orr, fül, szemöldök, száj, nyak, hüvelykujj; a rendőrön gombok és zsebek, az öltönyön hajtóka és díszzsebkendő, a tanítványon öv. Az öltönyösök és a mester bal karja járás közben leng, a törzs ellentétesen fordul. Talpárnyék minden szereplő alatt (`BLOB`), gépen 2048-as árnyéktérkép.
+- **Város:** valódi méretű ablakos homlokzatok (4 fajta), lépcsőzetes tetők, gépházak, antennák, felhők, rácsos daru, tetőlemez és napelemek, mozgó autók, madárraj, időnként helikopter (`stepLife`). A közeli tornyokon erkélyek, tetőkert medencével, felirat nélküli reklámtáblák, ablakmosó állvány. A penthouse üvege egyszer lefényképezi a környezetét (CubeCamera), abban tükröződik.
+- **Falu:** cserép- és nádtetők, tornác, papír tolóajtók, lámpások, lépőkövek, bambuszligetek, új tórii, juhar- és cseresznyefák (rózsaszín hulló szirmok). Az érkezésnél koi-tó ívelt híddal és gereblyézett kavicskert: **a kavicson 1,7-szer hangosabbak a léptek** (`gravelAt`, `noiseMul`). A csend udvarán shishi-odoshi: koppanás után 1,6 mp-ig a léptek zaja negyedére csökken 18 m-en belül. A falu belsejében ritkább és alacsonyabb a fű.
+
 ## 3. Fájlok
 
 A `GZDirect/jatekok` repóban minden játék külön mappában van. A GitHub Pages a `main` ágból közvetlenül szolgálja ki őket.

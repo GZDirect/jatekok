@@ -78,7 +78,7 @@ G.hooks.newRound=()=>{Object.assign(T,{killed:false,bodyFound:false,ph:0,phT:0,r
   $('tutText').textContent='Kuroda, aki a rendőröket rád küldte, a szomszéd torony tetején lévő üvegfalú irodában dolgozik. Kampóval jutsz át: a darura, onnan a víztoronyra. Az üvegen át mindenki lát. A kamerák pásztáznak, füsttel vakíthatók. Végezz vele, aztán csússz le a kábelen a terasz sarkában.';};
 
 G.hooks.update=dt=>{const t=S.time,b=boss();
-  V.stepGondola(dt);stepCams(dt,t);
+  V.stepGondola(dt);stepCams(dt,t);V.stepLife(dt,t);
   if(T.panelT>0){T.panelT-=dt;if(T.panelT<=0||P.z<8)$('tut').hidden=true;}
   /* mentési pont: a céltorony teteje */
   if(!T.cp&&P.mode==='ground'&&P.z<8.2){T.cp=true;G.showMsg('Mentési pont: a céltorony teteje.');}
@@ -131,6 +131,10 @@ $('lead').textContent='Délben, egy nagyváros közepén. Egy felhőkarcoló tet
 document.querySelectorAll('#diff [data-d] small').forEach(s=>{const k=s.parentNode.dataset.d;s.textContent=NP[k]+' őr a tetőn';});
 {const dts=document.querySelectorAll('.how dt');dts.forEach(dt=>{if(dt.textContent==='Kampó')dt.nextElementSibling.textContent='célozz egy kampópontra (daru, víztorony, antenna): ha felderül, átlendülsz rá';if(dt.textContent==='Karmok')dt.nextElementSibling.textContent='a víztorony lábán és az antenna oszlopán felmászhatsz (1–7: eszközváltás)';});}
 $('go').querySelector('span').textContent='Cél: Kuroda. Utána a kábel a terasz sarkában.';
+/* az üveg egyszer lefotózza a környezetét (tükröződés) */
+try{const rt=new THREE.WebGLCubeRenderTarget(256,{generateMipmaps:true,minFilter:THREE.LinearMipmapLinearFilter});const cc=new THREE.CubeCamera(0.5,900,rt);cc.position.set(6,2.2,-37);A.scene.add(cc);
+  const gm=V.glassM,vis=gm.visible;gm.visible=false;ALLCOPS.forEach(c=>c.mesh.visible=false);cc.update(A.renderer,A.scene);gm.visible=vis;G.hooks.setup();
+  gm.envMap=rt.texture;gm.reflectivity=0.55;gm.combine=THREE.MixOperation;gm.needsUpdate=true;}catch(e){}
 G.hooks.setup();
 if(/[?&]aetest/.test(location.search))window.AE_VAROS={T,V,setPhase,boss,path,finish};
 })();

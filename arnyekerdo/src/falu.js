@@ -192,5 +192,58 @@ const students=[
 Object.values(GATES).forEach(G=>{if(G.kind!=='gate')return;[-1,1].forEach(s=>{const x=G.x+s*1.0,y=H(G.x,G.z)+2.05;const lp=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.15,0.36,10),new THREE.MeshLambertMaterial({color:0xf2e2c0,emissive:0xe08a40,emissiveIntensity:0.75}));lp.position.set(x,y,G.z+0.3);scene.add(lp);
   const gl=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,color:0xffb060,transparent:true,opacity:0.55,depthWrite:false,blending:THREE.AdditiveBlending}));gl.scale.setScalar(1.5);gl.position.copy(lp.position);scene.add(gl);lampGlow.push(gl);});});
 
-A.FALU={LIGHTS,shojiM,ROOMS,GATES,DUMMIES,master,students,stepGates,stepDummies,lampGlow,XF};
+/* ---------- juhar- és cseresznyefák az udvarok sarkában ---------- */
+const TREES2=[];
+{const spots=[[-14,45.5,1],[14.5,34,0],[-14.5,26,1],[14.5,7,0],[-14.5,-4,1],[14.5,-36,0],[-14.5,-56,1],[14.5,-70,0],[-14.5,-81,1],[14.5,-94,0],[-14.5,-104,1],[14.5,-125,0]];
+  const trunkM=lam(0x4a3628),r=mulberry32(37),blobs=[];
+  spots.forEach(q=>{const [x,z,kind]=q,h=3.2+r()*0.8;const tr=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.2,h,7),trunkM);tr.position.set(x,H(x,z)+h/2,z);tr.rotation.z=(r()-0.5)*0.15;tr.castShadow=true;scene.add(tr);
+    for(let k=0;k<3;k++){const b=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.07,1.6,5),trunkM);const a=r()*6.28;b.position.set(x+Math.cos(a)*0.5,H(x,z)+h-0.2,z+Math.sin(a)*0.5);b.rotation.set(Math.sin(a)*0.8,0,-Math.cos(a)*0.8);scene.add(b);}
+    for(let k=0;k<7;k++){const a=r()*6.28,rr=r()*1.4;blobs.push({x:x+Math.cos(a)*rr,y:H(x,z)+h+0.2+r()*1.1,z:z+Math.sin(a)*rr,s:0.8+r()*0.6,kind,c:r()});}
+    const o={x,z,r:0.28,kind:'prop'};trees.push(o);addTo(grid,o);TREES2.push({x,z,kind});});
+  const m=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),lam(0xffffff,{flatShading:true}),blobs.length),D=new THREE.Object3D(),C=new THREE.Color();
+  blobs.forEach((b,i)=>{D.position.set(b.x,b.y,b.z);D.rotation.set(b.c*4,b.c*7,0);D.scale.set(b.s,b.s*0.75,b.s);D.updateMatrix();m.setMatrixAt(i,D.matrix);
+    m.setColorAt(i,b.kind?C.setHSL(0.94+b.c*0.03,0.55,0.78+b.c*0.08):C.setHSL(0.02+b.c*0.04,0.75,0.42+b.c*0.1));});m.castShadow=true;scene.add(m);
+  if(A.falling)A.falling.material.color.setHex(0xf0b0c4);}
+
+/* ---------- érkezés: koi-tó híddal, gereblyézett kavicskert ---------- */
+const KOI=[],GRAVEL=[{x0:-14,x1:-6.5,z0:39,z1:46}];
+{const px=10,pz=42,R=2.7;
+  const water=new THREE.Mesh(new THREE.CircleGeometry(R,28),new THREE.MeshPhongMaterial({color:0x1c3a40,shininess:110,specular:0x8ab0c0,transparent:true,opacity:0.92}));water.rotation.x=-Math.PI/2;water.scale.set(1.25,1,1);water.position.set(px,H(px,pz)+0.04,pz);scene.add(water);
+  const r=mulberry32(53),rim=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),lam(0x6a6862,{flatShading:true}),36),D=new THREE.Object3D();
+  for(let i=0;i<36;i++){const a=i/36*Math.PI*2,x=px+Math.cos(a)*R*1.25*1.02,z=pz+Math.sin(a)*R*1.02;D.position.set(x,H(x,z)+0.05,z);D.rotation.set(r(),r()*6,r());const s=0.28+r()*0.18;D.scale.set(s,s*0.6,s);D.updateMatrix();rim.setMatrixAt(i,D.matrix);
+    if(Math.abs(Math.sin(a))<0.35)continue;/* a híd két végénél nincs ütköző */const o={x,z,r:0.5,low:true,kind:'prop'};trees.push(o);addTo(grid,o);}
+  scene.add(rim);
+  /* ívelt fahíd kelet-nyugati irányban */
+  const red2=lam(0x9a2e20),bw=1.2,L=R*2.5+1;for(let i=0;i<12;i++){const t=i/11,x=px-L/2+t*L,y=Math.sin(t*Math.PI)*0.35;const pl=new THREE.Mesh(new THREE.BoxGeometry(L/12+0.02,0.08,bw),plankM);pl.position.set(x,H(px,pz)+0.12+y,pz);pl.receiveShadow=true;scene.add(pl);}
+  [-1,1].forEach(s=>{for(let i=0;i<=6;i++){const t=i/6,x=px-L/2+t*L,y=Math.sin(t*Math.PI)*0.35;const post=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.6,0.07),red2);post.position.set(x,H(px,pz)+0.42+y,pz+s*bw/2);scene.add(post);}
+    const rail=new THREE.Mesh(new THREE.TorusGeometry(L/2,0.035,4,20,Math.PI),red2);rail.scale.set(1,0.35/(L/2)*1.2,1);rail.position.set(px,H(px,pz)+0.68,pz+s*bw/2);scene.add(rail);});
+  /* tavirózsa-levelek és pontyok */
+  for(let i=0;i<6;i++){const a=r()*6.28,rr=r()*R*0.8;const lp=new THREE.Mesh(new THREE.CircleGeometry(0.22+r()*0.1,10),lam(0x3e6a2c));lp.rotation.x=-Math.PI/2;lp.position.set(px+Math.cos(a)*rr*1.2,H(px,pz)+0.06,pz+Math.sin(a)*rr);scene.add(lp);}
+  const koiM=[lam(0xe8602a),lam(0xf2efe6),lam(0xe8a030)];for(let i=0;i<5;i++){const k=new THREE.Mesh(new THREE.SphereGeometry(0.12,8,6),koiM[i%3]);k.scale.set(0.55,0.35,1.6);scene.add(k);KOI.push({m:k,px,pz,r:0.8+r()*1.4,ph:r()*6.28,sp:0.25+r()*0.25,y:H(px,pz)+0.0});}}
+{const g=GRAVEL[0],w=g.x1-g.x0,d=g.z1-g.z0,cx=(g.x0+g.x1)/2,cz=(g.z0+g.z1)/2;
+  const tex=canvasTex(256,256,(c,W,Hh)=>{c.fillStyle='#8e8a80';c.fillRect(0,0,W,Hh);const r=mulberry32(61);for(let i=0;i<3000;i++){c.fillStyle=['rgba(80,76,68,0.4)','rgba(180,176,166,0.4)'][i%2];c.fillRect(r()*W,r()*Hh,1.5,1.5);}
+    c.strokeStyle='rgba(60,56,50,0.6)';c.lineWidth=2;for(let y=6;y<Hh;y+=10){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke();}},true);tex.repeat.set(w/4,d/4);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),lam(0xffffff,{map:tex}));m.rotation.x=-Math.PI/2;m.position.set(cx,H(cx,cz)+0.03,cz);m.receiveShadow=true;scene.add(m);
+  /* három kő a kavicsban, körülöttük körkörös gereblyézés */
+  [[-11.5,41.5,0.6],[-9,44,0.4],[-8.2,40.5,0.35]].forEach(q=>{const rk=new THREE.Mesh(new THREE.DodecahedronGeometry(1,0),lam(0x5a5a56,{flatShading:true}));rk.scale.set(q[2]*1.2,q[2],q[2]);rk.position.set(q[0],H(q[0],q[1])+q[2]*0.5,q[1]);rk.castShadow=true;scene.add(rk);
+    for(let k=1;k<=2;k++){const ring=new THREE.Mesh(new THREE.RingGeometry(q[2]*1.3+k*0.25,q[2]*1.3+k*0.25+0.04,24),new THREE.MeshBasicMaterial({color:0x8e887a}));ring.rotation.x=-Math.PI/2;ring.position.set(q[0],H(q[0],q[1])+0.035,q[1]);scene.add(ring);}
+    const o={x:q[0],z:q[1],r:q[2]*1.1,low:true,kind:'rock'};trees.push(o);addTo(grid,o);});}
+const gravelAt=(x,z)=>GRAVEL.some(g=>x>g.x0&&x<g.x1&&z>g.z0&&z<g.z1);
+
+/* ---------- shishi-odoshi a csend udvarán: koppanáskor egy pillanatra elnyomja a lépteket ---------- */
+const SHISHI={x:13.2,z:33.2,t:0,period:9,tip:0,maskT:0};
+{const g=new THREE.Group();g.position.set(SHISHI.x,H(SHISHI.x,SHISHI.z),SHISHI.z);g.rotation.y=-0.6;scene.add(g);const bam=lam(0x8a9a4a),stone=lam(0x6a6a64,{flatShading:true});
+  const basin=new THREE.Mesh(new THREE.CylinderGeometry(0.45,0.55,0.4,10),stone);basin.position.set(0,0.2,0.8);g.add(basin);const wtr=new THREE.Mesh(new THREE.CircleGeometry(0.38,12),new THREE.MeshPhongMaterial({color:0x22404a,shininess:90}));wtr.rotation.x=-Math.PI/2;wtr.position.set(0,0.41,0.8);g.add(wtr);
+  const spout=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,1.1,6),bam);spout.rotation.x=Math.PI/2.4;spout.position.set(0,1.05,-0.55);g.add(spout);
+  [-1,1].forEach(s=>{const p=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,0.8,6),bam);p.position.set(s*0.14,0.4,0);g.add(p);});
+  const piv=new THREE.Group();piv.position.set(0,0.62,0);g.add(piv);const tube=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,1.3,8),bam);tube.rotation.x=Math.PI/2;tube.position.z=0.1;piv.add(tube);
+  const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(0.16,0),stone);rock.position.set(0,0.12,-0.55);g.add(rock);SHISHI.piv=piv;
+  const o={x:SHISHI.x,z:SHISHI.z,r:0.7,low:true,kind:'prop'};trees.push(o);addTo(grid,o);}
+function stepFalu(dt,t){KOI.forEach(k=>{k.ph+=dt*k.sp;const a=k.ph;k.m.position.set(k.px+Math.cos(a)*k.r*1.2,k.y,k.pz+Math.sin(a)*k.r*0.85);k.m.rotation.y=-a;});
+  SHISHI.t+=dt;let knock=false;const ph=SHISHI.t%SHISHI.period;const fill=Math.min(1,ph/(SHISHI.period-0.6));let ang;
+  if(ph<SHISHI.period-0.6)ang=-0.25+fill*0.45;else{ang=0.55-(ph-(SHISHI.period-0.6))*0.8;}
+  if(SHISHI.last!=null&&SHISHI.last<SHISHI.period-0.25&&ph>=SHISHI.period-0.25)knock=true;SHISHI.last=ph;SHISHI.piv.rotation.x=ang;
+  if(SHISHI.maskT>0)SHISHI.maskT-=dt;if(knock)SHISHI.maskT=1.6;return knock;}
+
+A.FALU={TREES2,KOI,GRAVEL,gravelAt,SHISHI,stepFalu,LIGHTS,shojiM,ROOMS,GATES,DUMMIES,master,students,stepGates,stepDummies,lampGlow,XF};
 })();
