@@ -110,6 +110,21 @@ A tervezésnél ezekre figyeltünk: Hitman (rövid, kiszámítható célpont-kö
 - **Város:** valódi méretű ablakos homlokzatok (4 fajta), lépcsőzetes tetők, gépházak, antennák, felhők, rácsos daru, tetőlemez és napelemek, mozgó autók, madárraj, időnként helikopter (`stepLife`). A közeli tornyokon erkélyek, tetőkert medencével, felirat nélküli reklámtáblák, ablakmosó állvány. A penthouse üvege egyszer lefényképezi a környezetét (CubeCamera), abban tükröződik.
 - **Falu:** cserép- és nádtetők, tornác, papír tolóajtók, lámpások, lépőkövek, bambuszligetek, új tórii, juhar- és cseresznyefák (rózsaszín hulló szirmok). Az érkezésnél koi-tó ívelt híddal és gereblyézett kavicskert: **a kavicson 1,7-szer hangosabbak a léptek** (`gravelAt`, `noiseMul`). A csend udvarán shishi-odoshi: koppanás után 1,6 mp-ig a léptek zaja negyedére csökken 18 m-en belül. A falu belsejében ritkább és alacsonyabb a fű.
 
+## 2e. Negyedik pálya: Hegyi expressz (`?palya=vonat`)
+
+Délben, a hegyek között. Kuroda jobbkeze, Mori, a cég iratait a magánvonatán viszi északra. A 3. pálya után nyílik (mentés: `l4`, `r4`, `s4`).
+
+- **Motor:** a vonat áll, a táj mozog alatta (`LIFE.V` = 22 m/s, menetirány −z). A táj 60 m-es csempékből áll (rét, erdő, falu, folyó rácsos híddal), amelyek hátrafelé vándorolnak és elölről újraépülnek (`stepLand`). A sínek és a felsővezeték rövid darabokból állnak (a nagyon hosszú háromszögek átlátszottak a padlón).
+- **Kocsik** hátulról előre (`VONAT_CARS` a `world.js`-ben, a padló magassága kocsinként: `trainH`): kilátókocsi (rajt a hátsó peronon, kalauz), tehervagon (csak a tetején lehet átmenni, létrával fel és le), fülkés személykocsi (folyosó jobb oldalt, 4 fülke rejtekhellyel), pőrekocsi két konténerrel (kampópont mindkettő tetején, `VONAT_GIANTS`), étkezőkocsi (magas támlás boxok takarnak, elöl konyha), szalonkocsi (Mori, két testőr), mozdony (gépterem két keskeny folyosóval, elöl a vezetőállás a vészfékkel). Az ajtók 1,7 m szélesek, hogy a játékos és az őrök is átférjenek.
+- **Feladat:** az aktatáska elvétele Mori íróasztaláról, aztán a vészfék a mozdonyban. Mori napirendje: íróasztal (28 mp) ↔ ablak (14 mp). Ha visszaér, és az aktatáska hiányzik, riaszt. Az ajtó melletti testőr 7–11 mp-enként a bejárat felé fordul.
+- **Alagutak:** időnként (az első rögtön, amikor a tehervagon tetejére érsz) dudaszó és felirat jelzi. A tetőn állva vagy a konténer tetején lesodor (visszaállás az utolsó mentési pontra, vagy a tehervagon aljára); guggolva átjutsz. Az alagútban sötét van: az őrök látótávolsága 55%-ra csökken (`G.visMul`).
+- **Zajok:** a tetőn és a pőrekocsin a menetszél elnyomja a lépteket (0,55×), az alagútban a zakatolás (0,7×).
+- **Őrök a kocsik között:** a `steerCops` a kocsi ajtóin át vezeti őket (fülkés kocsiban a folyosón, a mozdonyban a géptermen kívül), hogy keresés után vissza tudjanak térni a helyükre.
+- **Mentési pontok:** a fülkés kocsi eleje és a szalonkocsi ajtaja. Halál után „Folytatás a mentési pontról”.
+- **Ülő utasok:** díszlet, nem figyelnek (`civ:true`).
+- **Pecsétek:** Árnyék (nem volt riasztás), Tiszta kéz (senki sem halt meg), Gyors (7 percen belül).
+- **Teszt:** `?palya=vonat&aetest`, `window.AE_VONAT`.
+
 ## 3. Fájlok
 
 A `GZDirect/jatekok` repóban minden játék külön mappában van. A GitHub Pages a `main` ágból közvetlenül szolgálja ki őket.
@@ -136,8 +151,10 @@ arnyekerdo/
                     Tesztelési horog: ?aetest címparaméterrel window.AE_TEST.
     varos.js      ← a 3. pálya díszlete: tetők, város, daru, víztorony, antenna, penthouse, kamerák, ablakmosó kosár (AE.VAROS)
     varos_game.js ← a 3. pálya menete: Kuroda napirendje, testőrök, erősítés, kamerák, kosár, kábel, pecsétek
+    vonat.js      ← a 4. pálya díszlete: kocsik, belső terek, mozdony, mozgó táj, alagút (AE.VONAT)
+    vonat_game.js ← a 4. pálya menete: őrök, Mori napirendje, alagutak és sötétség, aktatáska, vészfék, pecsétek
     falu_game.js  ← a 2. pálya próbái, a mester szövegei, hiba és újrakezdés, pecsétek
-    build.py      ← összeállítja az index.html-t (sorrend: world, actors, falu, varos, parkolt, game, falu_game, varos_game)
+    build.py      ← összeállítja az index.html-t (sorrend: world, actors, falu, varos, vonat, parkolt, game, falu_game, varos_game, vonat_game)
 ```
 
 Összeállítás a repó gyökeréből:

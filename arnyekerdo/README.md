@@ -9,6 +9,8 @@ A második pálya (**A mester faluja**) kiképzés: egy idős mester rejtett heg
 
 A harmadik pálya (**Üvegtorony**) nappal, egy nagyváros felhőkarcolóinak tetején játszódik: daruról víztoronyra kampózol át, az üvegfalú irodában ülő Kurodát kell kiiktatni a testőrei és a kamerák elől, aztán egy kábelen lecsúszni.
 
+A negyedik pálya (**Hegyi expressz**) egy száguldó magánvonaton játszódik nappal: kocsiról kocsira jutsz előre, a tehervagon tetején az alagutak elől le kell guggolni, el kell venni Mori aktatáskáját, és a mozdonyban meghúzni a vészféket.
+
 **Játék:** https://gzdirect.github.io/jatekok/arnyekerdo/
 
 Fejlesztéshez: [FEJLESZTES.md](FEJLESZTES.md). A forrás az `src/` mappában van, az `index.html` generált (`python3 arnyekerdo/src/build.py`).

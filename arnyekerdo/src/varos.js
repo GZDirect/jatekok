@@ -289,7 +289,7 @@ function stepLife(dt,t){CARS.forEach(c=>{c.pos+=c.sp*dt;if(c.pos>330)c.pos=-330;
   HELI.t+=dt;if(HELI.t>45)HELI.t=-15;const k=HELI.t/45;HELI.g.visible=HELI.t>0;if(HELI.t>0){HELI.g.position.set(-260+k*520,70+Math.sin(k*3)*6,-170+k*60);HELI.g.rotation.y=-Math.PI/2+0.1;HELI.rot.rotation.y+=dt*30;}
   if(NEAR.rig){NEAR.rig.position.y=NEAR.rigY+Math.sin(t*0.05)*8;}}
 
-A.VAROS={glassM,stepLife,rects,walkable,clampRoof,GOND,stepGondola,CAMS,ANCHOR,PH,HOOKS,DEEP,
+A.ROOF=A.VAROS={glassM,stepLife,rects,walkable,clampRoof,GOND,stepGondola,CAMS,ANCHOR,PH,HOOKS,DEEP,
   /* szereplők: 0 Kuroda, 1-2 személyi testőr, 3-6 járőr (nehézség szerint), 7-8 erősítés */
   actors:['boss','guard','guard','patrol','patrol','patrol','patrol','reinf','reinf'],
   stair:{x:-18.5,z:-23.6},

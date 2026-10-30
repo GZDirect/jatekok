@@ -9,13 +9,15 @@ const lerp=(a,b,t)=>a+(b-a)*t;
    Fix méretű völgy: |x|<XW és -ZN<z<ZS a járható rész, körülötte meredek gerincek (rdg).
    Északon (x≈0) egy szoros vezet ki az útra: ott van a kijárat. */
 /* két pálya: 1. erdő (rendőrkordon), 2. falu (kiképzés). A falu a ?palya=falu címmel töltődik. */
-const LV=/[?&]palya=falu/.test(location.search)?'falu':/[?&]palya=varos/.test(location.search)?'varos':'erdo';
-const VR=LV==='varos';/* 3. pálya: két felhőkarcoló teteje, sík (H=0), a város a mélyben */
-const XW=LV==='falu'?26:VR?24:52,ZS=LV==='falu'?50:VR?66:100,ZN=LV==='falu'?128:VR?64:104,HB=LV==='falu'?0.15:VR?0:1;
+const LV=/[?&]palya=falu/.test(location.search)?'falu':/[?&]palya=varos/.test(location.search)?'varos':/[?&]palya=vonat/.test(location.search)?'vonat':'erdo';
+const VR=LV==='varos',VT=LV==='vonat',FL=VR||VT;/* 4. pálya: a vonat kocsijai; a padló magassága kocsinként más (a tehervagon tetején 3 m) */
+const VONAT_CARS=[{id:'loco',z0:-62,z1:-44,h:0},{id:'salon',z0:-42,z1:-22,h:0},{id:'dining',z0:-20,z1:0,h:0},{id:'flat',z0:2,z1:22,h:1.1},{id:'pass',z0:24,z1:44,h:0},{id:'box',z0:46,z1:66,h:3.0},{id:'obs',z0:68,z1:82,h:0}];
+function trainH(z){for(let i=0;i<VONAT_CARS.length;i++){const c=VONAT_CARS[i];if(z>=c.z0&&z<=c.z1)return c.h;const n=VONAT_CARS[i+1];if(n&&z>c.z1&&z<n.z0){const t=(z-c.z1)/(n.z0-c.z1);return c.h+(n.h-c.h)*t;}}return 0;}/* 3. pálya: két felhőkarcoló teteje, sík (H=0), a város a mélyben */
+const XW=LV==='falu'?26:VR?24:VT?4:52,ZS=LV==='falu'?50:VR?66:VT?84:100,ZN=LV==='falu'?128:VR?64:VT?64:104,HB=LV==='falu'?0.15:FL?0:1;
 const sstep=(a,b,v)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t);};
-function rdg(x,z){if(VR)return 0;const ex=Math.max(Math.abs(x)-XW,0),ez=z>0?Math.max(z-ZS,0):Math.max(-z-ZN,0)*(LV==='falu'?1:sstep(5,12,Math.abs(x))),e=ex+ez;return e*(0.35+0.055*e)+0.6*Math.min(e,8)*Math.sin(x*0.21+z*0.17);}
-function H(x,z){return HB*(1.5*Math.sin(x*0.043+1.1)*Math.cos(z*0.037-0.4)+0.9*Math.sin(x*0.097+z*0.071+2.0)+0.4*Math.sin(x*0.23-z*0.19+0.7)+0.25*Math.cos(x*0.31+z*0.27))+rdg(x,z);}
-const GLSL_H=VR?'float rdg(float x,float z){return 0.0;}\nfloat hgt(float x,float z){return 0.0;}\n':'float rdg(float x,float z){float ex=max(abs(x)-'+XW.toFixed(1)+',0.0);float ez=z>0.0?max(z-'+ZS.toFixed(1)+',0.0):max(-z-'+ZN.toFixed(1)+',0.0)*'+(LV==='falu'?'1.0':'smoothstep(5.0,12.0,abs(x))')+';float e=ex+ez;return e*(0.35+0.055*e)+0.6*min(e,8.0)*sin(x*0.21+z*0.17);}\n'+
+function rdg(x,z){if(FL)return 0;const ex=Math.max(Math.abs(x)-XW,0),ez=z>0?Math.max(z-ZS,0):Math.max(-z-ZN,0)*(LV==='falu'?1:sstep(5,12,Math.abs(x))),e=ex+ez;return e*(0.35+0.055*e)+0.6*Math.min(e,8)*Math.sin(x*0.21+z*0.17);}
+function H(x,z){if(VT)return trainH(z);return HB*(1.5*Math.sin(x*0.043+1.1)*Math.cos(z*0.037-0.4)+0.9*Math.sin(x*0.097+z*0.071+2.0)+0.4*Math.sin(x*0.23-z*0.19+0.7)+0.25*Math.cos(x*0.31+z*0.27))+rdg(x,z);}
+const GLSL_H=FL?'float rdg(float x,float z){return 0.0;}\nfloat hgt(float x,float z){return 0.0;}\n':'float rdg(float x,float z){float ex=max(abs(x)-'+XW.toFixed(1)+',0.0);float ez=z>0.0?max(z-'+ZS.toFixed(1)+',0.0):max(-z-'+ZN.toFixed(1)+',0.0)*'+(LV==='falu'?'1.0':'smoothstep(5.0,12.0,abs(x))')+';float e=ex+ez;return e*(0.35+0.055*e)+0.6*min(e,8.0)*sin(x*0.21+z*0.17);}\n'+
   'float hgt(float x,float z){return '+HB.toFixed(2)+'*(1.5*sin(x*0.043+1.1)*cos(z*0.037-0.4)+0.9*sin(x*0.097+z*0.071+2.0)+0.4*sin(x*0.23-z*0.19+0.7)+0.25*cos(x*0.31+z*0.27))+rdg(x,z);}\n';
 function normalAt(x,z){const e=0.4,dx=H(x+e,z)-H(x-e,z),dz=H(x,z+e)-H(x,z-e);return new THREE.Vector3(-dx,2*e,-dz).normalize();}
 
@@ -162,14 +164,17 @@ const FALU_GIANTS=[[-6,-10,1.0],[5,-20,1.0],[-7,-33,1.0],[-11,17,0.95],[-12,-110
 /* a városban: daru a szakadék fölött, víztorony a céltorony tetején, antenna a penthouse tetején (kampópontok) */
 const VAROS_GIANTS=[[-3,25,1.0],[10,1.5,1.0],[-2,-41.2,0.82]];
 const VAROS_BUSHES=[[-19,-9,0.85],[-19,-14.5,0.85],[-13.5,-23,0.8],[17,-19,0.85],[11,-23.5,0.8],[-19,-50,0.85],[-19,-56,0.85],[-6,-58.5,0.8],[7,-58.5,0.8],[-3,-12,0.75],[19.5,-8,0.8]];
+/* a vonaton: kampópontok a két konténer tetején; rejtekhelyek (bőröndhalmok, fülkék, boxok) */
+const VONAT_GIANTS=[[-0.6,6.2,0.3],[0.6,17.8,0.3]];
+const VONAT_BUSHES=[[1.05,71,0.6],[-1.0,28,0.62],[-1.0,32,0.62],[-1.0,36,0.62],[-1.0,40,0.62],[-1.05,10.4,0.62],[1.05,13.6,0.62],[-1.1,-6,0.6],[1.1,-10,0.6],[-1.1,-14,0.6],[1.05,-17.6,0.6],[1.1,-25.2,0.6],[-1.15,-33,0.6]];
 const FALU_BUSHES=[[-10,44,0.9],[11,42,0.9],[3,20,0.9],[-5,15,1.0],[6,11.5,0.9],[-3,9,1.0],[-12,8,0.8],[11,-32,0.9],[-11,-45,1.0],[11,-47,1.0],[-11,-55,1.0],[9,-61,1.0],[-4,-63.5,0.9],[-9,-71,1.0],[8,-74,1.0],[-13,-81,1.0],[13,-81,1.0],[6,-84,0.9],[-13,-105,1.0],[13,-105,1.0],[-6,-113,0.9],[6,-115,0.9],[0,-108,0.8],[-13,-121,0.8],[13,-120,0.8]];
 /* Ahová nem kerülhet fa: rajt (dél), kijárat és út (észak), rendőrautó. */
-function keepClear(x,z,m){if(VR)return true;if(LV==='falu')return (Math.abs(x)<27+m&&z<51+m&&z>-129-m);return Math.hypot(x,z-96)<8+m||Math.hypot(x*0.7,z+106)<8+m||(Math.abs(x)<6+m&&z<-98)||Math.hypot(x-8,z-98)<5+m;}
+function keepClear(x,z,m){if(FL)return true;if(LV==='falu')return (Math.abs(x)<27+m&&z<51+m&&z>-129-m);return Math.hypot(x,z-96)<8+m||Math.hypot(x*0.7,z+106)<8+m||(Math.abs(x)<6+m&&z<-98)||Math.hypot(x-8,z-98)<5+m;}
 const inField=(x,z,m)=>Math.abs(x)<XW-m&&z<ZS-m&&z>-ZN+m;
 (function forest(){
   const r=mulberry32(1337);
   /* mászható óriásfák: sűrű lomb, vastag ágak, legalább 15 m-re egymástól */
-  const fixed=LV==='falu'?FALU_GIANTS:VR?VAROS_GIANTS:[[-9,79],[11,73]];let tries=0;while(giants.length<(LV==='falu'?FALU_GIANTS.length:VR?VAROS_GIANTS.length:26)&&tries<4000){tries++;const fx=fixed[giants.length];const x=fx?fx[0]:(r()*2-1)*46,z=fx?fx[1]:-94+r()*182;if(!fx&&keepClear(x,z,4))continue;
+  const fixed=LV==='falu'?FALU_GIANTS:VR?VAROS_GIANTS:VT?VONAT_GIANTS:[[-9,79],[11,73]];let tries=0;while(giants.length<(LV==='falu'?FALU_GIANTS.length:VR?VAROS_GIANTS.length:VT?VONAT_GIANTS.length:26)&&tries<4000){tries++;const fx=fixed[giants.length];const x=fx?fx[0]:(r()*2-1)*46,z=fx?fx[1]:-94+r()*182;if(!fx&&keepClear(x,z,4))continue;
     if(!fx&&giants.some(g=>Math.hypot(g.x-x,g.z-z)<15))continue;const s=fx&&fx[2]?fx[2]:0.92+r()*0.22;
     const t={kind:'giant',x,z,s,c:r(),r:1.05*s,col:1.6*s,cr:3.4*s,h:21*s,py:8.6*s,climb:true,i:giants.length};giants.push(t);trees.push(t);addTo(grid,t);}
   for(let i=0;i<1250;i++){const x=(r()*2-1)*82,z=-132+r()*262;const inside=inField(x,z,-3);if(!inside&&r()<0.45)continue;if(keepClear(x,z,0))continue;
@@ -180,7 +185,8 @@ const inField=(x,z,m)=>Math.abs(x)<XW-m&&z<ZS-m&&z>-ZN+m;
     trees.push(t);addTo(grid,t);}
   for(let i=0;i<40;i++){const x=(r()*2-1)*48,z=-96+r()*188,a=r()*Math.PI,L=3.5+r()*3.5;if(keepClear(x,z,2))continue;
     const lg={x,z,a,L,rad:0.32+r()*0.15};logs.push(lg);for(let k=-L/2+0.6;k<=L/2-0.6;k+=1.1){const o={x:x+Math.cos(a)*k,z:z+Math.sin(a)*k,r:lg.rad+0.15,low:true};trees.push(o);addTo(grid,o);}}
-  if(VR)VAROS_BUSHES.forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()*0.4,hedge:true};bushes.push(b);addTo(bgrid,b);});
+  if(VT)VONAT_BUSHES.forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()};bushes.push(b);addTo(bgrid,b);});
+  else if(VR)VAROS_BUSHES.forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()*0.4,hedge:true};bushes.push(b);addTo(bgrid,b);});
   else if(LV==='falu')FALU_BUSHES.forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()};bushes.push(b);addTo(bgrid,b);});
   else for(let i=0;i<240;i++){const x=(r()*2-1)*51,z=-100+r()*198;if(keepClear(x,z,-2))continue;const s=0.8+r()*0.7;const b={x,z,r:1.45*s,s,c:r()};bushes.push(b);addTo(bgrid,b);}
 })();
@@ -222,9 +228,11 @@ function glowGiant(i,k){if(i<0)return;TC.copy(GLEAF_BASE[i]).multiplyScalar(1+k*
 /* bokrok */
 {const parts=[],r=mulberry32(31),dk=rgb(0x16261a),lt=rgb(0x35503a);
   /* a városban nyírt sövény (puszpáng) virágládában */
-  if(VR){const g=jitter(new THREE.BoxGeometry(1.5,0.8,1.5,4,2,4),0.16,3);g.translate(0,0.82,0);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>mixc(rgb(0x2a4a22),rgb(0x5c8a3a),clamp(ny*0.5+(y-0.4)*0.6,0,1))});}
+  if(VT){/* bőröndhalom */const cs=[[0x6a3a24,0.55,0.38,0.32,0,0.19,0],[0x2a3a5a,0.48,0.32,0.28,0.05,0.54,0.02],[0x8a7a5a,0.36,0.26,0.24,-0.04,0.83,-0.02]];
+    cs.forEach(q=>{const g=new THREE.BoxGeometry(q[1],q[2],q[3]);g.translate(q[4],q[5],q[6]);parts.push({g,flat:true,c:rgb(q[0])});});}
+  else if(VR){const g=jitter(new THREE.BoxGeometry(1.5,0.8,1.5,4,2,4),0.16,3);g.translate(0,0.82,0);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>mixc(rgb(0x2a4a22),rgb(0x5c8a3a),clamp(ny*0.5+(y-0.4)*0.6,0,1))});}
   else for(let i=0;i<8;i++){const g=new THREE.IcosahedronGeometry(0.45+r()*0.35,0);jitter(g,0.3,i);const a=r()*6.28,rr=r()*0.75;g.translate(Math.cos(a)*rr,0.3+r()*0.55,Math.sin(a)*rr);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>mixc(dk,lt,clamp(ny*0.6+y*0.35,0,1))});}
-  const g=merge(parts);bushes.forEach(b=>b._col=VR?TC.setHSL(0.27+b.c*0.04,0.35,0.75+b.c*0.2).clone():TC.setHSL(0.3+b.c*0.06,0.3,0.5+b.c*0.35).clone());
+  const g=merge(parts);bushes.forEach(b=>b._col=VT?TC.setRGB(1,1,1).clone():VR?TC.setHSL(0.27+b.c*0.04,0.35,0.75+b.c*0.2).clone():TC.setHSL(0.3+b.c*0.06,0.3,0.5+b.c*0.35).clone());
   bushes.forEach((b,i)=>b.i=i);bushMesh=inst(g,vcMat(),bushes,b=>{D.position.set(b.x,H(b.x,b.z)-0.1,b.z);D.rotation.set(0,b.c*9,0);D.scale.set(1.5*b.s,1.05*b.s,1.5*b.s);},true);}
 function shakeBush(b,k,t){if(!bushMesh||!b)return;D.position.set(b.x,H(b.x,b.z)-0.1,b.z);D.rotation.set(Math.sin(t*23+b.c*9)*0.07*k,b.c*9+Math.sin(t*17)*0.05*k,Math.cos(t*19+b.c)*0.07*k);D.scale.set(1.5*b.s,1.05*b.s*(1-0.03*k),1.5*b.s);D.updateMatrix();bushMesh.setMatrixAt(b.i,D.matrix);bushMesh.instanceMatrix.needsUpdate=true;}
 /* páfrányok */
@@ -236,19 +244,19 @@ function shakeBush(b,k,t){if(!bushMesh||!b)return;D.position.set(b.x,H(b.x,b.z)-
   inst(g,vcMat({side:THREE.DoubleSide}),list,f=>{D.position.set(f.x,H(f.x,f.z)-0.02,f.z);D.rotation.set(0,f.a,0);D.scale.setScalar(f.s);});}
 /* kövek */
 {const g=jitter(new THREE.DodecahedronGeometry(1,0),0.45,5);const grey=rgb(0x55585a),moss=rgb(0x34502c);const m=merge([{g,flat:true,c:(x,y,z,nx,ny)=>mixc(grey,moss,clamp((ny-0.45)*2.4,0,1))}]);
-  const r=mulberry32(51),list=[];for(let i=0;i<(VR?0:380);i++){const out=i>=270,x=out?(r()<0.5?-1:1)*(52+r()*22):(r()*2-1)*52,z=out?-125+r()*250:-102+r()*202,s=out?0.9+r()*2.4:0.25+Math.pow(r(),2.2)*1.6;if(!out&&keepClear(x,z,0))continue;list.push({x,z,s,sy:s*(0.55+r()*0.35),a:r()*6.28,c:r()});
+  const r=mulberry32(51),list=[];for(let i=0;i<(FL?0:380);i++){const out=i>=270,x=out?(r()<0.5?-1:1)*(52+r()*22):(r()*2-1)*52,z=out?-125+r()*250:-102+r()*202,s=out?0.9+r()*2.4:0.25+Math.pow(r(),2.2)*1.6;if(!out&&keepClear(x,z,0))continue;list.push({x,z,s,sy:s*(0.55+r()*0.35),a:r()*6.28,c:r()});
     if(s>0.42&&!out){const o={x,z,r:s*1.02,low:s<1.3,kind:'rock'};trees.push(o);addTo(grid,o);}}
   list.forEach(k=>k._col=TC.setHSL(0.3,0.05,0.55+k.c*0.35).clone());
   inst(m,vcMat(),list,k=>{D.position.set(k.x,H(k.x,k.z)-k.sy*0.3,k.z);D.rotation.set(k.c,k.a,k.c*0.5);D.scale.set(k.s,k.sy,k.s*(0.8+k.c*0.4));},true);}
 /* avar */
 {const g=new THREE.PlaneGeometry(0.16,0.16);g.rotateX(-Math.PI/2);const r=mulberry32(61),list=[],cols=[0x9a6a36,0xb08a44,0x7a4a26,0xa07a3a,0x6a5a36];
-  for(let i=0;i<(VR?0:5600);i++){const x=(r()*2-1)*55,z=-108+r()*212;list.push({x,z,a:r()*6.28,s:0.7+r()*0.9,_col:new THREE.Color(cols[i%5])});}
+  for(let i=0;i<(FL?0:5600);i++){const x=(r()*2-1)*55,z=-108+r()*212;list.push({x,z,a:r()*6.28,s:0.7+r()*0.9,_col:new THREE.Color(cols[i%5])});}
   inst(g,flashPatch(new THREE.MeshLambertMaterial({side:THREE.DoubleSide,map:leafTex,alphaTest:0.5})),list,l=>{D.position.set(l.x,H(l.x,l.z)+0.03,l.z);D.rotation.set(0,l.a,0);D.scale.setScalar(l.s);});}
 /* világító gombák */
 const glowSprites=[];
 {const parts=[],r=mulberry32(71);for(let i=0;i<3;i++){const a=r()*6.28,rr=r()*0.22,h=0.06+r()*0.08;const st=new THREE.CylinderGeometry(0.008,0.012,h,5);st.translate(Math.cos(a)*rr,h/2,Math.sin(a)*rr);parts.push({g:st,c:[0.55,0.85,0.8]});
   const cp=new THREE.SphereGeometry(0.035+r()*0.03,6,3,0,Math.PI*2,0,Math.PI/2);cp.scale(1,0.6,1);cp.translate(Math.cos(a)*rr,h,Math.sin(a)*rr);parts.push({g:cp,c:[0.45,1,0.9]});}
-  const g=merge(parts);const r2=mulberry32(72),list=[];for(let i=0;i<(VR?0:80);i++){const x=(r2()*2-1)*50,z=-100+r2()*196;list.push({x,z,s:0.8+r2()*1.2});}
+  const g=merge(parts);const r2=mulberry32(72),list=[];for(let i=0;i<(FL?0:80);i++){const x=(r2()*2-1)*50,z=-100+r2()*196;list.push({x,z,s:0.8+r2()*1.2});}
   inst(g,new THREE.MeshBasicMaterial({vertexColors:true}),list,m=>{D.position.set(m.x,H(m.x,m.z),m.z);D.rotation.set(0,m.s*5,0);D.scale.setScalar(m.s);});
   const gm=new THREE.SpriteMaterial({map:glowTex,color:0x5fe8d0,transparent:true,opacity:0.42,depthWrite:false,blending:THREE.AdditiveBlending});
   list.forEach(m=>{const s=new THREE.Sprite(gm);s.position.set(m.x,H(m.x,m.z)+0.12,m.z);s.scale.setScalar(0.9*m.s);scene.add(s);glowSprites.push(s);});}
@@ -257,7 +265,7 @@ const shafts=[];
 {const mat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,fog:false,uniforms:{uT:{value:0}},
   vertexShader:'varying float vY;varying vec3 vN;varying vec3 vV;void main(){vY=uv.y;vec4 w=modelMatrix*vec4(position,1.0);vN=normalize(mat3(modelMatrix)*normal);vV=normalize(cameraPosition-w.xyz);gl_Position=projectionMatrix*viewMatrix*w;}',
   fragmentShader:'uniform float uT;varying float vY;varying vec3 vN;varying vec3 vV;void main(){float edge=pow(abs(dot(vN,vV)),1.6);float a=(1.0-vY)*smoothstep(0.0,0.06,vY)*edge*0.11*(0.85+0.15*sin(uT*0.7+vY*6.0));gl_FragColor=vec4(0.62,0.72,0.95,a);}'});
-  const r=mulberry32(81);let tries=0;while(!VR&&shafts.length<8&&tries<400){tries++;const x=(r()*2-1)*46,z=-92+r()*180;let ok=true;near(grid,x,z,t=>{if(!t.low&&Math.hypot(x-t.x,z-t.z)<6)ok=false;});if(!ok)continue;
+  const r=mulberry32(81);let tries=0;while(!FL&&shafts.length<8&&tries<400){tries++;const x=(r()*2-1)*46,z=-92+r()*180;let ok=true;near(grid,x,z,t=>{if(!t.low&&Math.hypot(x-t.x,z-t.z)<6)ok=false;});if(!ok)continue;
     const L=60,g=new THREE.CylinderGeometry(1.8,4.2,L,20,1,true);g.translate(0,-L/2,0);const m=new THREE.Mesh(g,mat);const top=new THREE.Vector3(x,H(x,z),z).addScaledVector(MOON_DIR,L);m.position.copy(top);
     m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),MOON_DIR);scene.add(m);shafts.push(m);}
   shafts.mat=mat;}
@@ -325,7 +333,7 @@ if(LV==='erdo'){const wht=flashPatch(new THREE.MeshLambertMaterial({color:0xe6e8
 [-1.45,0,1.45].forEach(k=>{const o={x:8+Math.sin(0.5)*k,z:98+Math.cos(0.5)*k,r:1.05,kind:'prop'};trees.push(o);addTo(grid,o);});patrolCar.rotation.y=0.5;patrolCar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
   patrolCar.userData={red,rs};}
 /* a városban nincs erdő: a terep, a fű, a hulló levél, a köd és az erdő-sziluettek eltűnnek (a díszletet a varos.js építi) */
-if(VR){[terrain,grass,falling,ring1,ring2,ring3,giantTrunk,giantWood,giantLeaf].forEach(o=>o.visible=false);fogSheets.forEach(f=>f.visible=false);flies.forEach(f=>f.visible=false);}
+if(FL){[terrain,grass,falling,giantTrunk,giantWood,giantLeaf].concat(VR?[ring1,ring2,ring3]:[]).forEach(o=>o.visible=false);fogSheets.forEach(f=>f.visible=false);flies.forEach(f=>f.visible=false);}
 function stepScenery(t){const u=patrolCar.userData;if(!u.red)return;const k=Math.max(0,Math.sin(t*7.5));u.red.intensity=0.25+k*1.6;u.rs.material.opacity=0.25+k*0.7;}
 
 window.AE={LV,$,clamp,mulberry32,hash3,lerp,H,GLSL_H,normalAt,renderer,scene,camera,resize,MOON_DIR,moonLight,hemi,FOG_COL,canvasTex,radial,glowTex,softTex,merge,jitter,rgb,mixc,vcMat,
