@@ -5,11 +5,11 @@
 const A=window.AE,{$,clamp,H,scene,camera,renderer,grid,bgrid,near,moonLight,MOON_DIR,giants,XW,ZS,ZN,EXIT,FLU,NFL}=A;
 const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a)),rnd=(a,b)=>a+Math.random()*(b-a);
 const LV=A.LV||'erdo';
-const START=LV==='falu'?{x:0,z:45}:{x:0,z:93},GOAL=LV==='falu'?{x:0,z:39}:{x:0,z:-112};
-const G={LV,day:false,hooks:{},goalName:LV==='falu'?'Mester':'Kijárat'};A.G=G;
+const START=LV==='falu'?{x:0,z:45}:LV==='varos'?{x:0,z:58}:{x:0,z:93},GOAL=LV==='falu'?{x:0,z:39}:LV==='varos'?{x:0,z:-44}:{x:0,z:-112};
+const G={LV,day:false,hooks:{},goalName:LV==='falu'?'Mester':LV==='varos'?'Kuroda':'Kijárat'};A.G=G;
 
 /* ---------- Térbeli segédek ---------- */
-function clampField(p){p.x=clamp(p.x,-XW-1,XW+1);p.z=clamp(p.z,-ZN-16,ZS+2);if(p.z<-ZN+1&&Math.abs(p.x)>5)p.z=-ZN+1;if(p.z<-ZN-0.5)p.x=clamp(p.x,-3.4,3.4);}
+function clampField(p){if(LV==='varos'){A.VAROS.clampRoof(p);return;}p.x=clamp(p.x,-XW-1,XW+1);p.z=clamp(p.z,-ZN-16,ZS+2);if(p.z<-ZN+1&&Math.abs(p.x)>5)p.z=-ZN+1;if(p.z<-ZN-0.5)p.x=clamp(p.x,-3.4,3.4);}
 function pushOut(p,rad){
   near(grid,p.x,p.z,t=>{if(t.off)return;const dx=p.x-t.x,dz=p.z-t.z,d=Math.hypot(dx,dz),m=(t.col||t.r)+rad;if(d<m&&d>1e-4){p.x=t.x+dx/d*m;p.z=t.z+dz/d*m;}});
   clampField(p);
@@ -44,14 +44,14 @@ function drawMark(sp,kind,k){const u=sp.userData,key=kind+(kind==='?'?Math.round
   if(kind==='!'){g.fillStyle='#e0503f';g.fillText('!',32,86);}
   else{g.fillStyle='rgba(236,229,211,0.38)';g.fillText('?',32,86);g.save();const top=86-74*clamp(k,0,1);g.beginPath();g.rect(0,top,64,96-top);g.clip();g.fillStyle='#e0a43a';g.fillText('?',32,86);g.restore();}
   u.tx.needsUpdate=true;}
-const MAXCOPS=LV==='falu'?A.FALU.students.length:8,ALLCOPS=[],COPS=[];
+const MAXCOPS=LV==='falu'?A.FALU.students.length:LV==='varos'?A.VAROS.actors.length:8,ALLCOPS=[],COPS=[];
 /* minden körben új útvonalak: a völgy sávokra oszlik délről északra, mindegyikben egy rendőr jár körbe */
 function genRoute(i,n){const z0=64,z1=-96,band=(z0-z1)/n,zc=z0-(i+0.5)*band,xc=rnd(-30,30),pts=[],a0=Math.random()*6.28;
   for(let k=0;k<4;k++){const a=a0+k/4*Math.PI*2+rnd(-0.35,0.35),o={x:clamp(xc+Math.cos(a)*rnd(9,17),-46,46),z:clamp(zc+Math.sin(a)*Math.min(band*0.55,rnd(7,13)),-98,70)};pushOut(o,1.2);pts.push(o);}return pts;}
-for(let i=0;i<MAXCOPS;i++){const mesh=A.buildPolice(i+3,LV==='falu'?{student:true}:null);scene.add(mesh);
+for(let i=0;i<MAXCOPS;i++){const mesh=A.buildPolice(i+3,LV==='falu'?{student:true}:LV==='varos'?{suit:true,boss:A.VAROS.actors[i]==='boss'}:null);scene.add(mesh);
   ALLCOPS.push({id:i,mesh,beam:A.makeBeam(),pool:A.makePool(),mark:makeMark(),route:[],ri:0,x:0,z:0,ry:0,st:'patrol',tx:0,tz:0,wait:0,aw:0,bp:-0.2,sweep:0,hp:3,down:false,dead:false,koT:0,fall:0,stagger:0,
     shootCd:0,aimT:0,shoot:0,lostT:0,searchT:0,spd:0,sees:false,saidT:0,found:false,lookUpT:0,blind:0,lens:new THREE.Vector3(),dir:new THREE.Vector3(0,0,-1),seenBody:new Set(),stuck:0,hiddenBody:false,stepT:0,radioT:null});}
-function setupCops(){COPS.length=0;if(LV==='falu'){ALLCOPS.forEach(c=>COPS.push(c));if(G.hooks.setup)G.hooks.setup();return;}ALLCOPS.forEach((c,i)=>{const on=i<D.n;c.mesh.visible=on;c.beam.visible=on;c.pool.visible=on;c.mark.visible=false;if(on)COPS.push(c);});
+function setupCops(){COPS.length=0;if(LV!=='erdo'){ALLCOPS.forEach(c=>COPS.push(c));if(G.hooks.setup)G.hooks.setup();return;}ALLCOPS.forEach((c,i)=>{const on=i<D.n;c.mesh.visible=on;c.beam.visible=on;c.pool.visible=on;c.mark.visible=false;if(on)COPS.push(c);});
   COPS.forEach((c,i)=>{c.route=genRoute(i,COPS.length);resetCop(c);});}
 function resetCop(c){const k=Math.floor(Math.random()*c.route.length);c.ri=k;c.x=c.route[k].x+rnd(-2,2);c.z=c.route[k].z+rnd(-2,2);pushOut(c,0.5);
   c.ry=Math.random()*6.28;c.st='patrol';c.aw=0;c.hp=3;c.down=c.dead=false;c.koT=0;c.fall=0;c.stagger=0;c.shootCd=0;c.aimT=0;c.shoot=0;c.lostT=0;c.searchT=0;c.found=false;
@@ -138,7 +138,7 @@ function eyePos(out){return out.set(P.x,P.mode==='ground'?H(P.x,P.z)+P.camY:P.py
 
 /* ---------- Fegyverek ---------- */
 function meleeTarget(){const f=fwd();let best=null,bd=9;
-  COPS.forEach(c=>{if(c.dead)return;const dx=c.x-P.x,dz=c.z-P.z,d=Math.hypot(dx,dz);if(d>2.2)return;const ang=Math.acos(clamp((dx*f.x+dz*f.z)/(d||1),-1,1));if(ang<0.85&&d<bd){bd=d;best=c;}});return best;}
+  COPS.forEach(c=>{if(c.dead||c.active===false)return;const dx=c.x-P.x,dz=c.z-P.z,d=Math.hypot(dx,dz);if(d>2.2)return;const ang=Math.acos(clamp((dx*f.x+dz*f.z)/(d||1),-1,1));if(ang<0.85&&d<bd){bd=d;best=c;}});return best;}
 function takeDown(c,lethal,how){c.down=true;c.dead=lethal;c.koT=lethal?0:75;c.st='down';c.aw=0;c.shoot=0;c.found=false;c.seenBody.clear();
   if(lethal)S.kills++;else S.kos++;showMsg(how);noiseHit(0.35,700,'bandpass',0.25,1.2);thump(0.5);}
 function strike(c,weapon,fromAbove){
@@ -231,7 +231,7 @@ function dest(pan){try{if(ac.createStereoPanner){const p=ac.createStereoPanner()
 function panOf(x,z){const ang=Math.atan2(x-P.x,z-P.z);return clamp(-Math.sin(wrapA(ang-(P.yaw+Math.PI))),-1,1);}
 function noisePan(vol,freq,type,dec,q,pan){if(!ac)return;try{const t=ac.currentTime,s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=noiseBuf;f.type=type;f.frequency.value=freq;f.Q.value=q||0.7;
   env(g,t,0.004,vol,dec);s.connect(f);f.connect(g);g.connect(dest(pan));s.start(t,Math.random()*0.3);s.stop(t+dec+0.05);}catch(e){}}
-function surfAt(x,z){if(z<-ZN+1&&Math.abs(x)<4)return 'road';if(bushAt(x,z))return 'bush';const n=0.5+0.5*Math.sin(x*0.08+Math.cos(z*0.06)*2)*Math.cos(z*0.07);return n>0.55?'leaves':'grass';}
+function surfAt(x,z){if(LV==='varos')return bushAt(x,z)?'bush':'road';if(z<-ZN+1&&Math.abs(x)<4)return 'road';if(bushAt(x,z))return 'bush';const n=0.5+0.5*Math.sin(x*0.08+Math.cos(z*0.06)*2)*Math.cos(z*0.07);return n>0.55?'leaves':'grass';}
 function footstep(){const v=P.drag?0.5:P.crouch?0.3:P.running?1:0.6,s=surfAt(P.x,P.z),r=0.85+Math.random()*0.3;
   if(s==='road'){noisePan(0.06*v*r,900,'lowpass',0.05,0.7,0);noisePan(0.03*v,4200,'bandpass',0.03,2,0);}
   else if(s==='bush')noisePan(0.1*v*r,1700,'bandpass',0.3,0.8,0);
@@ -249,8 +249,8 @@ function radio(v,pan){try{const t=ac.currentTime,s=ac.createBufferSource(),f=ac.
   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.09*v,t+0.02);g.gain.setValueAtTime(0.09*v,t+0.45);g.gain.exponentialRampToValueAtTime(0.0001,t+0.55);s.connect(f);f.connect(g);g.connect(dest(pan));s.start(t);s.stop(t+0.6);
   [0.6,0.72].forEach(dl=>{const o=ac.createOscillator(),gg=ac.createGain();o.type='square';o.frequency.value=1250;gg.gain.setValueAtTime(0.0001,t+dl);gg.gain.exponentialRampToValueAtTime(0.03*v,t+dl+0.005);gg.gain.exponentialRampToValueAtTime(0.0001,t+dl+0.05);o.connect(gg);gg.connect(dest(pan));o.start(t+dl);o.stop(t+dl+0.06);});}catch(e){}}
 function ambStep(dt){if(!ac||!AMB.on)return;
-  AMB.cr-=dt;if(AMB.cr<=0){AMB.cr=0.35+Math.random()*0.7;const pan=Math.random()*2-1,n=2+(Math.random()*3|0),f=4300+Math.random()*700,v=0.004+Math.random()*0.006;for(let i=0;i<n;i++)chirp(f,v,pan,i*0.055);}
-  AMB.owl-=dt;if(AMB.owl<=0){AMB.owl=18+Math.random()*28;owl(Math.random()*2-1);}
+  AMB.cr-=dt;if(AMB.cr<=0&&!G.day){AMB.cr=0.35+Math.random()*0.7;const pan=Math.random()*2-1,n=2+(Math.random()*3|0),f=4300+Math.random()*700,v=0.004+Math.random()*0.006;for(let i=0;i<n;i++)chirp(f,v,pan,i*0.055);}
+  AMB.owl-=dt;if(AMB.owl<=0&&!G.day){AMB.owl=18+Math.random()*28;owl(Math.random()*2-1);}
   COPS.forEach(c=>{if(c.down)return;const d=Math.hypot(c.x-P.x,c.z-P.z);
     if(c.spd>0.3&&d<22){c.stepT-=dt*(c.spd/1.3);if(c.stepT<=0){c.stepT=0.55;noisePan(0.075*(1-d/22)*(c.spd>2?1.3:1),1300,'bandpass',0.08,1,panOf(c.x,c.z));}}
     c.radioT=(c.radioT==null?rnd(4,20):c.radioT)-dt;if(c.radioT<=0){c.radioT=rnd(14,28);if(d<32)radio(clamp(1-d/32,0,1),panOf(c.x,c.z));}});}
@@ -299,12 +299,13 @@ function startHook(g){const from=eyePos(new THREE.Vector3()),pr=perchFor(g,P.x,P
   P.py=from.y;noiseHit(0.25,1400,'bandpass',0.35,2);P.noiseBoost=5;updateButtons();}
 function startClimb(g){const from=eyePos(new THREE.Vector3()),pr=perchFor(g,P.x,P.z);
   P.mode='climb';P.run=false;P.crouch=false;P.anim={t:0,g,from,to:new THREE.Vector3(pr.x,pr.y,pr.z),dur:2.4,tx:g.x+pr.dx*(g.r+0.45),tz:g.z+pr.dz*(g.r+0.45)};P.py=from.y;P.noiseBoost=4;updateButtons();}
-function arrivePerch(g){P.mode='perch';P.tree=g;A.setRope(0,0,0,0,0,0,false);showMsg('A lombban vagy. Innen nem látnak, csak ha rád világítanak.');thump(0.2);updateButtons();}
+function arrivePerch(g){P.mode='perch';P.tree=g;A.setRope(0,0,0,0,0,0,false);showMsg(LV==='varos'?'Fent vagy. Kampózz tovább, vagy ugorj le, ha alattad tető van.':'A lombban vagy. Innen nem látnak, csak ha rád világítanak.');thump(0.2);updateButtons();}
 function dropDown(){if(P.mode!=='perch')return;const g=P.tree,pr=perchFor(g,P.x,P.z);let lx=g.x+pr.dx*(1.75*g.s+1.6),lz=g.z+pr.dz*(1.75*g.s+1.6);
   /* felülről támadás: van-e rendőr a földet érés közelében? */
-  let tgt=null,bd=4.8;COPS.forEach(c=>{if(c.dead)return;const d=Math.hypot(c.x-lx,c.z-lz);if(d<bd){bd=d;tgt=c;}});
+  let tgt=null,bd=4.8;COPS.forEach(c=>{if(c.dead||c.active===false)return;const d=Math.hypot(c.x-lx,c.z-lz);if(d<bd){bd=d;tgt=c;}});
   if(tgt&&ITEMS[P.item].id!=='tekko'&&ITEMS[P.item].id!=='tanto'){/* ha nincs fegyver a kézben, a tantót veszi elő */selectItem(0);}
   if(tgt){const dx=P.x-tgt.x,dz=P.z-tgt.z,d=Math.hypot(dx,dz)||1;lx=tgt.x+dx/d*0.9;lz=tgt.z+dz/d*0.9;}
+  if(LV==='varos'&&!A.VAROS.walkable(lx,lz)){showMsg('Alattad a mélység. Kampózz tovább egy másik pontra.');return;}
   const o={x:lx,z:lz};pushOut(o,0.45);
   P.mode='drop';P.anim={t:0,dur:0.6,from:new THREE.Vector3(P.x,P.py,P.z),to:new THREE.Vector3(o.x,H(o.x,o.z)+0.95,o.z),tgt};P.tree=null;updateButtons();}
 function stepPlayerAnim(dt){const a=P.anim;a.t+=dt;
@@ -324,8 +325,8 @@ function newRound(){
   S.time=0;S.smoke=D.smoke;S.stones=D.stones;S.spikes=D.spikes;S.darts=D.darts;S.smokeT=0;S.beat=0;S.threat=0;S.alarm=0;S.alarms=0;S.kills=0;S.kos=0;S.shots=0;S.aim=null;
   Object.assign(P,{x:START.x,z:START.z,yaw:0,pitch:0.05,crouch:false,run:false,stam:100,hp:100,mode:'ground',tree:null,anim:null,atk:0,atkCd:0,pend:null,hurt:0,noiseBoost:0,camY:1.65,drag:null});
   selectItem(0);A.setRope(0,0,0,0,0,0,false);setupCops();A.clearPrints();STONE.on=false;STONE.m.visible=false;if(BR.b){A.shakeBush(BR.b,0,0);BR.b=null;}
-  $('foe').textContent=(LV==='falu'?'Tanítványok: ':'Rendőrök: ')+COPS.length;updateButtons();
-  if(LV==='falu'){tutEnd(false);if(G.hooks.newRound)G.hooks.newRound();}
+  $('foe').textContent=LV==='erdo'?'Rendőrök: '+COPS.length:'';updateButtons();
+  if(LV!=='erdo'){tutEnd(false);if(G.hooks.newRound)G.hooks.newRound();}
   else{showMsg('A rendőrség körbezárta a völgyet. Juss el az északi útig.');if($('tutOn').checked)tutStart();else tutEnd(false);}
   S.running=true;
 }
@@ -347,7 +348,7 @@ document.addEventListener('pointerdown',()=>{if(!S.running&&!document.fullscreen
 function showDiff(){document.querySelectorAll('#diff [data-d]').forEach(b=>b.setAttribute('aria-checked',DIFF[b.dataset.d]===D?'true':'false'));$('copsN').textContent=D.n;}
 document.querySelectorAll('#diff [data-d]').forEach(b=>b.addEventListener('click',()=>{D=DIFF[b.dataset.d];try{localStorage.setItem('ae-diff',b.dataset.d);}catch(e){}showDiff();}));
 /* ---------- Nyitókép és mentések (3 hely, a böngészőben tárolva) ---------- */
-const R1=['Útonálló','Tanonc','Nindzsa','Mester','Nagymester','Csendes halál','Árnyék'],R2=['Tanítvány','Nindzsa','Mester','Árnyékmester'];
+const R1=['Útonálló','Tanonc','Nindzsa','Mester','Nagymester','Csendes halál','Árnyék'],R2=['Tanítvány','Nindzsa','Mester','Árnyékmester'],R3=['Bérgyilkos','Nindzsa','Mester','Árnyék'];
 const lsGet=k=>{try{return localStorage.getItem(k);}catch(e){return null;}},lsSet=(k,v)=>{try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v);}catch(e){}};
 const slotNo=()=>clamp(+lsGet('ae-slot')||1,1,3);
 function loadSave(n){try{return JSON.parse(lsGet('ae-save-'+n))||{};}catch(e){return{};}}
@@ -356,21 +357,22 @@ if(lsGet('ae-l1-done')&&!lsGet('ae-save-1')){storeSave(1,{l1:true});}
 function saveProgress(o){const n=slotNo(),sv=loadSave(n);
   if(o.l1){sv.l1=true;if(R1.indexOf(o.r1)>R1.indexOf(sv.r1||''))sv.r1=o.r1;}
   if(o.l2){sv.l2=true;if(R2.indexOf(o.r2)>R2.indexOf(sv.r2||'')){sv.r2=o.r2;sv.s2=o.s2;}}
+  if(o.l3){sv.l3=true;if(R3.indexOf(o.r3)>R3.indexOf(sv.r3||'')){sv.r3=o.r3;sv.s3=o.s3;}}
   sv.t=Date.now();storeSave(n,sv);}
 G.saveProgress=saveProgress;G.loadSave=()=>loadSave(slotNo());
-function saveText(sv){if(!sv.t&&!sv.l1)return'Üres';const a=[];a.push('1. pálya: '+(sv.l1?(sv.r1||'kész'):'még nincs kész'));if(sv.l1)a.push('2. pálya: '+(sv.l2?(sv.r2||'kész')+(sv.s2&&sv.s2.length?' ('+sv.s2.length+' pecsét)':''):'nyitva'));return a.join(' · ');}
-function refreshLvl(){const sv=G.loadSave(),f=LV==='falu',l2=$('lvl2');$('lvl1').classList.toggle('on',!f);l2.classList.toggle('on',f);
-  if(!sv.l1&&!f){l2.classList.add('locked');l2.removeAttribute('href');l2.innerHTML='2 · A mester faluja<small>az 1. pálya után nyílik</small>';}
-  else{l2.classList.remove('locked');l2.setAttribute('href','?palya=falu');l2.textContent='2 · A mester faluja';}
-  const n=slotNo();$('tStartSub').textContent='Mentés '+n+' · '+(sv.l1?(sv.l2?'mindkét pálya kész':'folytatás: 2. pálya'):(sv.t?'folytatás: 1. pálya':'új játék'));}
+function saveText(sv){if(!sv.t&&!sv.l1)return'Üres';const a=[];a.push('1. pálya: '+(sv.l1?(sv.r1||'kész'):'még nincs kész'));if(sv.l1)a.push('2. pálya: '+(sv.l2?(sv.r2||'kész')+(sv.s2&&sv.s2.length?' ('+sv.s2.length+' pecsét)':''):'nyitva'));if(sv.l2)a.push('3. pálya: '+(sv.l3?(sv.r3||'kész'):'nyitva'));return a.join(' · ');}
+function refreshLvl(){const sv=G.loadSave();$('lvl1').classList.toggle('on',LV==='erdo');
+  [['lvl2','falu','2 · A mester faluja',sv.l1,'az 1. pálya után nyílik'],['lvl3','varos','3 · Üvegtorony',sv.l2,'a 2. pálya után nyílik']].forEach(q=>{const el=$(q[0]),here=LV===q[1];el.classList.toggle('on',here);
+    if(!q[3]&&!here){el.classList.add('locked');el.removeAttribute('href');el.innerHTML=q[2]+'<small>'+q[4]+'</small>';}else{el.classList.remove('locked');el.setAttribute('href','?palya='+q[1]);el.textContent=q[2];}});
+  const n=slotNo();$('tStartSub').textContent='Mentés '+n+' · '+(sv.l1?(sv.l2?(sv.l3?'minden pálya kész':'folytatás: 3. pálya'):'folytatás: 2. pálya'):(sv.t?'folytatás: 1. pálya':'új játék'));}
 function drawSlots(){const box=$('slots');box.innerHTML='';const cur=slotNo();
   for(let n=1;n<=3;n++){const sv=loadSave(n),el=document.createElement('div');el.className='slot'+(n===cur?' on':'');el.setAttribute('role','button');el.tabIndex=0;
     el.innerHTML='<b>Mentés '+n+(n===cur?' · kiválasztva':'')+'</b><span>'+saveText(sv)+'</span>'+(sv.t||sv.l1?'<button class="del" type="button">Törlés</button>':'');
     el.addEventListener('click',e=>{if(e.target.classList.contains('del')){if(e.target.dataset.sure){lsSet('ae-save-'+n,null);drawSlots();refreshLvl();}else{e.target.dataset.sure=1;e.target.textContent='Biztos?';}return;}
       lsSet('ae-slot',String(n));drawSlots();refreshLvl();});box.appendChild(el);}}
 function showTitle(on){$('title').hidden=!on;$('start').hidden=on;if(on){$('saves').hidden=true;$('title').classList.remove('sv');}refreshLvl();}
-$('tStart').addEventListener('click',()=>{const sv=G.loadSave();if(sv.t===undefined&&!sv.l1)saveProgress({});const want=sv.l1&&!sv.l2?'falu':'erdo';
-  if(want!==LV&&!(sv.l1&&sv.l2)){location.href='?palya='+want;return;}showTitle(false);goFull();});
+$('tStart').addEventListener('click',()=>{const sv=G.loadSave();if(sv.t===undefined&&!sv.l1)saveProgress({});const want=!sv.l1?'erdo':!sv.l2?'falu':!sv.l3?'varos':LV;
+  if(want!==LV){location.href='?palya='+want;return;}showTitle(false);goFull();});
 $('tSaves').addEventListener('click',()=>{drawSlots();$('saves').hidden=false;$('title').classList.add('sv');});
 $('sBack').addEventListener('click',()=>{$('saves').hidden=true;$('title').classList.remove('sv');refreshLvl();});
 showTitle(!/[?&]palya=/.test(location.search));
@@ -388,8 +390,8 @@ function endGame(win,title,text){
   S.running=false;tutEnd(false);if(P.drag)P.drag=null;joy.id=null;look.id=null;joyEl.hidden=true;A.hands.visible=false;A.setRope(0,0,0,0,0,0,false);aimMark.visible=false;if(S.aimGlow>=0){A.glowGiant(S.aimGlow,0);S.aimGlow=-1;}
   $('endEyebrow').textContent=win?'Kijutottál':'Vége';$('endTitle').textContent=title;$('endText').textContent=text;
   const rk=G.hooks.rank?G.hooks.rank():rank();$('endFoe').textContent=win?'Rang: '+rk[0]:'';
-  $('endTip').textContent=LV==='falu'?(rk[2]||''):(win?rk[1]+' ':'')+'Nehézség: '+D.name+' · Idő: '+fmt(S.time)+' · Ölések: '+S.kills+' · Leütések: '+S.kos+' · Riasztások: '+S.alarms+'.';
-  $('nextLvl').hidden=!(win&&LV==='erdo');try{document.exitPointerLock&&document.pointerLockElement&&document.exitPointerLock();}catch(e){}
+  $('endTip').textContent=LV!=='erdo'?(rk[2]||''):(win?rk[1]+' ':'')+'Nehézség: '+D.name+' · Idő: '+fmt(S.time)+' · Ölések: '+S.kills+' · Leütések: '+S.kos+' · Riasztások: '+S.alarms+'.';
+  {const nx=LV==='erdo'?['falu','Tovább: 2 · A mester faluja']:LV==='falu'?['varos','Tovább: 3 · Üvegtorony']:null;$('nextLvl').hidden=!(win&&nx);if(nx){$('nextLvl').setAttribute('href','?palya='+nx[0]);$('nextLvl').textContent=nx[1];}}try{document.exitPointerLock&&document.pointerLockElement&&document.exitPointerLock();}catch(e){}
   document.body.classList.add('menu');$('end').hidden=false;try{speechSynthesis&&speechSynthesis.cancel();}catch(e){}
 }
 
@@ -410,7 +412,7 @@ function stepCop(c,dt,eye){
   if(c.down){c.fall=Math.min(1,c.fall+dt*2.2);c.spd=0;
     if(!c.dead){c.koT-=dt;if(c.koT<=0){c.down=false;c.hp=2;c.st='search';c.searchT=30;c.tx=c.x;c.tz=c.z;c.aw=0.7;say(c,'wake');S.alarm=Math.max(S.alarm,30);alertAll(c,c.x,c.z,'wake');}}
     return;}
-  if(LV==='falu'&&!c.active){c.spd=0;c.fall=Math.max(0,c.fall-dt*1.5);return;}
+  if(c.active===false){c.spd=0;c.fall=Math.max(0,c.fall-dt*1.5);return;}
   c.fall=Math.max(0,c.fall-dt*1.5);
   /* --- látás --- */
   const dx=P.x-c.x,dz=P.z-c.z,dh=Math.hypot(dx,dz),ce=copEyeY(c),ey=eye.y-0.35;
@@ -460,10 +462,11 @@ function stepCop(c,dt,eye){
     if(c.sees){c.lostT=0;S.lastKnown.x=P.x;S.lastKnown.z=P.z;c.tx=P.x;c.tz=P.z;wantYaw=Math.atan2(-dx,-dz);bpT=Math.atan2(ey-ce,Math.max(dh,0.5));
       sp=dh>8?3.4:dh>4?1.2:0;c.aimT+=dt;c.shootCd-=dt;
       if(LV==='falu'){sp=c.blind>0?0:4.2;if(dh<1.3&&c.blind<=0&&!(c.spikeT>0)&&G.hooks.caught)G.hooks.caught(c);}
-      else if(c.aimT>0.65&&c.shootCd<=0&&c.stagger<=0&&c.blind<=0)fire(c,dh);
+      else if(!c.unarmed&&c.aimT>0.65&&c.shootCd<=0&&c.stagger<=0&&c.blind<=0)fire(c,dh);
     }else{c.lostT+=dt;c.aimT=Math.max(0,c.aimT-dt);c.shootCd-=dt;sp=3.2;c.tx=S.lastKnown.x;c.tz=S.lastKnown.z;bpT=0.1+0.35*Math.sin(S.time*1.3+c.id);swT=0.6*Math.sin(S.time*1.4);
       if(c.lostT>3.5){c.st='search';c.searchT=24;c.aw=0.6;say(c,'lost');}}
   }
+  if(c.unarmed&&(c.st==='alert'||c.st==='search')){c.tx=c.safe.x;c.tz=c.safe.z;sp=c.blind>0?0:3.2;wantYaw=null;c.aimT=0;}
   if(c.stagger>0||c.blind>0)sp*=0.25;
   if(c.spikeT>0){sp=0;wantYaw=null;}
   /* mozgás */
@@ -476,7 +479,7 @@ function stepCop(c,dt,eye){
 }
 function fire(c,dh){c.shootCd=rnd(1.0,1.5);c.shoot=1;S.shots++;gunshot(dh);P.noiseBoost=Math.max(P.noiseBoost,0);
   const air=P.mode!=='ground';let p=0.78-dh*0.022-(P.moving?0.14:0)-(P.running?0.16:0)-(P.crouch?0.06:0)-(air?0.1:0);if(dh<4)p=0.9;p=clamp(p,0.08,0.9);
-  if(Math.random()<p){const dmg=rnd(18,26)*D.dmg;P.hp-=dmg;P.hurt=1;thump(0.7);noiseHit(0.4,400,'lowpass',0.2);if(P.hp<=0){P.hp=0;endGame(false,'Lelőttek','A rendőrök '+fmt(S.time)+' után elkaptak.');}}
+  if(Math.random()<p){const dmg=rnd(18,26)*D.dmg;P.hp-=dmg;P.hurt=1;thump(0.7);noiseHit(0.4,400,'lowpass',0.2);if(P.hp<=0){P.hp=0;endGame(false,'Lelőttek',(LV==='varos'?'A testőrök ':'A rendőrök ')+fmt(S.time)+' után elkaptak.');}}
   else{noiseHit(0.15,5000,'highpass',0.08);}
   COPS.forEach(o=>{if(o===c||o.down)return;if(Math.hypot(o.x-c.x,o.z-c.z)<60&&o.st!=='alert'){o.st='search';o.searchT=26;o.tx=S.lastKnown.x+rnd(-5,5);o.tz=S.lastKnown.z+rnd(-5,5);}});}
 function syncCop(c,dt){const m=c.mesh,y=H(c.x,c.z);m.position.set(c.x,y,c.z);m.rotation.y=c.ry;
@@ -489,7 +492,7 @@ function syncCop(c,dt){const m=c.mesh,y=H(c.x,c.z);m.position.set(c.x,y,c.z);m.r
 let last=performance.now(),hudT=0,T=0;const VIEW={yaw:0,pitch:0};const BR={b:null,k:0,in:false};
 const shadowSnap=60/1024;
 function frame(now){
-  const raw=(now-last)/1000,dt=Math.min(0.05,raw);last=now;T+=dt;
+  const raw=Math.max(0,(now-last)/1000),dt=Math.min(0.05,raw);last=now;T+=dt;
   if(S.running&&!PORT.matches){update(dt);Q.frames++;Q.acc+=raw;if(Q.frames===150){if(Q.acc/150>0.03&&Q.level>0){lowerQuality();}Q.frames=0;Q.acc=0;}}
   else{P.yaw+=dt*0.04;}
   const gy=H(P.x,P.z);
@@ -606,8 +609,9 @@ function drawRadar(){const dpr=Math.min(2,window.devicePixelRatio||1),W=rad.clie
   const tf=(x,z)=>{const dx=x-P.x,dz=z-P.z;return [c+(dx*cy-dz*sy)*k,c+(dx*sy+dz*cy)*k];};const inR=(x,z,m)=>Math.hypot(x-P.x,z-P.z)<RM+(m||0);
   g.save();g.beginPath();g.arc(c,c,R,0,Math.PI*2);g.fillStyle='rgba(5,8,10,0.66)';g.fill();g.clip();
   /* határ és út */
-  g.strokeStyle='rgba(236,229,211,0.28)';g.lineWidth=1.2;g.beginPath();[[-XW,ZS],[XW,ZS],[XW,-ZN],[3.9,-ZN],[3.9,-150],[-3.9,-150],[-3.9,-ZN],[-XW,-ZN]].forEach((q,i)=>{const p=tf(q[0],q[1]);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.closePath();g.stroke();
-  g.fillStyle='rgba(120,128,132,0.35)';g.beginPath();[[-3.5,-ZN],[3.5,-ZN],[3.5,-150],[-3.5,-150]].forEach((q,i)=>{const p=tf(q[0],q[1]);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.closePath();g.fill();
+  if(LV==='varos'){g.strokeStyle='rgba(236,229,211,0.32)';g.lineWidth=1.2;A.VAROS.rects.forEach(r=>{if(!r.on||r.id==='board'||r.id==='hatch')return;g.beginPath();[[r.x0,r.z0],[r.x1,r.z0],[r.x1,r.z1],[r.x0,r.z1]].forEach((q,i)=>{const p=tf(q[0],q[1]);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.closePath();g.stroke();});}
+  else{g.strokeStyle='rgba(236,229,211,0.28)';g.lineWidth=1.2;g.beginPath();[[-XW,ZS],[XW,ZS],[XW,-ZN],[3.9,-ZN],[3.9,-150],[-3.9,-150],[-3.9,-ZN],[-XW,-ZN]].forEach((q,i)=>{const p=tf(q[0],q[1]);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.closePath();g.stroke();
+  g.fillStyle='rgba(120,128,132,0.35)';g.beginPath();[[-3.5,-ZN],[3.5,-ZN],[3.5,-150],[-3.5,-150]].forEach((q,i)=>{const p=tf(q[0],q[1]);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.closePath();g.fill();}
   g.fillStyle='rgba(70,110,70,0.55)';A.bushes.forEach(b=>{if(!inR(b.x,b.z,2))return;const p=tf(b.x,b.z);g.beginPath();g.arc(p[0],p[1],Math.max(1.4,b.r*k*0.8),0,Math.PI*2);g.fill();});
   giants.forEach(t=>{if(!inR(t.x,t.z,5))return;const p=tf(t.x,t.z);g.fillStyle='rgba(127,211,230,0.18)';g.beginPath();g.arc(p[0],p[1],t.cr*k,0,Math.PI*2);g.fill();g.fillStyle='#7fd3e6';g.beginPath();g.arc(p[0],p[1],2.2,0,Math.PI*2);g.fill();});
   if(S.smokeT>0&&inR(S.sx,S.sz,5)){const p=tf(S.sx,S.sz);g.fillStyle='rgba(180,190,196,0.35)';g.beginPath();g.arc(p[0],p[1],4.2*k,0,Math.PI*2);g.fill();}
@@ -624,7 +628,7 @@ function hud(){
   const st=m===3?['Riadó','var(--blood)']:m===2?['Keresnek','var(--lantern)']:m===1?['Gyanakszanak','var(--lantern)']:['Nyugodt','var(--calm)'];
   $('kiState').textContent=st[0];$('kiState').style.color=st[1];$('kiChar').style.color=st[1];$('kiRing').style.borderColor=st[1];
   $('kiDist').textContent=nd<35?Math.round(nd)+' m':'—';
-  const out=COPS.filter(c=>c.down).length;$('foe').textContent=LV==='falu'?(G.station||''):'Rendőrök: '+(COPS.length-out)+(out?' · kiiktatva: '+out:'');
+  const out=COPS.filter(c=>c.down).length;$('foe').textContent=LV!=='erdo'?(G.station||''):'Rendőrök: '+(COPS.length-out)+(out?' · kiiktatva: '+out:'');
   $('timer').textContent=fmt(S.time);
   $('hpBar').firstElementChild.style.width=P.hp+'%';$('hpBar').classList.toggle('low',P.hp<35);
   $('stamBar').firstElementChild.style.width=P.stam+'%';
@@ -648,9 +652,23 @@ function hud(){
   if(P.mode==='perch')updateButtons();
 }
 A.hands.visible=false;A.beacon.visible=false;
+/* nappali fények (a falu vizsgája és a város): ég, köd, nap, a holdas/éjszakai díszletek ki */
+const NIGHT={};
+function setDaylight(on){const sky=A.sky.material.uniforms;
+  if(!NIGHT.saved)Object.assign(NIGHT,{saved:true,bg:scene.background.getHex(),fog:scene.fog.color.getHex(),fd:scene.fog.density,hor:sky.uHor.value.getHex(),zen:sky.uZen.value.getHex(),
+    ml:moonLight.color.getHex(),mi:moonLight.intensity,hc:A.hemi.color.getHex(),hg:A.hemi.groundColor.getHex(),hi:A.hemi.intensity,r:[A.ring1,A.ring2,A.ring3].map(m=>m.material.color.getHex())});
+  G.day=on;const N=NIGHT,city=LV==='varos';
+  scene.background.setHex(on?0xbcd0dc:N.bg);scene.fog.color.setHex(on?(city?0xc4d2dc:0xbcd0dc):N.fog);scene.fog.density=on?(city?0.0024:0.007):N.fd;
+  sky.uHor.value=new THREE.Color(on?0xcfe0ea:N.hor);sky.uZen.value=new THREE.Color(on?0x4f86c6:N.zen);
+  moonLight.color.setHex(on?(city?0xfff8f0:0xfff0d8):N.ml);moonLight.intensity=on?1.55:N.mi;A.hemi.color.setHex(on?0xcfe2ff:N.hc);A.hemi.groundColor.setHex(on?(city?0x606468:0x6a5c42):N.hg);A.hemi.intensity=on?0.9:N.hi;
+  [A.ring1,A.ring2,A.ring3].forEach((m,k)=>m.material.color.setHex(on?[0x4f6448,0x64806a,0x9cb2c2][k]:N.r[k]));
+  A.stars.visible=A.moonSpr.visible=A.moonHalo.visible=!on;if(!city){A.fogSheets.forEach(f=>f.visible=!on);A.flies.forEach(f=>f.visible=!on);}
+  (A.shafts||[]).forEach(o=>{if(o&&o.isObject3D)o.visible=!on;});A.glowSprites.forEach(o=>{if(o&&o.isObject3D)o.visible=!on;});
+  ALLCOPS.forEach(c=>{c.pool.visible=!on;const R=c.mesh.userData.R;if(R&&R.lensGlow)R.lensGlow.visible=!on;});document.body.classList.toggle('day',on);}
+function raiseAlarm(x,z){if(S.alarm<=0)S.alarms++;S.alarm=40;alertAll(null,x,z,'cam');}
 /* a falu (kiképzés) logikája ezen keresztül éri el a játék belsejét */
 function sayLine(l,x,z,pitch){const d=Math.hypot(x-P.x,z-P.z);showSub(l[2],Math.max(3.2,l[2].length*0.075));speak(l[2],0.95,pitch||0.6,clamp(1.1-d/40,0.25,1));}
-Object.assign(G,{clearSpikes,SPK,DART,LINES,setDiff:k=>{D=DIFF[k];},P,S,COPS,ALLCOPS,GOAL,START,ITEMS,showMsg,sayLine,say,selectItem,updateButtons,pushOut,inBush,bodyNear,tone,thump,noiseHit,endGame,eyePos,fwd,resetCop,nextWaypoint,fmt,wrapA,rnd,STONE,startGame,
+Object.assign(G,{setDaylight,raiseAlarm,alertAll,blocked,smokeBlocks,takeDown,spotted,clampField,isTouch,TS,tutEnd,D:()=>D,DIFF,setDiffName:k=>{D=DIFF[k];},clearSpikes,SPK,DART,LINES,setDiff:k=>{D=DIFF[k];},P,S,COPS,ALLCOPS,GOAL,START,ITEMS,showMsg,sayLine,say,selectItem,updateButtons,pushOut,inBush,bodyNear,tone,thump,noiseHit,endGame,eyePos,fwd,resetCop,nextWaypoint,fmt,wrapA,rnd,STONE,startGame,
   setStones:n=>{S.stones=n;updateButtons();},setSpikes:n=>{S.spikes=n;updateButtons();},setDarts:n=>{S.darts=n;updateButtons();},setSmoke:n=>{S.smoke=n;updateButtons();}});
 /* Tesztelési horog: csak ?aetest címparaméterrel él, az élő játékban nincs. */
 if(/[?&]aetest/.test(location.search))window.AE_TEST={blowDart,useSpikes,SPK,DART,P,S,COPS,ALLCOPS,DIFF,setD:k=>{D=DIFF[k];},toggleDrag,throwStone,STONE,TS,drawRadar,startGame,useItem,selectItem,dropDown,startHook,startClimb,giants,stepCop,blocked,perchFor,arrivePerch,tick:(dt,n)=>{for(let i=0;i<(n||1);i++){if(!S.running)break;update(dt);COPS.forEach(c=>syncCop(c,dt));}},frame:()=>frame(performance.now())};

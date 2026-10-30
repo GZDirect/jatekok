@@ -45,6 +45,12 @@ function buildMonster(){const g=new THREE.Group(),fur=L(0x1d1612),hide=L(0x2a211
   const jaw=pivot(0,-0.28,-0.2);neck.add(jaw);const jm=new THREE.Mesh(new THREE.SphereGeometry(0.33,10,6,0,Math.PI*2,Math.PI/2,Math.PI/2),hide);jm.scale.set(1,0.6,1.3);jm.position.z=-0.3;jaw.add(jm);
   for(let i=0;i<6;i++){const tth=new THREE.Mesh(new THREE.ConeGeometry(0.03,0.12,4),claw);tth.rotation.x=Math.PI;tth.position.set(-0.2+i*0.08,-0.24,-0.72+Math.abs(i-2.5)*0.04);neck.add(tth);}
   [-1,1].forEach(s=>{const hg=new THREE.TorusGeometry(0.32,0.06,6,10,Math.PI*0.75);const h=new THREE.Mesh(hg,horn);h.position.set(s*0.38,0.3,0.05);h.rotation.set(0,s>0?0.3:Math.PI-0.3,Math.PI*0.15*s);neck.add(h);});
+  if(SU){/* öltöny: fehér ing, nyakkendő, a testőrnek napszemüveg és fülhallgató, a főnöknek ősz halánték */
+    const tie=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.34,0.02),L(BO?0x9a1e22:0x101114));tie.position.set(0,0.42,-0.2);tie.rotation.x=0.12;chest.add(tie);
+    const shirtV=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.2,0.02),shirt);shirtV.position.set(0,0.5,-0.19);shirtV.rotation.x=0.15;chest.add(shirtV);
+    if(!BO){const gl=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.035,0.02),new THREE.MeshPhongMaterial({color:0x08090a,shininess:90,specular:0x888888}));gl.position.set(0,0.135,-0.118);neck.add(gl);
+      const ear=new THREE.Mesh(new THREE.CylinderGeometry(0.004,0.004,0.16,4),L(0xd8d8d0));ear.position.set(0.11,0.0,0.0);ear.rotation.z=0.2;neck.add(ear);}
+    else{[-1,1].forEach(s=>{const gr=new THREE.Mesh(new THREE.SphereGeometry(0.05,6,5),L(0xb8b4ac));gr.position.set(s*0.1,0.14,0.02);neck.add(gr);});}}
   const eyeM=new THREE.MeshBasicMaterial({color:0xff4a2a,fog:false});const eyes=[-1,1].map(s=>{const e=new THREE.Mesh(new THREE.SphereGeometry(0.07,8,6),eyeM);e.position.set(s*0.22,0.08,-0.5);neck.add(e);const gl=glowSprite(0xff3a1a,0.9,0.9);gl.position.copy(e.position);neck.add(gl);return gl;});
   const arms=[-1,1].map(s=>{const sh=pivot(s*0.95,0.15,-0.55);body.add(sh);const up=limb(0.95,0.2,0.26,fur,8);sh.add(up);const el=pivot(0,-0.95,0);sh.add(el);const lo=limb(0.85,0.15,0.2,fur,8);el.add(lo);
     for(let k=0;k<3;k++){const c=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.28,4),claw);c.position.set((k-1)*0.09,-0.95,-0.08);c.rotation.x=-2.6;el.add(c);}return{sh,el};});
@@ -83,8 +89,8 @@ function buildEnemy(type){return type==='monster'?buildMonster():type==='ninja'?
 /* ================= Japán rendőr (zseblámpa bal kézben, revolver jobb kézben) =================
    Előre a −z irány. anim(t,spd,dt,o): o={st,bp (lámpa dőlése fel+),sweep (felsőtest elfordulása),shoot,fall,stagger} */
 /* opt.student: kiképzésen részt vevő tanítvány (indigó ruha, fejpánt, fakard, papírlámpás); opt.master: idős mester (szürke köntös, fehér haj és szakáll, bot) */
-function buildPolice(seed,opt){opt=opt||{};const ST=!!opt.student,MA=!!opt.master,POL=!ST&&!MA;const g=new THREE.Group(),r=mulberry32(seed||1);
-  const navy=L(MA?0x5d5a55:ST?0x2b2e48:0x22304d),pants=L(MA?0x46433d:ST?0x1b1b25:0x1a2236),shirt=L(MA?0x8a857a:ST?0xd9d4c8:0x9ab6dc),skin=L(0xc9a07e),black=L(0x111216),glove=L(0xe6e6dc),gold=L(0xd8b040,{emissive:0x3a2a08}),
+function buildPolice(seed,opt){opt=opt||{};const ST=!!opt.student,MA=!!opt.master,SU=!!opt.suit,BO=!!opt.boss,POL=!ST&&!MA&&!SU;const g=new THREE.Group(),r=mulberry32(seed||1);
+  const navy=L(BO?0x4a4e58:SU?0x17181d:MA?0x5d5a55:ST?0x2b2e48:0x22304d),pants=L(BO?0x3e424b:SU?0x141519:MA?0x46433d:ST?0x1b1b25:0x1a2236),shirt=L(SU?0xeeeeea:MA?0x8a857a:ST?0xd9d4c8:0x9ab6dc),skin=L(0xc9a07e),black=L(0x111216),glove=L(0xe6e6dc),gold=L(0xd8b040,{emissive:0x3a2a08}),
     vest=L(0xb6d23c,{emissive:0x2c3608}),gunM=new THREE.MeshPhongMaterial({color:0x2a2c30,shininess:60,specular:0x666666});
   const body=pivot(0,0,0);g.add(body);const hips=pivot(0,0.98,0);body.add(hips);
   const legs=[-1,1].map(s=>{const hp=pivot(s*0.1,0,0);hips.add(hp);hp.add(limb(0.47,0.075,0.09,pants));const kn=pivot(0,-0.47,0);hp.add(kn);kn.add(limb(0.45,0.055,0.07,pants));
@@ -118,6 +124,7 @@ function buildPolice(seed,opt){opt=opt||{};const ST=!!opt.student,MA=!!opt.maste
   const gun=new THREE.Group();gun.position.set(0,-0.31,0);arms[1].el.add(gun);
   if(ST){const bk=new THREE.Mesh(new THREE.CylinderGeometry(0.016,0.02,0.95,7),L(0x8a6a44));bk.position.set(0,-0.42,-0.02);gun.add(bk);}
   else if(MA){const st=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.025,1.6,7),L(0x6a5038));st.position.set(0,-0.15,0);gun.add(st);}
+  else if(BO){const ph=new THREE.Mesh(new THREE.BoxGeometry(0.035,0.015,0.075),L(0x101114));ph.position.set(0,-0.03,0);gun.add(ph);}
   else{const grip=new THREE.Mesh(new THREE.BoxGeometry(0.03,0.04,0.09),gunM);grip.position.set(0,0,0.03);grip.rotation.x=-0.3;gun.add(grip);
    const cyl=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.022,0.045,8),gunM);cyl.position.set(0,-0.04,-0.005);gun.add(cyl);
    const bar=new THREE.Mesh(new THREE.CylinderGeometry(0.009,0.009,0.11,6),gunM);bar.position.set(0,-0.11,-0.01);gun.add(bar);}
@@ -126,10 +133,10 @@ function buildPolice(seed,opt){opt=opt||{};const ST=!!opt.student,MA=!!opt.maste
   const torch=new THREE.Group();torch.position.set(0,-0.31,0);arms[0].el.add(torch);
   if(ST){const lp=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,0.22,10),new THREE.MeshLambertMaterial({color:0xf4e2c0,emissive:0xd07a30,emissiveIntensity:0.9}));lp.position.y=-0.2;torch.add(lp);
     const lc=new THREE.Mesh(new THREE.CylinderGeometry(0.085,0.085,0.02,10),black);lc.position.y=-0.08;torch.add(lc);const lc2=lc.clone();lc2.position.y=-0.32;torch.add(lc2);}
-  else if(!MA){const tb=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.018,0.2,8),black);tb.position.y=-0.06;torch.add(tb);
+  else if(!MA&&!SU){const tb=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.018,0.2,8),black);tb.position.y=-0.06;torch.add(tb);
    const th=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.022,0.06,10),black);th.position.y=-0.18;torch.add(th);
    const lens=new THREE.Mesh(new THREE.CircleGeometry(0.03,10),new THREE.MeshBasicMaterial({color:0xfff4d8}));lens.rotation.x=Math.PI/2;lens.position.y=-0.212;torch.add(lens);}
-  torch.visible=!MA;
+  torch.visible=!MA&&!SU;
   const lensP=new THREE.Object3D();lensP.position.y=-0.22;torch.add(lensP);
   const lensGlow=glowSprite(ST?0xffb060:0xfff0cc,ST?1.1:0.7,0.9);lensGlow.position.y=ST?-0.2:-0.23;torch.add(lensGlow);
   g.traverse(o=>{if(o.isMesh)o.castShadow=true;});

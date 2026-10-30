@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Árnyékerdő összeállítása: src/shell.html + world.js + actors.js + falu.js + parkolt.js + game.js + falu_game.js -> ../index.html
+"""Árnyékerdő összeállítása: src/shell.html + world.js + actors.js + falu.js + parkolt.js + game.js + falu_game.js + varos.js + varos_game.js -> ../index.html
 
 Futtatás: python3 arnyekerdo/src/build.py   (bárhonnan)
 Csak a src/ mappában dolgozz, az index.html generált fájl.
@@ -9,7 +9,7 @@ import os
 D = os.path.dirname(os.path.abspath(__file__))
 rd = lambda n: open(os.path.join(D, n), encoding='utf-8').read()
 shell = rd('shell.html')
-js = '\n'.join(rd(n) for n in ('world.js', 'actors.js', 'falu.js', 'parkolt.js', 'game.js', 'falu_game.js')) + '\n'
+js = '\n'.join(rd(n) for n in ('world.js', 'actors.js', 'falu.js', 'varos.js', 'parkolt.js', 'game.js', 'falu_game.js', 'varos_game.js')) + '\n'
 assert '/*@@JATEK@@*/' in shell, 'hiányzik a /*@@JATEK@@*/ jelölő a shell.html-ből'
 page = shell.replace('/*@@JATEK@@*/', js)
 # GitHub Pages-hez kell egy teljes HTML-váz (a claude.ai artifact ezt magától adja hozzá).

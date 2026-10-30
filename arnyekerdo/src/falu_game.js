@@ -168,20 +168,8 @@ G.hooks.update=dt=>{
 
 /* ---------- nappal: a vizsga másnap délben ---------- */
 const NIGHT={};
-function setDay(on){if(on===G.day&&NIGHT.saved)return;const sc=A.scene,sky=A.sky.material.uniforms;
-  if(!NIGHT.saved){Object.assign(NIGHT,{saved:true,bg:sc.background.getHex(),fog:sc.fog.color.getHex(),fd:sc.fog.density,hor:sky.uHor.value.getHex(),zen:sky.uZen.value.getHex(),
-    ml:A.moonLight.color.getHex(),mi:A.moonLight.intensity,hc:A.hemi.color.getHex(),hg:A.hemi.groundColor.getHex(),hi:A.hemi.intensity,
-    r:[A.ring1,A.ring2,A.ring3].map(m=>m.material.color.getHex()),li:F.LIGHTS.map(l=>l.intensity),sh:F.shojiM.emissiveIntensity});}
-  G.day=on;const N=NIGHT;
-  sc.background.setHex(on?0xbcd0dc:N.bg);sc.fog.color.setHex(on?0xbcd0dc:N.fog);sc.fog.density=on?0.007:N.fd;
-  sky.uHor.value=new THREE.Color(on?0xcfe0ea:N.hor);sky.uZen.value=new THREE.Color(on?0x4f86c6:N.zen);
-  A.moonLight.color.setHex(on?0xfff0d8:N.ml);A.moonLight.intensity=on?1.55:N.mi;
-  A.hemi.color.setHex(on?0xcfe2ff:N.hc);A.hemi.groundColor.setHex(on?0x6a5c42:N.hg);A.hemi.intensity=on?0.9:N.hi;
-  [A.ring1,A.ring2,A.ring3].forEach((m,k)=>m.material.color.setHex(on?[0x4f6448,0x64806a,0x9cb2c2][k]:N.r[k]));
-  A.stars.visible=A.moonSpr.visible=A.moonHalo.visible=!on;A.fogSheets.forEach(f=>f.visible=!on);A.flies.forEach(f=>f.visible=!on);
-  (A.shafts||[]).forEach(o=>{if(o&&o.isObject3D)o.visible=!on;});A.glowSprites.forEach(o=>{if(o&&o.isObject3D)o.visible=!on;});
-  F.LIGHTS.forEach((l,k)=>l.intensity=on?0:N.li[k]);F.shojiM.emissiveIntensity=on?0.08:N.sh;F.lampGlow.forEach(s=>s.material.opacity=on?0.08:0.5);
-  ALLCOPS.forEach(c=>{c.pool.visible=!on;const R=c.mesh.userData.R;if(R&&R.lensGlow)R.lensGlow.visible=!on;});document.body.classList.toggle('day',on);}
+function setDay(on){if(!NIGHT.saved)Object.assign(NIGHT,{saved:true,li:F.LIGHTS.map(l=>l.intensity),sh:F.shojiM.emissiveIntensity});
+  G.setDaylight(on);F.LIGHTS.forEach((l,k)=>l.intensity=on?0:NIGHT.li[k]);F.shojiM.emissiveIntensity=on?0.08:NIGHT.sh;F.lampGlow.forEach(s=>s.material.opacity=on?0.08:0.5);}
 G.setDay=setDay;
 function dayFade(on){const fd=$('dayFade');fd.style.opacity=1;
   setDay(true);Object.assign(P,{x:0,z:-103.6,yaw:0,pitch:0,crouch:true,run:false,mode:'ground',camY:0.95});G.clearSpikes();G.updateButtons();}

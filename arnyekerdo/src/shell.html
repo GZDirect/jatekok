@@ -118,7 +118,7 @@ body.menu .hud,body.menu #btns,body.menu #tools,body.menu #bDrag{visibility:hidd
 .back{font-size:13px;color:var(--mist);text-decoration:none;align-self:flex-start;}.back:hover{color:var(--moon);}
 #dayFade{position:fixed;inset:0;z-index:40;background:#05080a;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:none;}
 #dayFade div{text-align:center;color:var(--moon);}#dayFade small{display:block;font:500 13px var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--mist);margin-bottom:8px;}#dayFade b{font:600 44px var(--display);}
-body.falu #diff,body.falu label.opt,body.falu .tutB{display:none;}
+body.varos label.opt,body.varos .tutB,body.falu #diff,body.falu label.opt,body.falu .tutB{display:none;}
 #tutStep{font-size:11px;letter-spacing:1.5px;color:var(--goal);grid-column:1;}
 #tutText{grid-column:1;font-size:14px;line-height:1.45;color:var(--moon);}
 .tutB{grid-column:2;grid-row:1 / span 2;align-self:center;display:flex;flex-direction:column;gap:6px;}
@@ -215,7 +215,7 @@ body.falu #diff,body.falu label.opt,body.falu .tutB{display:none;}
       <a class="back" href="./">‹ Főmenü</a>
       <div class="eyebrow" id="startEyebrow">1. fejezet · Lopakodó küldetés</div>
       <h1>Shinobi</h1>
-      <nav class="lvl" aria-label="Pálya"><a href="?palya=erdo" id="lvl1">1 · Rendőrkordon</a><a href="?palya=falu" id="lvl2">2 · A mester faluja</a></nav>
+      <nav class="lvl" aria-label="Pálya"><a href="?palya=erdo" id="lvl1">1 · Rendőrkordon</a><a href="?palya=falu" id="lvl2">2 · A mester faluja</a><a href="?palya=varos" id="lvl3">3 · Üvegtorony</a></nav>
       <p id="lead">Éjszaka van a japán hegyekben. A rendőrség körbezárta a völgyet: <span id="copsN">6</span> rendőr fésüli át az erdőt zseblámpával és pisztollyal. Juss el a déli végéből az északi útig – árnyékként, vagy úgy, hogy egyenként eltünteted őket.</p>
       <div class="diff" id="diff" role="radiogroup" aria-label="Nehézség">
         <button type="button" role="radio" data-d="konnyu">Könnyű<small>4 rendőr</small></button>

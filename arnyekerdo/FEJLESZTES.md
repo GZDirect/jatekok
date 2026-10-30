@@ -77,11 +77,31 @@ Mintának a Tenchu kiképző küldetését (szobáról szobára, egy ötlet egy 
 - **Kapcsolat a játékkal:** a `game.js` a `window.AE.G` objektumon ad horgokat (`setup`, `newRound`, `update`, `caught`, `melee`, `rank`) és belső függvényeket. A falu nem öl: a tantó is csak leüt. A tanítványoknál a `c.active` jelző dönti el, hogy figyelnek-e; csak az aktuális udvar tanítványai aktívak.
 - **Tesztelés:** `?palya=falu&aetest`, a `window.AE_FALU` horoggal (`startStation(i)`, `T`, `fail`). Headless teszttel mind a tizenkét próba végigment, a csend próbája járva elbukik, guggolva sikerül.
 
+- **Teljes képernyő:** minden eszközön az első kattintásra/érintésre (a böngésző kattintás nélkül nem engedi).
 - **Pályák sorrendje:** a 2. pálya gombja a kezdőképernyőn le van zárva, amíg az 1. pályát egyszer nem teljesítetted (`localStorage` `ae-l1-done`). Az 1. pálya sikeres vége után a záró képernyőn „Tovább: 2 · A mester faluja” gomb jelenik meg. A `?palya=falu` cím közvetlenül mindig működik.
 - **Minőség:** ha 150 kép átlaga 30 ms fölött van, a játék lejjebb veszi a minőséget (pixelarány, fű, árnyék).
 
 - **Nyitókép:** a játék neve **Shinobi** (a mappa és a link marad `arnyekerdo`). Induláskor a nyitókép jön (`#title`: `nyitokep.jpg` 2560×1440 nagy kijelzőre, `nyitokep-kicsi.jpg` 1280×720 telefonra), rajta a „Shinobi” cím, a Kezdés és a Mentések gomb. A kép egy kunyhó belseje a fegyvertartóval; a bal oldalra sötét átmenet kerül a felirat miatt. Ha a címben van `?palya=`, a nyitókép kimarad (például a Tovább gombnál).
 - **Mentések:** három hely a böngészőben (`ae-save-1..3`, a kiválasztott: `ae-slot`). Tárolja, hogy kész-e az 1. és a 2. pálya, a legjobb rangot és a 2. pálya pecsétjeit (`saveProgress`, `loadSave`). A Kezdés a kiválasztott mentés szerint folytat: ha az 1. pálya kész, a 2. pálya kezdőképernyőjére visz. A régi `ae-l1-done` jelzést az 1. mentésbe veszi át.
+
+## 2c. Harmadik pálya: Üvegtorony (`?palya=varos`)
+
+Nappal, egy nagyváros közepén, két felhőkarcoló tetején. A cél Kuroda, a cégvezető, aki a rendőröket a játékosra küldte. A 2. pálya teljesítése után nyílik (mentés: `l3`, `r3`, `s3`).
+
+A tervezésnél ezekre figyeltünk: Hitman (rövid, kiszámítható célpont-kör és „lehetőségek”), Dishonored 2 (logikus terek, több út), Mark of the Ninja (egyértelmű visszajelzés, gyors újrakezdés), Sekiro (jól jelölt kampópontok). Kerülendő volt a Tenchu: Shadow Assassins hibája (láthatatlan falak, holttestet nem vevő őrök) és az Aragami 2 ismétlődése.
+
+- **Motor:** a tetők síkja y=0 (`H()=0`). A járható részek téglalapok (`VAROS.rects`). A `clampField` a legközelebbi tetőre húz vissza, így a mélybe nem lehet lesétálni. A mélység fölé nem lehet leugrani (`dropDown` megtagadja). Az erdő díszletei (terep, fű, fák, köd) ki vannak kapcsolva; a város a `varos.js`-ben épül (tornyok, utca a mélyben −150 m-en, autók).
+- **Kampópontok:** a `giants` lista ezen a pályán daru (a szakadék fölött), víztorony (a céltorony tetején, karmokkal is mászható) és antenna (a penthouse tetején, az iroda fölött). A fák helyett ezek világítanak fel célzáskor (`A.glowGiant` felülírva).
+- **Penthouse:** üvegfal (átlátni rajta, átmenni nem: `low` ütköző), redőny és beton (eltakar), belső fal ajtóval, íróasztal, tárgyalóasztal. Tetőablak az antenna mellett: onnan felülről lehet Kurodára ugrani.
+- **Kuroda** (`buildPolice(…,{suit:true,boss:true})`, fegyvertelen): napirend íróasztal → tárgyaló → íróasztal → terasz (ott telefonál, a testőr az ajtóban háttal áll). Riadóra a biztonságos sarokba menekül. Az ajtókon át útvonalat számolunk (`path`, `navTo`).
+- **Testőrök és járőrök:** két személyi testőr követi Kurodát; 2/3/4 járőr a tetőn (nehézség szerint); az első riadó után 8 mp-cel két erősítés jön a lépcsőházból.
+- **Kamerák:** három pásztázó kamera; ha 1 mp körül látnak, riasztanak. A füst elvakítja őket, a sövény és a fedezék eltakar.
+- **Ablakmosó kosár:** a keleti homlokzaton; ráállva elindul, a tárgyaló nyitható ablakához visz (és vissza).
+- **Menekülés:** Kuroda halála után a terasz északkeleti sarkában lévő kábelen kell lecsúszni (`P.mode='zip'`).
+- **Mentési pont:** ha a céltorony tetején lelőnek, a záró képernyőn „Folytatás a céltorony tetejéről”.
+- **Pecsétek:** Árnyék (nem volt riasztás), Tiszta kéz (csak Kuroda halt meg), Rejtett (a testét nem találták meg). Rang: Bérgyilkos, Nindzsa, Mester, Árnyék.
+- **Nappal:** a közös `G.setDaylight(on)` kapcsolja (a falu vizsgája is ezt használja).
+- **Teszt:** `?palya=varos&aetest`, `window.AE_VAROS`.
 
 ## 3. Fájlok
 
@@ -107,8 +127,10 @@ arnyekerdo/
     game.js       ← rendőrök érzékelése és viselkedése, eszközök, kampó, mászás, leugrás, irányítás,
                     feliratok és hangok, HUD, értékelés, képernyőeffektek, minőség-visszaszabályozás, fő ciklus.
                     Tesztelési horog: ?aetest címparaméterrel window.AE_TEST.
+    varos.js      ← a 3. pálya díszlete: tetők, város, daru, víztorony, antenna, penthouse, kamerák, ablakmosó kosár (AE.VAROS)
+    varos_game.js ← a 3. pálya menete: Kuroda napirendje, testőrök, erősítés, kamerák, kosár, kábel, pecsétek
     falu_game.js  ← a 2. pálya próbái, a mester szövegei, hiba és újrakezdés, pecsétek
-    build.py      ← összeállítja az index.html-t (sorrend: world, actors, falu, parkolt, game, falu_game)
+    build.py      ← összeállítja az index.html-t (sorrend: world, actors, falu, varos, parkolt, game, falu_game, varos_game)
 ```
 
 Összeállítás a repó gyökeréből:
