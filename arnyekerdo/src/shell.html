@@ -87,6 +87,7 @@ h2{font-size:40px;}
 #endFoe{font-family:var(--display);font-size:22px;color:var(--lantern);}
 @media (prefers-reduced-motion:reduce){#msg,#kiRing,#kiChar,#fxLeaf,#sub{transition:none;}}
 .stats{font-size:13px;color:var(--mist);}
+body.desk #btns,body.desk #bDrag{display:none!important;}
 body.menu .hud,body.menu #btns,body.menu #tools,body.menu #bDrag{visibility:hidden;}
 #radar{top:calc(env(safe-area-inset-top,0px) + 86px);left:calc(env(safe-area-inset-left,0px) + 16px);width:min(27vh,120px);height:min(27vh,120px);}
 #tut{top:calc(env(safe-area-inset-top,0px) + 96px);left:50%;transform:translateX(-50%);width:min(64vw,470px);background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--goal);border-radius:6px;padding:9px 12px 10px;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:start;}
@@ -229,7 +230,8 @@ body.varos label.opt,body.varos .tutB,body.falu #diff,body.falu label.opt,body.f
     <dl class="how">
       <dt>Bal hüvelykujj</dt><dd>mozgás (gép: W A S D)</dd>
       <dt>Jobb hüvelykujj</dt><dd>körülnézés (gép: kattints a játéktérre, utána az egérrel nézel körül; Esc elengedi)</dd>
-      <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol (C)</dd>
+      <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol (jobb egérgomb vagy C)</dd>
+      <dt>Futás</dt><dd>gyors, de hangos (Q vagy Shift)</dd>
       <dt>Tantó, tekko</dt><dd>hátulról egy csapás: a tantó öl, a tekko csak leüt (kattintás vagy E)</dd>
       <dt>Kampó</dt><dd>célozz egy sűrű lombú óriásfára: ha halványan felderül, fel tudsz kapaszkodni</dd>
       <dt>Karmok</dt><dd>az óriásfa törzsén felmászhatsz (1–7: eszközváltás)</dd>

@@ -130,7 +130,7 @@ const master=A.buildPolice(99,{master:true});scene.add(master);
 /* ---------- tanítványok: hol állnak, merre járnak ---------- */
 const P2=(x,z)=>({x,z});
 const students=[
-  {room:'csend',route:[P2(-4,29)],ry:Math.PI/2,listen:true},
+  {room:'csend',route:[P2(-6,30.5)],ry:Math.PI/2,listen:true},
   {room:'bokor',route:[P2(-13,15),P2(13,15)],ry:-Math.PI/2},
   {room:'karom',route:[P2(-13,-30.5),P2(-1,-30.5)],ry:-Math.PI/2},
   {room:'kavics',route:[P2(0,-50.6)],ry:Math.PI},

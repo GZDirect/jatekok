@@ -105,6 +105,7 @@ h2{font-size:40px;}
 #endFoe{font-family:var(--display);font-size:22px;color:var(--lantern);}
 @media (prefers-reduced-motion:reduce){#msg,#kiRing,#kiChar,#fxLeaf,#sub{transition:none;}}
 .stats{font-size:13px;color:var(--mist);}
+body.desk #btns,body.desk #bDrag{display:none!important;}
 body.menu .hud,body.menu #btns,body.menu #tools,body.menu #bDrag{visibility:hidden;}
 #radar{top:calc(env(safe-area-inset-top,0px) + 86px);left:calc(env(safe-area-inset-left,0px) + 16px);width:min(27vh,120px);height:min(27vh,120px);}
 #tut{top:calc(env(safe-area-inset-top,0px) + 96px);left:50%;transform:translateX(-50%);width:min(64vw,470px);background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--goal);border-radius:6px;padding:9px 12px 10px;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:start;}
@@ -247,7 +248,8 @@ body.varos label.opt,body.varos .tutB,body.falu #diff,body.falu label.opt,body.f
     <dl class="how">
       <dt>Bal hüvelykujj</dt><dd>mozgás (gép: W A S D)</dd>
       <dt>Jobb hüvelykujj</dt><dd>körülnézés (gép: kattints a játéktérre, utána az egérrel nézel körül; Esc elengedi)</dd>
-      <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol (C)</dd>
+      <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol (jobb egérgomb vagy C)</dd>
+      <dt>Futás</dt><dd>gyors, de hangos (Q vagy Shift)</dd>
       <dt>Tantó, tekko</dt><dd>hátulról egy csapás: a tantó öl, a tekko csak leüt (kattintás vagy E)</dd>
       <dt>Kampó</dt><dd>célozz egy sűrű lombú óriásfára: ha halványan felderül, fel tudsz kapaszkodni</dd>
       <dt>Karmok</dt><dd>az óriásfa törzsén felmászhatsz (1–7: eszközváltás)</dd>
@@ -1019,7 +1021,7 @@ const master=A.buildPolice(99,{master:true});scene.add(master);
 /* ---------- tanítványok: hol állnak, merre járnak ---------- */
 const P2=(x,z)=>({x,z});
 const students=[
-  {room:'csend',route:[P2(-4,29)],ry:Math.PI/2,listen:true},
+  {room:'csend',route:[P2(-6,30.5)],ry:Math.PI/2,listen:true},
   {room:'bokor',route:[P2(-13,15),P2(13,15)],ry:-Math.PI/2},
   {room:'karom',route:[P2(-13,-30.5),P2(-1,-30.5)],ry:-Math.PI/2},
   {room:'kavics',route:[P2(0,-50.6)],ry:Math.PI},
@@ -1290,6 +1292,7 @@ const A=window.AE,{$,clamp,H,scene,camera,renderer,grid,bgrid,near,moonLight,MOO
 const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a)),rnd=(a,b)=>a+Math.random()*(b-a);
 const LV=A.LV||'erdo';
 const START=LV==='falu'?{x:0,z:45}:LV==='varos'?{x:0,z:58}:{x:0,z:93},GOAL=LV==='falu'?{x:0,z:39}:LV==='varos'?{x:0,z:-44}:{x:0,z:-112};
+const isTouch=matchMedia('(pointer:coarse)').matches;
 const G={LV,day:false,hooks:{},goalName:LV==='falu'?'Mester':LV==='varos'?'Kuroda':'Kijárat'};A.G=G;
 
 /* ---------- Térbeli segédek ---------- */
@@ -1381,7 +1384,7 @@ const joy={id:null,ox:0,oy:0,x:0,y:0},look={id:null,lx:0,ly:0,sx:0,sy:0,t0:0,mou
 const touch=$('touch'),joyEl=$('joy'),knob=$('knob');
 touch.addEventListener('pointerdown',e=>{
   if(!S.running)return;
-  if(e.pointerType==='mouse'&&document.pointerLockElement===touch)return;
+  if(e.pointerType==='mouse'&&(document.pointerLockElement===touch||e.button!==0))return;
   const left=e.clientX<window.innerWidth*0.45&&e.pointerType!=='mouse';
   if(left&&joy.id===null){joy.id=e.pointerId;joy.ox=e.clientX;joy.oy=e.clientY;joy.x=joy.y=0;joyEl.style.left=e.clientX+'px';joyEl.style.top=e.clientY+'px';joyEl.hidden=false;knob.style.transform='translate(0,0)';$('joyHint').hidden=true;}
   else if(look.id===null){look.id=e.pointerId;look.lx=look.sx=e.clientX;look.ly=look.sy=e.clientY;look.t0=performance.now();look.mouse=e.pointerType==='mouse';}
@@ -1397,14 +1400,16 @@ function endPtr(e){if(e.pointerId===joy.id){joy.id=null;joy.x=joy.y=0;joyEl.hidd
 /* egér: a játéktérre kattintva rögzül (pointer lock), onnantól húzás nélkül nézel körül, kattintás = használat, Esc elengedi.
    Az egér érzékenysége kisebb, mint az ujjé: ugyanannyi képpont kisebb fordulat, ettől lesz sima a körbenézés. */
 const MOUSE_K=0.42;
-touch.addEventListener('mousedown',e=>{if(!S.running||isTouch||e.button!==0)return;if(document.pointerLockElement!==touch){goFull();try{const r=touch.requestPointerLock();if(r&&r.catch)r.catch(()=>{});}catch(_){}}else useItem();});
+/* gépen: jobb egérgomb = guggolás, Q = futás; a jobb oldali érintőgombok nem kellenek */
+document.addEventListener('contextmenu',e=>{if(!isTouch)e.preventDefault();});if(!isTouch)document.body.classList.add('desk');
+touch.addEventListener('mousedown',e=>{if(!S.running||isTouch)return;if(e.button===2){e.preventDefault();crouchOrDrop();return;}if(e.button!==0)return;if(document.pointerLockElement!==touch){goFull();try{const r=touch.requestPointerLock();if(r&&r.catch)r.catch(()=>{});}catch(_){}}else useItem();});
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement!==touch||!S.running)return;const dx=clamp(e.movementX,-200,200),dy=clamp(e.movementY,-200,200);
   P.yaw-=dx*0.0058*MOUSE_K;P.pitch=clamp(P.pitch-dy*0.0045*MOUSE_K,-1.25,1.3);P.lookDX+=dx*0.01*MOUSE_K;});
 touch.addEventListener('pointerup',endPtr);touch.addEventListener('pointercancel',endPtr);
 touch.addEventListener('wheel',e=>{if(S.running)selectItem((P.item+(e.deltaY>0?1:ITEMS.length-1))%ITEMS.length);},{passive:true});
 window.addEventListener('keydown',e=>{keys[e.code]=true;if(!S.running||e.repeat)return;
   if(e.code==='KeyC')crouchOrDrop();if(e.code==='KeyF')useSmoke();if(e.code==='KeyE')useItem();if(e.code==='Space'){e.preventDefault();if(P.mode==='perch')dropDown();else useItem();}
-  if(e.code==='KeyG')toggleDrag();if(e.code==='Enter'&&TS.on)tutNext(false);if(e.code==='KeyQ')selectItem((P.item+1)%ITEMS.length);const n=['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7'].indexOf(e.code);if(n>=0)selectItem(n);});
+  if(e.code==='KeyG')toggleDrag();if(e.code==='Enter'&&TS.on)tutNext(false);if(e.code==='KeyQ')toggleRun();const n=['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7'].indexOf(e.code);if(n>=0)selectItem(n);});
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
 function tap(el,fn){el.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(S.running)fn();});el.addEventListener('click',e=>{if(e.detail===0&&S.running)fn();});}
 function crouchOrDrop(){if(P.mode==='perch'){dropDown();return;}if(P.mode!=='ground')return;P.crouch=!P.crouch;if(P.crouch)P.run=false;updateButtons();}
@@ -1470,7 +1475,7 @@ function throwStone(){if(STONE.on)return;if(S.stones<=0){showMsg('Elfogyott a ka
 function stepStone(dt){if(!STONE.on)return;STONE.t+=dt;STONE.vy-=9.8*dt;STONE.x+=STONE.vx*dt;STONE.y+=STONE.vy*dt;STONE.z+=STONE.vz*dt;
   STONE.m.position.set(STONE.x,STONE.y,STONE.z);STONE.m.rotation.x+=dt*9;STONE.m.rotation.y+=dt*7;
   const gy=H(STONE.x,STONE.z);let hit=STONE.y<=gy+0.05;
-  if(!hit&&STONE.y<gy+4)near(grid,STONE.x,STONE.z,t=>{if(!hit&&Math.hypot(STONE.x-t.x,STONE.z-t.z)<t.r+0.05)hit=true;});
+  if(!hit&&STONE.y<gy+4)near(grid,STONE.x,STONE.z,t=>{if(!hit&&!t.off&&!(t.low&&STONE.y>gy+1.3)&&Math.hypot(STONE.x-t.x,STONE.z-t.z)<t.r+0.05)hit=true;});
   if(hit||STONE.t>4){STONE.on=false;STONE.m.visible=false;clearSpikes();DART.on=false;DART.m.visible=false;stoneLand(STONE.x,STONE.z);}}
 function stoneLand(x,z){const d=Math.hypot(x-P.x,z-P.z),v=clamp(1-d/45,0.12,1);noiseHit(0.3*v,3200,'bandpass',0.09,3);tone(0.05*v,1800,900,0.05,'square');
   COPS.forEach(c=>{if(c.down||c.st==='alert')return;if(Math.hypot(c.x-x,c.z-z)>16*D.hear)return;
@@ -1540,16 +1545,16 @@ function ambStep(dt){if(!ac||!AMB.on)return;
     c.radioT=(c.radioT==null?rnd(4,20):c.radioT)-dt;if(c.radioT<=0){c.radioT=rnd(14,28);if(d<32)radio(clamp(1-d/32,0,1),panOf(c.x,c.z));}});}
 
 /* ---------- Bemutató az első percben ---------- */
-const isTouch=matchMedia('(pointer:coarse)').matches;
+
 const TUT=[
   {t:isTouch?'Mozogj: húzd a bal hüvelykujjadat a képernyő bal oldalán.':'Mozogj a W A S D billentyűkkel.',done:()=>Math.hypot(P.x-START.x,P.z-START.z)>4},
-  {t:isTouch?'Nézz körül: húzd a jobb hüvelykujjadat.':'Nézz körül: húzd az egeret lenyomott gombbal.',done:()=>TS.yaw>1.2},
-  {t:isTouch?'Guggolj le a Guggol gombbal. Guggolva halkabb vagy, bokorban nem látnak.':'Guggolj le a C billentyűvel. Guggolva halkabb vagy, bokorban nem látnak.',done:()=>P.crouch},
+  {t:isTouch?'Nézz körül: húzd a jobb hüvelykujjadat.':'Nézz körül: kattints a játéktérre, és mozgasd az egeret (Esc elengedi).',done:()=>TS.yaw>1.2},
+  {t:isTouch?'Guggolj le a Guggol gombbal. Guggolva halkabb vagy, bokorban nem látnak.':'Guggolj le a jobb egérgombbal (vagy C). Guggolva halkabb vagy, bokorban nem látnak. Futás: Q.',done:()=>P.crouch},
   {t:isTouch?'Válaszd a Kampót, és célozz a közeli óriásfa lombjára. Ha a lomb felderül, nyomd meg a Kampó gombot.':'Válaszd a kampót (3), célozz a közeli óriásfa lombjára, és ha felderül, kattints.',done:()=>P.mode==='perch'},
   {t:'Fent vagy a lombban: innen csak akkor látnak meg, ha rád világítanak. Ugorj le ('+(isTouch?'Le gomb':'szóköz')+'). Ha alattad rendőr áll, felülről támadsz.',done:()=>P.mode==='ground'},
   {t:'Válaszd a kavicsot ('+(isTouch?'Kavics':'5')+'), és dobj el egyet ('+(isTouch?'Dob gomb':'kattintás')+'). A koppanása odacsalja a közeli rendőröket.',done:()=>TS.thrown},
   {t:'A tantóval (1) hátulról egy szúrással végzel egy rendőrrel, a tekkóval (2) csak leütöd. Válaszd ki a tantót.',done:()=>P.item===0},
-  {t:'A leütött rendőrt bokorba húzhatod ('+(isTouch?'Húz gomb':'G')+'), így a társai nem találják meg. A bal felső térkép mutatja a bokrokat és az óriásfákat. Ha készen állsz, nyomd meg a Tovább gombot, és indulj észak felé!',manual:true}];
+  {t:'A leütött rendőrt bokorba húzhatod ('+(isTouch?'Húz gomb':'G')+'), így a társai nem találják meg. A bal felső térkép mutatja a bokrokat és az óriásfákat. Ha készen állsz, nyomd meg a Tovább gombot'+(isTouch?'':' (Enter)')+', és indulj észak felé!',manual:true}];
 const TS={on:false,i:0,t:0,yaw:0,lastYaw:0,thrown:false};
 function tutShow(){const el=$('tut');if(!TS.on||TS.i>=TUT.length){el.hidden=true;return;}el.hidden=false;$('tutStep').textContent=(TS.i+1)+' / '+TUT.length;$('tutText').textContent=TUT[TS.i].t;$('tutNext').textContent=TS.i===TUT.length-1?'Kész':'Tovább';}
 function tutStart(){TS.on=true;TS.i=0;TS.t=0;TS.yaw=0;TS.lastYaw=P.yaw;TS.thrown=false;tutShow();}
@@ -1704,7 +1709,7 @@ function stepCop(c,dt,eye){
   const inBeam=!G.day&&(lx*c.dir.x+ly*c.dir.y+lz*c.dir.z)/ld>0.955&&ld<28*D.see;
   const fx=-Math.sin(c.ry),fz=-Math.cos(c.ry),ang=Math.acos(clamp((fx*dx+fz*dz)/(dh||1),-1,1)),elev=Math.atan2(ey-ce,dh);
   const air=P.mode!=='ground';let rate=0;
-  if(c.blind<=0&&dh<40){
+  if(c.blind<=0&&dh<40&&!c.eyesClosed){
     const los=!blocked(c.x,c.z,P.x,P.z,P.tree)&&!smokeBlocks(c.x,c.z,P.x,P.z);
     if(los){
       if(inBeam){const hid=P.hidden&&!air;rate=(2.4*(1-ld/30)+0.6)*(hid?(ld<7?0.5:0):1)*(air?0.75:1);}
@@ -1770,7 +1775,7 @@ function syncCop(c,dt){const m=c.mesh,y=H(c.x,c.z);m.position.set(c.x,y,c.z);m.r
   m.userData.anim(S.time,c.spd,dt,{st:c.st,bp:c.bp,sweep:c.sweep,shoot:c.shoot,fall:c.fall,stagger:c.stagger>0?Math.sin(c.stagger*12)*0.6:0});
   m.updateMatrixWorld(true);const R=m.userData.R;R.lensP.getWorldPosition(c.lens);c.dir.set(0,-1,0).transformDirection(R.lensP.matrixWorld);
   /* fénycsóva */
-  const on=c.dead?0.55:c.down?0.7:1;c.beam.position.copy(c.lens);c.beam.quaternion.setFromUnitVectors(UPV,c.dir);c.beam.material.uniforms.uA.value=on;c.beam.visible=on>0&&!G.day;}
+  const on=c.dead?0.55:c.down?0.7:1;c.beam.position.copy(c.lens);c.beam.quaternion.setFromUnitVectors(UPV,c.dir);c.beam.material.uniforms.uA.value=on;c.beam.visible=on>0&&!G.day&&!c.eyesClosed;}
 
 /* ---------- Ciklus ---------- */
 let last=performance.now(),hudT=0,T=0;const VIEW={yaw:0,pitch:0};const BR={b:null,k:0,in:false};
@@ -1799,7 +1804,7 @@ function frame(now){
   /* rendőrök megjelenítése, zseblámpák fénye a shaderekben */
   COPS.forEach(c=>syncCop(c,S.running?dt:0));
   {const near6=COPS.slice().sort((a,b)=>Math.hypot(a.x-P.x,a.z-P.z)-Math.hypot(b.x-P.x,b.z-P.z));
-    for(let i=0;i<NFL;i++){const c=near6[i];if(c){FLU.uFLp.value[i].copy(c.lens);FLU.uFLd.value[i].copy(c.dir);FLU.uFLo.value[i]=G.day?0:c.dead?0.5:c.down?0.6:1;}else FLU.uFLo.value[i]=0;}
+    for(let i=0;i<NFL;i++){const c=near6[i];if(c){FLU.uFLp.value[i].copy(c.lens);FLU.uFLd.value[i].copy(c.dir);FLU.uFLo.value[i]=G.day||c.eyesClosed?0:c.dead?0.5:c.down?0.6:1;}else FLU.uFLo.value[i]=0;}
     const pc=U.uPC.value;for(let i=0;i<4;i++){const c=near6[i];if(c)pc[i].set(c.x,c.z,(c.spd>0.2||c.down)?1:0);else pc[i].set(0,0,0);}}
   A.beamU.uT.value=T;
   COPS.forEach(c=>{const on=c.dead?0.55:c.down?0.7:1,h=c.beam.visible?A.beamHit(c.lens,c.dir,V3):null;
@@ -1998,7 +2003,7 @@ const K=(t,g)=>isTouch?t:g;
 const ST=[
   {name:'Érkezés',say:null,task:'Menj oda a mesterhez a kapu előtt.'},
   {name:'Csend',say:['あの者は耳がいい。しゃがんで通れ。','Ano mono wa mimi ga ii. Shagande tōre.','Annak jó a füle. Guggolva menj el mögötte.'],
-    task:'A tanítvány háttal áll, de mindent hall. Guggolj le ('+K('Guggol gomb','C')+'), és osonj el mögötte a jobb oldali kapuig. Járva vagy futva meghallja a lépteidet.',open:true,pass:true},
+    task:'A tanítvány háttal áll, csukott szemmel, de mindent hall. Guggolj le ('+K('Guggol gomb','jobb egérgomb')+'), és osonj el mögötte a jobb oldali kapuig: guggolva csak 3–4 méterről hall meg. Ha nem mersz, dobj kavicsot ('+K('Kavics','5')+') a túlsó sarokba: odamegy megnézni, és közben átjutsz. Három kavicsod van.',open:true,pass:true},
   {name:'Bokor',say:['茂みに隠れろ。灯りを避けよ。','Shigemi ni kakurero. Akari o sakeyo.','Bújj a bokrokba, kerüld a lámpást.'],
     task:'Egy tanítvány lámpással járőrözik. Guggolva a bokorban nem látszol. Figyeld a feje fölötti jelet: a ? a gyanúval telik, ha megtelik, észrevett. Juss át a bal oldali kapun.',open:true,pass:true},
   {name:'Bábuk',say:['背後から打て。三体とも。','Haigo kara ute. Santai tomo.','Hátulról üss. Mindhármat.'],
@@ -2012,7 +2017,7 @@ const ST=[
   {name:'Test',say:['倒れた者を隠せ。','Taoreta mono o kakuse.','Rejtsd el a földön fekvőt, mielőtt meglátják.'],
     task:'Egy „leütött” tanítvány fekszik az udvar közepén. Fogd meg ('+K('Húz gomb','G')+'), húzd be egy bokorba, és engedd el, mielőtt a járőr meglátja.'},
   {name:'Füst',say:['見つかったら、煙だ。','Mitsukattara, kemuri da.','Ha meglátnak: füst, és fuss.'],
-    task:'Két idősebb tanítvány vár, és azonnal meglát. Várd meg, amíg egészen közel érnek, és akkor dobj füstöt ('+K('Füst gomb','F')+'): csak a közelieket vakítja el. Aztán fuss ('+K('Fut gomb','Shift')+') közöttük a mögöttük lévő kapuig.',open:true,pass:true},
+    task:'Két idősebb tanítvány vár, és azonnal meglát. Várd meg, amíg egészen közel érnek, és akkor dobj füstöt ('+K('Füst gomb','F')+'): csak a közelieket vakítja el. Aztán fuss ('+K('Fut gomb','Q')+') közöttük a mögöttük lévő kapuig.',open:true,pass:true},
   {name:'Köpőcső',say:['吹き矢で眠らせろ。','Fukiya de nemurasero.','Altasd el a köpőcsővel.'],
     task:'Az őr a kapu előtt áll, és messzire ellát. Guggolj le, válaszd a köpőcsövet ('+K('Köpőcső','7')+'), célozz rá, és fújd ki az altatónyilat ('+K('Fúj gomb','kattintás')+'). Ha a célkereszt felderül, talál. Három nyilad van.'},
   {name:'Tüskék',say:['追われたら、まきびしだ。','Owaretara, makibishi da.','Ha üldöznek: tüskék.'],
@@ -2029,7 +2034,7 @@ const T={i:0,done:false,wait:0,q:[],qt:0,fails:0,stFails:0,grace:0,resetT:0,why:
 G.station='';
 function placeStudent(i){const c=ALLCOPS[i],s=F.students[i],p=s.route[0];c.route=s.route;c.ri=0;c.x=p.x;c.z=p.z;c.ry=s.ry;c.tx=p.x;c.tz=p.z;
   Object.assign(c,{st:'patrol',aw:0,hp:3,down:false,dead:false,koT:0,fall:0,stagger:0,shootCd:0,aimT:0,shoot:0,lostT:0,searchT:0,found:false,wait:s.delay||2.5,blind:0,saidT:-99,hiddenBody:false,lookUpT:-6,active:false,spd:0,sleepT:0,spikeT:0,spiked:false,slept:false});
-  c.seenBody.clear();c.lens.set(c.x,H(c.x,c.z)+1.3,c.z);c.dir.set(-Math.sin(c.ry),-0.35,-Math.cos(c.ry)).normalize();c.mesh.visible=true;c.beam.visible=true;c.mark.visible=false;
+  c.eyesClosed=!!s.listen;{const R=c.mesh.userData.R;if(R&&R.lensGlow)R.lensGlow.visible=!s.listen;}c.seenBody.clear();c.lens.set(c.x,H(c.x,c.z)+1.3,c.z);c.dir.set(-Math.sin(c.ry),-0.35,-Math.cos(c.ry)).normalize();c.mesh.visible=true;c.beam.visible=true;c.mark.visible=false;
   if(s.body){c.down=true;c.koT=1e9;c.fall=1;c.st='down';}}
 function roomCops(i){return(byRoom[F.ROOMS[i].id]||[]).map(k=>ALLCOPS[k]);}
 function activate(i,on){roomCops(i).forEach(c=>{c.active=on&&!F.students[c.id].body;});}
@@ -2051,7 +2056,7 @@ function startStation(i){T.i=i;T.done=false;T.resetT=0;T.grace=0.8;T.stFails=0;T
   const st=ST[i];ALLCOPS.forEach(c=>c.active=false);roomCops(i).forEach(c=>placeStudent(c.id));activate(i,i!==8&&i!==10&&i!==EX);if(st.open)F.GATES[F.ROOMS[i].id]&&F.GATES[F.ROOMS[i].id].setOpen(true);
   tools(i);if(i===EX){T.examAl=S.alarms;T.fadeT=3.4;dayFade(true);}
   if(st.say&&i!==EX)queue([st.say]);panel();G.tone(0.07,660,990,0.14);}
-function tools(i){if(i===6)G.setStones(3);if(i===8)G.setSmoke(2);if(i===9)G.setDarts(3);if(i===10)G.setSpikes(2);
+function tools(i){if(i===1||i===6)G.setStones(3);if(i===8)G.setSmoke(2);if(i===9)G.setDarts(3);if(i===10)G.setSpikes(2);
   if(i===EX){G.setStones(3);G.setSmoke(2);G.setDarts(3);G.setSpikes(2);}}
 function complete(){if(T.done)return;T.done=true;const i=T.i;G.tone(0.08,880,1320,0.16);
   activate(i,false);roomCops(i).forEach(c=>{if(!F.students[c.id].body&&!c.down){c.st='patrol';c.aw=0;c.mark.visible=false;}});
@@ -2110,7 +2115,7 @@ G.hooks.update=dt=>{
   if(i!==8&&i!==10&&i!==EX&&T.grace<=0&&act.some(c=>c.st==='alert')){fail('seen');return;}
   switch(i){
     case 0:if(!T.spoke&&dM<3.2){T.spoke=true;T.onQ=()=>{complete();G.showMsg('Kinyílt a kapu.');};queue([L.intro,L.ten,L.crouch],3.6);}break;
-    case 1:if(T.grace<=0&&act.some(c=>c.aw>=0.3||c.st!=='patrol'))fail('heard');else if(pz<r.bot-0.3)complete();break;
+    case 1:if(T.grace<=0&&act.some(c=>c.st!=='patrol'&&Math.hypot(c.tx-P.x,c.tz-P.z)<4.5&&Math.hypot(c.x-P.x,c.z-P.z)<12))fail('heard');else if(pz<r.bot-0.3)complete();break;
     case 2:if(pz<r.bot-0.3)complete();break;
     case 4:if(P.mode==='ground'&&pz<-16.2)complete();break;
     case 5:{const c=cops[0];if(c&&c.down){if(t-T.dropT<1.6)complete();else fail('above');}}break;

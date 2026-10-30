@@ -37,7 +37,7 @@ const K=(t,g)=>isTouch?t:g;
 const ST=[
   {name:'Érkezés',say:null,task:'Menj oda a mesterhez a kapu előtt.'},
   {name:'Csend',say:['あの者は耳がいい。しゃがんで通れ。','Ano mono wa mimi ga ii. Shagande tōre.','Annak jó a füle. Guggolva menj el mögötte.'],
-    task:'A tanítvány háttal áll, de mindent hall. Guggolj le ('+K('Guggol gomb','C')+'), és osonj el mögötte a jobb oldali kapuig. Járva vagy futva meghallja a lépteidet.',open:true,pass:true},
+    task:'A tanítvány háttal áll, csukott szemmel, de mindent hall. Guggolj le ('+K('Guggol gomb','jobb egérgomb')+'), és osonj el mögötte a jobb oldali kapuig: guggolva csak 3–4 méterről hall meg. Ha nem mersz, dobj kavicsot ('+K('Kavics','5')+') a túlsó sarokba: odamegy megnézni, és közben átjutsz. Három kavicsod van.',open:true,pass:true},
   {name:'Bokor',say:['茂みに隠れろ。灯りを避けよ。','Shigemi ni kakurero. Akari o sakeyo.','Bújj a bokrokba, kerüld a lámpást.'],
     task:'Egy tanítvány lámpással járőrözik. Guggolva a bokorban nem látszol. Figyeld a feje fölötti jelet: a ? a gyanúval telik, ha megtelik, észrevett. Juss át a bal oldali kapun.',open:true,pass:true},
   {name:'Bábuk',say:['背後から打て。三体とも。','Haigo kara ute. Santai tomo.','Hátulról üss. Mindhármat.'],
@@ -51,7 +51,7 @@ const ST=[
   {name:'Test',say:['倒れた者を隠せ。','Taoreta mono o kakuse.','Rejtsd el a földön fekvőt, mielőtt meglátják.'],
     task:'Egy „leütött” tanítvány fekszik az udvar közepén. Fogd meg ('+K('Húz gomb','G')+'), húzd be egy bokorba, és engedd el, mielőtt a járőr meglátja.'},
   {name:'Füst',say:['見つかったら、煙だ。','Mitsukattara, kemuri da.','Ha meglátnak: füst, és fuss.'],
-    task:'Két idősebb tanítvány vár, és azonnal meglát. Várd meg, amíg egészen közel érnek, és akkor dobj füstöt ('+K('Füst gomb','F')+'): csak a közelieket vakítja el. Aztán fuss ('+K('Fut gomb','Shift')+') közöttük a mögöttük lévő kapuig.',open:true,pass:true},
+    task:'Két idősebb tanítvány vár, és azonnal meglát. Várd meg, amíg egészen közel érnek, és akkor dobj füstöt ('+K('Füst gomb','F')+'): csak a közelieket vakítja el. Aztán fuss ('+K('Fut gomb','Q')+') közöttük a mögöttük lévő kapuig.',open:true,pass:true},
   {name:'Köpőcső',say:['吹き矢で眠らせろ。','Fukiya de nemurasero.','Altasd el a köpőcsővel.'],
     task:'Az őr a kapu előtt áll, és messzire ellát. Guggolj le, válaszd a köpőcsövet ('+K('Köpőcső','7')+'), célozz rá, és fújd ki az altatónyilat ('+K('Fúj gomb','kattintás')+'). Ha a célkereszt felderül, talál. Három nyilad van.'},
   {name:'Tüskék',say:['追われたら、まきびしだ。','Owaretara, makibishi da.','Ha üldöznek: tüskék.'],
@@ -68,7 +68,7 @@ const T={i:0,done:false,wait:0,q:[],qt:0,fails:0,stFails:0,grace:0,resetT:0,why:
 G.station='';
 function placeStudent(i){const c=ALLCOPS[i],s=F.students[i],p=s.route[0];c.route=s.route;c.ri=0;c.x=p.x;c.z=p.z;c.ry=s.ry;c.tx=p.x;c.tz=p.z;
   Object.assign(c,{st:'patrol',aw:0,hp:3,down:false,dead:false,koT:0,fall:0,stagger:0,shootCd:0,aimT:0,shoot:0,lostT:0,searchT:0,found:false,wait:s.delay||2.5,blind:0,saidT:-99,hiddenBody:false,lookUpT:-6,active:false,spd:0,sleepT:0,spikeT:0,spiked:false,slept:false});
-  c.seenBody.clear();c.lens.set(c.x,H(c.x,c.z)+1.3,c.z);c.dir.set(-Math.sin(c.ry),-0.35,-Math.cos(c.ry)).normalize();c.mesh.visible=true;c.beam.visible=true;c.mark.visible=false;
+  c.eyesClosed=!!s.listen;{const R=c.mesh.userData.R;if(R&&R.lensGlow)R.lensGlow.visible=!s.listen;}c.seenBody.clear();c.lens.set(c.x,H(c.x,c.z)+1.3,c.z);c.dir.set(-Math.sin(c.ry),-0.35,-Math.cos(c.ry)).normalize();c.mesh.visible=true;c.beam.visible=true;c.mark.visible=false;
   if(s.body){c.down=true;c.koT=1e9;c.fall=1;c.st='down';}}
 function roomCops(i){return(byRoom[F.ROOMS[i].id]||[]).map(k=>ALLCOPS[k]);}
 function activate(i,on){roomCops(i).forEach(c=>{c.active=on&&!F.students[c.id].body;});}
@@ -90,7 +90,7 @@ function startStation(i){T.i=i;T.done=false;T.resetT=0;T.grace=0.8;T.stFails=0;T
   const st=ST[i];ALLCOPS.forEach(c=>c.active=false);roomCops(i).forEach(c=>placeStudent(c.id));activate(i,i!==8&&i!==10&&i!==EX);if(st.open)F.GATES[F.ROOMS[i].id]&&F.GATES[F.ROOMS[i].id].setOpen(true);
   tools(i);if(i===EX){T.examAl=S.alarms;T.fadeT=3.4;dayFade(true);}
   if(st.say&&i!==EX)queue([st.say]);panel();G.tone(0.07,660,990,0.14);}
-function tools(i){if(i===6)G.setStones(3);if(i===8)G.setSmoke(2);if(i===9)G.setDarts(3);if(i===10)G.setSpikes(2);
+function tools(i){if(i===1||i===6)G.setStones(3);if(i===8)G.setSmoke(2);if(i===9)G.setDarts(3);if(i===10)G.setSpikes(2);
   if(i===EX){G.setStones(3);G.setSmoke(2);G.setDarts(3);G.setSpikes(2);}}
 function complete(){if(T.done)return;T.done=true;const i=T.i;G.tone(0.08,880,1320,0.16);
   activate(i,false);roomCops(i).forEach(c=>{if(!F.students[c.id].body&&!c.down){c.st='patrol';c.aw=0;c.mark.visible=false;}});
@@ -149,7 +149,7 @@ G.hooks.update=dt=>{
   if(i!==8&&i!==10&&i!==EX&&T.grace<=0&&act.some(c=>c.st==='alert')){fail('seen');return;}
   switch(i){
     case 0:if(!T.spoke&&dM<3.2){T.spoke=true;T.onQ=()=>{complete();G.showMsg('Kinyílt a kapu.');};queue([L.intro,L.ten,L.crouch],3.6);}break;
-    case 1:if(T.grace<=0&&act.some(c=>c.aw>=0.3||c.st!=='patrol'))fail('heard');else if(pz<r.bot-0.3)complete();break;
+    case 1:if(T.grace<=0&&act.some(c=>c.st!=='patrol'&&Math.hypot(c.tx-P.x,c.tz-P.z)<4.5&&Math.hypot(c.x-P.x,c.z-P.z)<12))fail('heard');else if(pz<r.bot-0.3)complete();break;
     case 2:if(pz<r.bot-0.3)complete();break;
     case 4:if(P.mode==='ground'&&pz<-16.2)complete();break;
     case 5:{const c=cops[0];if(c&&c.down){if(t-T.dropT<1.6)complete();else fail('above');}}break;

@@ -47,7 +47,7 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
 - **Felület (HUD):** iránytű, ki-gyűrű, élet- és zajsávok, célkereszt felirattal, a kijárat jelölője, képernyőeffektek (vignetta, vörös veszély- és sérülésjelzés, zöld bokorkeret).
 - **Irányítás:**
   - Telefon: bal hüvelykujj mozgás, jobb hüvelykujj körülnézés, gombok.
-  - Számítógép: W A S D; a játéktérre kattintva az egér rögzül (pointer lock), onnan húzás nélkül nézel körül, kattintás = használat, Esc elengedi (rögzítés nélkül húzással is megy). Az egér érzékenysége az ujjénak 0,42-szerese (`MOUSE_K`), a kamera pedig 30 ms körüli simítással követi a nézést (`VIEW`). Enter: bemutató, Tovább. C guggolás, kattintás vagy E a használat, 1–7 eszközváltás, G húzás, szóköz leugrás, F füst.
+  - Számítógép: W A S D; jobb egérgomb = guggolás (vagy C), Q = futás be/ki (vagy Shift nyomva), görgő = eszközváltás. Gépen a jobb oldali érintőgombok (Guggol, Fut, Füst, Szúr, Húz) el vannak rejtve (`body.desk`). a játéktérre kattintva az egér rögzül (pointer lock), onnan húzás nélkül nézel körül, kattintás = használat, Esc elengedi (rögzítés nélkül húzással is megy). Az egér érzékenysége az ujjénak 0,42-szerese (`MOUSE_K`), a kamera pedig 30 ms körüli simítással követi a nézést (`VIEW`). Enter: bemutató, Tovább. C guggolás, kattintás vagy E a használat, 1–7 eszközváltás, G húzás, szóköz leugrás, F füst.
   - Telefonon és tableten csak fekvő helyzetben játszható. Az első érintésre teljes képernyőre vált, és fekvőre rögzít (Androidon). Álló helyzetben a „Fordítsd el a telefont” jelzés takarja, és a játék megáll. iPhone-on a Safari ezt nem engedi; ott a „Hozzáadás a főképernyőhöz” után indítva teljes képernyős (`manifest.webmanifest`, ikonok, `apple-mobile-web-app-capable`).
 - **A régi ellenfelek** (szörny, nindzsa, szellem) beállításai és viselkedése az `src/parkolt.js`-ben vannak félretéve. A modelljeik az `actors.js`-ben maradtak, később visszakapcsolhatók.
 
@@ -61,7 +61,7 @@ Mintának a Tenchu kiképző küldetését (szobáról szobára, egy ötlet egy 
 - **A mester** (`buildPolice(…,{master:true})`) minden próbánál máshol áll, a játékos felé fordul. Magyarul beszél (`sayLine`, hu-HU felolvasás, felirat). A feladat a felső panelen olvasható. Az iránytű és a térkép a mestert mutatja.
 - **A tizenkét próba** (`ST` a `falu_game.js`-ben):
   1. Érkezés: odamenni a mesterhez. Bemutatkozik, és kinyitja a tóriit.
-  2. Csend: egy háttal álló tanítvány mellett guggolva elosonni. Ha járva megy el mellette, meghallja.
+  2. Csend: egy háttal, csukott szemmel álló tanítvány (nem lát, nincs lámpafénye, `eyesClosed`) mellett guggolva elosonni; járva meghallja. Kavicsot (3 db) is lehet dobni: ha a koppanáshoz megy, az nem bukás, csak ha a játékost hallja meg.
   3. Bokor: lámpás járőr; bokorban guggolva, a ? jelet figyelve átjutni.
   4. Bábuk: három szalmabábu, csak hátulról lehet eltalálni őket (tantóval és tekkóval is). Szemből ütve a mester szól.
   5. Kampó: a falon fáról fára (A → B) jutni át, majd leugrani.
