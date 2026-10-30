@@ -97,6 +97,7 @@ const joy={id:null,ox:0,oy:0,x:0,y:0},look={id:null,lx:0,ly:0,sx:0,sy:0,t0:0,mou
 const touch=$('touch'),joyEl=$('joy'),knob=$('knob');
 touch.addEventListener('pointerdown',e=>{
   if(!S.running)return;
+  if(e.pointerType==='mouse'&&document.pointerLockElement===touch)return;
   const left=e.clientX<window.innerWidth*0.45&&e.pointerType!=='mouse';
   if(left&&joy.id===null){joy.id=e.pointerId;joy.ox=e.clientX;joy.oy=e.clientY;joy.x=joy.y=0;joyEl.style.left=e.clientX+'px';joyEl.style.top=e.clientY+'px';joyEl.hidden=false;knob.style.transform='translate(0,0)';$('joyHint').hidden=true;}
   else if(look.id===null){look.id=e.pointerId;look.lx=look.sx=e.clientX;look.ly=look.sy=e.clientY;look.t0=performance.now();look.mouse=e.pointerType==='mouse';}
@@ -104,16 +105,22 @@ touch.addEventListener('pointerdown',e=>{
 });
 touch.addEventListener('pointermove',e=>{
   if(e.pointerId===joy.id){let dx=e.clientX-joy.ox,dy=e.clientY-joy.oy;const d=Math.hypot(dx,dy),m=50;if(d>m){dx=dx/d*m;dy=dy/d*m;}joy.x=dx/m;joy.y=dy/m;knob.style.transform='translate('+dx+'px,'+dy+'px)';}
-  else if(e.pointerId===look.id){const dx=e.clientX-look.lx,dy=e.clientY-look.ly;look.lx=e.clientX;look.ly=e.clientY;P.yaw-=dx*0.0058;P.pitch=clamp(P.pitch-dy*0.0045,-1.25,1.3);P.lookDX+=dx*0.01;}
+  else if(e.pointerId===look.id){const dx=e.clientX-look.lx,dy=e.clientY-look.ly;look.lx=e.clientX;look.ly=e.clientY;const k=look.mouse?MOUSE_K:1;P.yaw-=dx*0.0058*k;P.pitch=clamp(P.pitch-dy*0.0045*k,-1.25,1.3);P.lookDX+=dx*0.01*k;}
 });
 function endPtr(e){if(e.pointerId===joy.id){joy.id=null;joy.x=joy.y=0;joyEl.hidden=true;}
   if(e.pointerId===look.id){/* egérrel egy rövid kattintás húzás nélkül = használat */
-    if(look.mouse&&e.type==='pointerup'&&Math.hypot(e.clientX-look.sx,e.clientY-look.sy)<6&&performance.now()-look.t0<350&&S.running)useItem();look.id=null;}}
+    if(look.mouse&&e.type==='pointerup'&&document.pointerLockElement!==touch&&Math.hypot(e.clientX-look.sx,e.clientY-look.sy)<6&&performance.now()-look.t0<350&&S.running)useItem();look.id=null;}}
+/* egér: a játéktérre kattintva rögzül (pointer lock), onnantól húzás nélkül nézel körül, kattintás = használat, Esc elengedi.
+   Az egér érzékenysége kisebb, mint az ujjé: ugyanannyi képpont kisebb fordulat, ettől lesz sima a körbenézés. */
+const MOUSE_K=0.42;
+touch.addEventListener('mousedown',e=>{if(!S.running||isTouch||e.button!==0)return;if(document.pointerLockElement!==touch){try{const r=touch.requestPointerLock();if(r&&r.catch)r.catch(()=>{});}catch(_){}}else useItem();});
+document.addEventListener('mousemove',e=>{if(document.pointerLockElement!==touch||!S.running)return;const dx=clamp(e.movementX,-200,200),dy=clamp(e.movementY,-200,200);
+  P.yaw-=dx*0.0058*MOUSE_K;P.pitch=clamp(P.pitch-dy*0.0045*MOUSE_K,-1.25,1.3);P.lookDX+=dx*0.01*MOUSE_K;});
 touch.addEventListener('pointerup',endPtr);touch.addEventListener('pointercancel',endPtr);
 touch.addEventListener('wheel',e=>{if(S.running)selectItem((P.item+(e.deltaY>0?1:ITEMS.length-1))%ITEMS.length);},{passive:true});
 window.addEventListener('keydown',e=>{keys[e.code]=true;if(!S.running||e.repeat)return;
   if(e.code==='KeyC')crouchOrDrop();if(e.code==='KeyF')useSmoke();if(e.code==='KeyE')useItem();if(e.code==='Space'){e.preventDefault();if(P.mode==='perch')dropDown();else useItem();}
-  if(e.code==='KeyG')toggleDrag();if(e.code==='KeyQ')selectItem((P.item+1)%ITEMS.length);const n=['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7'].indexOf(e.code);if(n>=0)selectItem(n);});
+  if(e.code==='KeyG')toggleDrag();if(e.code==='Enter'&&TS.on)tutNext(false);if(e.code==='KeyQ')selectItem((P.item+1)%ITEMS.length);const n=['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7'].indexOf(e.code);if(n>=0)selectItem(n);});
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
 function tap(el,fn){el.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(S.running)fn();});el.addEventListener('click',e=>{if(e.detail===0&&S.running)fn();});}
 function crouchOrDrop(){if(P.mode==='perch'){dropDown();return;}if(P.mode!=='ground')return;P.crouch=!P.crouch;if(P.crouch)P.run=false;updateButtons();}
@@ -351,6 +358,7 @@ function endGame(win,title,text){
   $('endEyebrow').textContent=win?'Kijutottál':'Vége';$('endTitle').textContent=title;$('endText').textContent=text;
   const rk=G.hooks.rank?G.hooks.rank():rank();$('endFoe').textContent=win?'Rang: '+rk[0]:'';
   $('endTip').textContent=LV==='falu'?(rk[2]||''):(win?rk[1]+' ':'')+'Nehézség: '+D.name+' · Idő: '+fmt(S.time)+' · Ölések: '+S.kills+' · Leütések: '+S.kos+' · Riasztások: '+S.alarms+'.';
+  $('nextLvl').hidden=!(win&&LV==='erdo');try{document.exitPointerLock&&document.pointerLockElement&&document.exitPointerLock();}catch(e){}
   document.body.classList.add('menu');$('end').hidden=false;try{speechSynthesis&&speechSynthesis.cancel();}catch(e){}
 }
 
@@ -447,15 +455,16 @@ function syncCop(c,dt){const m=c.mesh,y=H(c.x,c.z);m.position.set(c.x,y,c.z);m.r
   const on=c.dead?0.55:c.down?0.7:1;c.beam.position.copy(c.lens);c.beam.quaternion.setFromUnitVectors(UPV,c.dir);c.beam.material.uniforms.uA.value=on;c.beam.visible=on>0&&!G.day;}
 
 /* ---------- Ciklus ---------- */
-let last=performance.now(),hudT=0,T=0;const BR={b:null,k:0,in:false};
+let last=performance.now(),hudT=0,T=0;const VIEW={yaw:0,pitch:0};const BR={b:null,k:0,in:false};
 const shadowSnap=60/1024;
 function frame(now){
   const raw=(now-last)/1000,dt=Math.min(0.05,raw);last=now;T+=dt;
-  if(S.running&&!PORT.matches){update(dt);Q.frames++;Q.acc+=raw;if(Q.frames===150){if(Q.acc/150>0.04&&Q.level>0){lowerQuality();}Q.frames=0;Q.acc=0;}}
+  if(S.running&&!PORT.matches){update(dt);Q.frames++;Q.acc+=raw;if(Q.frames===150){if(Q.acc/150>0.03&&Q.level>0){lowerQuality();}Q.frames=0;Q.acc=0;}}
   else{P.yaw+=dt*0.04;}
   const gy=H(P.x,P.z);
   if(P.mode==='ground')camera.position.set(P.x,gy+P.camY+Math.sin(P.bob)*0.04,P.z);else camera.position.set(P.x,P.py,P.z);
-  camera.rotation.set(P.pitch,P.yaw,Math.sin(P.bob*0.5)*0.006*(P.moving?1:0));
+  {const k=Math.abs(wrapA(P.yaw-VIEW.yaw))>1.2||Math.abs(P.pitch-VIEW.pitch)>1?1:1-Math.exp(-Math.min(raw,0.1)*32);VIEW.yaw+=wrapA(P.yaw-VIEW.yaw)*k;VIEW.pitch+=(P.pitch-VIEW.pitch)*k;}
+  camera.rotation.set(VIEW.pitch,VIEW.yaw,Math.sin(P.bob*0.5)*0.006*(P.moving?1:0));
   const sx=Math.round(P.x/shadowSnap)*shadowSnap,sz=Math.round(P.z/shadowSnap)*shadowSnap;
   moonLight.target.position.set(sx,gy,sz);moonLight.position.set(sx+MOON_DIR.x*70,gy+MOON_DIR.y*70,sz+MOON_DIR.z*70);
   A.sky.position.copy(camera.position);A.stars.position.copy(camera.position);A.stars.material.uniforms.uT.value=T;
@@ -535,7 +544,7 @@ function update(dt){
     aimMark.position.set(g.x+pr.dx*1.0*g.s,giantBase(g)+g.py+1.6*g.s,g.z+pr.dz*1.0*g.s);aimMark.material.opacity=0.22+0.16*k;aimMark.visible=true;}else aimMark.visible=false;
 
   /* Cél */
-  if(LV==='erdo'&&P.mode==='ground'&&P.z<-ZN-4&&Math.abs(P.x)<6){const rk=rank();endGame(true,'Kijutottál',rk[0]==='Árnyék'?'Átjutottál a völgyön, és senki sem tudta, hogy ott voltál.':'Elérted az északi utat '+fmt(S.time)+' alatt.');return;}
+  if(LV==='erdo'&&P.mode==='ground'&&P.z<-ZN-4&&Math.abs(P.x)<6){try{localStorage.setItem('ae-l1-done','1');}catch(e){}const rk=rank();endGame(true,'Kijutottál',rk[0]==='Árnyék'?'Átjutottál a völgyön, és senki sem tudta, hogy ott voltál.':'Elérted az északi utat '+fmt(S.time)+' alatt.');return;}
 
   if(G.hooks.update){G.hooks.update(dt);if(!S.running)return;}
   if(S.msgT>0){S.msgT-=dt;if(S.msgT<=0)$('msg').style.opacity=0;}

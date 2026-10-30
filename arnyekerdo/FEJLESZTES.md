@@ -47,7 +47,7 @@ Ez a leírás annak szól, aki (ember vagy Claude) a játékot tovább fejleszti
 - **Felület (HUD):** iránytű, ki-gyűrű, élet- és zajsávok, célkereszt felirattal, a kijárat jelölője, képernyőeffektek (vignetta, vörös veszély- és sérülésjelzés, zöld bokorkeret).
 - **Irányítás:**
   - Telefon: bal hüvelykujj mozgás, jobb hüvelykujj körülnézés, gombok.
-  - Számítógép: W A S D, egérrel húzva körülnézés, C guggolás, kattintás vagy E a használat, 1–7 eszközváltás, G húzás, szóköz leugrás, F füst.
+  - Számítógép: W A S D; a játéktérre kattintva az egér rögzül (pointer lock), onnan húzás nélkül nézel körül, kattintás = használat, Esc elengedi (rögzítés nélkül húzással is megy). Az egér érzékenysége az ujjénak 0,42-szerese (`MOUSE_K`), a kamera pedig 30 ms körüli simítással követi a nézést (`VIEW`). Enter: bemutató, Tovább. C guggolás, kattintás vagy E a használat, 1–7 eszközváltás, G húzás, szóköz leugrás, F füst.
   - Telefonon és tableten csak fekvő helyzetben játszható. Az első érintésre teljes képernyőre vált, és fekvőre rögzít (Androidon). Álló helyzetben a „Fordítsd el a telefont” jelzés takarja, és a játék megáll. iPhone-on a Safari ezt nem engedi; ott a „Hozzáadás a főképernyőhöz” után indítva teljes képernyős (`manifest.webmanifest`, ikonok, `apple-mobile-web-app-capable`).
 - **A régi ellenfelek** (szörny, nindzsa, szellem) beállításai és viselkedése az `src/parkolt.js`-ben vannak félretéve. A modelljeik az `actors.js`-ben maradtak, később visszakapcsolhatók.
 
@@ -76,6 +76,9 @@ Mintának a Tenchu kiképző küldetését (szobáról szobára, egy ötlet egy 
 - **Értékelés:** három pecsét jár. Árnyék, ha a vizsgán nem volt riasztás; Türelmes, ha egyszer sem kellett újrakezdeni; Gyors, ha 10 percen belül végzett. A rang a pecsétek számától függ: Tanítvány, Nindzsa, Mester, Árnyékmester.
 - **Kapcsolat a játékkal:** a `game.js` a `window.AE.G` objektumon ad horgokat (`setup`, `newRound`, `update`, `caught`, `melee`, `rank`) és belső függvényeket. A falu nem öl: a tantó is csak leüt. A tanítványoknál a `c.active` jelző dönti el, hogy figyelnek-e; csak az aktuális udvar tanítványai aktívak.
 - **Tesztelés:** `?palya=falu&aetest`, a `window.AE_FALU` horoggal (`startStation(i)`, `T`, `fail`). Headless teszttel mind a tizenkét próba végigment, a csend próbája járva elbukik, guggolva sikerül.
+
+- **Pályák sorrendje:** a 2. pálya gombja a kezdőképernyőn le van zárva, amíg az 1. pályát egyszer nem teljesítetted (`localStorage` `ae-l1-done`). Az 1. pálya sikeres vége után a záró képernyőn „Tovább: 2 · A mester faluja” gomb jelenik meg. A `?palya=falu` cím közvetlenül mindig működik.
+- **Minőség:** ha 150 kép átlaga 30 ms fölött van, a játék lejjebb veszi a minőséget (pixelarány, fű, árnyék).
 
 ## 3. Fájlok
 

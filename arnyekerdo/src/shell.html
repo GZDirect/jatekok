@@ -81,6 +81,7 @@ h2{font-size:40px;}
 .how{font-size:13px;line-height:1.6;color:var(--mist);display:grid;grid-template-columns:auto 1fr;gap:4px 12px;}
 .how dt{color:var(--moon);font-weight:600;}
 .how dd{margin:0;}
+#nextLvl{display:block;text-align:center;padding:14px 16px;margin-bottom:8px;background:var(--goal);color:#0a0f13;border-radius:6px;font-family:var(--ui);font-size:16px;font-weight:600;text-decoration:none;}#nextLvl[hidden]{display:none;}
 #again{padding:14px 16px;background:var(--moon);color:#0a0f13;border:0;border-radius:6px;font-family:var(--ui);font-size:16px;font-weight:600;cursor:pointer;}
 .legal{font-size:12px;color:var(--mist);text-align:center;margin:0;}
 #endFoe{font-family:var(--display);font-size:22px;color:var(--lantern);}
@@ -91,6 +92,7 @@ body.menu .hud,body.menu #btns,body.menu #tools,body.menu #bDrag{visibility:hidd
 #tut{top:calc(env(safe-area-inset-top,0px) + 96px);left:50%;transform:translateX(-50%);width:min(64vw,470px);background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--goal);border-radius:6px;padding:9px 12px 10px;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:start;}
 #tut[hidden]{display:none;}
 .lvl{display:flex;gap:6px;margin:2px 0 10px;}.lvl a{flex:1;text-align:center;padding:7px 8px;border:1px solid var(--line);border-radius:6px;color:var(--mist);text-decoration:none;font-size:13px;}
+.lvl a.locked{opacity:0.45;cursor:default;}.lvl a small{display:block;font-size:10px;margin-top:1px;}
 .lvl a.on{border-color:var(--goal);color:var(--moon);background:rgba(127,211,230,0.08);}
 #dayFade{position:fixed;inset:0;z-index:40;background:#05080a;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:none;}
 #dayFade div{text-align:center;color:var(--moon);}#dayFade small{display:block;font:500 13px var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--mist);margin-bottom:8px;}#dayFade b{font:600 44px var(--display);}
@@ -181,7 +183,7 @@ body.falu #diff,body.falu label.opt,body.falu .tutB{display:none;}
     <div class="col1">
       <div class="eyebrow" id="startEyebrow">1. fejezet · Lopakodó küldetés</div>
       <h1>Árnyékerdő</h1>
-      <nav class="lvl" aria-label="Pálya"><a href="./" id="lvl1">1 · Rendőrkordon</a><a href="?palya=falu" id="lvl2">2 · A mester faluja</a></nav><script>document.getElementById(/[?&]palya=falu/.test(location.search)?"lvl2":"lvl1").classList.add("on");</script>
+      <nav class="lvl" aria-label="Pálya"><a href="./" id="lvl1">1 · Rendőrkordon</a><a href="?palya=falu" id="lvl2">2 · A mester faluja</a></nav><script>(function(){var f=/[?&]palya=falu/.test(location.search),d=false;try{d=!!localStorage.getItem("ae-l1-done");}catch(e){}document.getElementById(f?"lvl2":"lvl1").classList.add("on");var l2=document.getElementById("lvl2");if(!d&&!f){l2.classList.add("locked");l2.removeAttribute("href");l2.innerHTML="2 · A mester faluja<small>az 1. pálya után nyílik</small>";}})();</script>
       <p id="lead">Éjszaka van a japán hegyekben. A rendőrség körbezárta a völgyet: <span id="copsN">6</span> rendőr fésüli át az erdőt zseblámpával és pisztollyal. Juss el a déli végéből az északi útig – árnyékként, vagy úgy, hogy egyenként eltünteted őket.</p>
       <div class="diff" id="diff" role="radiogroup" aria-label="Nehézség">
         <button type="button" role="radio" data-d="konnyu">Könnyű<small>4 rendőr</small></button>
@@ -194,7 +196,7 @@ body.falu #diff,body.falu label.opt,body.falu .tutB{display:none;}
     </div>
     <dl class="how">
       <dt>Bal hüvelykujj</dt><dd>mozgás (gép: W A S D)</dd>
-      <dt>Jobb hüvelykujj</dt><dd>körülnézés (gép: egérrel húzva)</dd>
+      <dt>Jobb hüvelykujj</dt><dd>körülnézés (gép: kattints a játéktérre, utána az egérrel nézel körül; Esc elengedi)</dd>
       <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol (C)</dd>
       <dt>Tantó, tekko</dt><dd>hátulról egy csapás: a tantó öl, a tekko csak leüt (kattintás vagy E)</dd>
       <dt>Kampó</dt><dd>célozz egy sűrű lombú óriásfára: ha halványan felderül, fel tudsz kapaszkodni</dd>
@@ -217,6 +219,7 @@ body.falu #diff,body.falu label.opt,body.falu .tutB{display:none;}
     <p id="endText"></p>
     <div id="endFoe"></div>
     <p id="endTip"></p>
+    <a id="nextLvl" href="?palya=falu" hidden>Tovább: 2 · A mester faluja</a>
     <button id="again" type="button">Újra</button>
     <p class="legal">© 2026 Fejes Géza. Minden jog fenntartva.</p>
   </div>
