@@ -135,6 +135,7 @@ import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
 import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 const $ = id => document.getElementById(id);
 const rnd = (a,b) => a + Math.random()*(b-a);
 // ================= renderer
@@ -412,11 +413,31 @@ function fall(l, dt, v){ const a = l.geometry.attributes.position.array, {n, len
 
 // ================= people
 const SKIN = [0xf1c7a0, 0xc68c5e, 0x8d5a3b, 0xe8b48a];
+// ================= figures modelled in Blender (falls back to capsules if missing)
+const FIG = await (async () => {
+  try {
+    const gl = new GLTFLoader();
+    const g = window.FIG_GLB ? await gl.parseAsync(Uint8Array.from(atob(window.FIG_GLB), c => c.charCodeAt(0)).buffer, '') : await gl.loadAsync('emberek.glb');
+    const parts = {}; [...g.scene.children].forEach(o => { o.position.set(0, 0, 0); parts[o.name] = o; });
+    return parts.FG_leg && parts.FG_torso && parts.FG_arm && parts.FG_head ? parts : null;
+  } catch (e) { console.warn('emberek.glb nem töltődött be, maradnak az egyszerű figurák', e); return null; }
+})();
+const FIG_SHOE = std(0x1a1a1e, 0.6), FIG_EYE = new THREE.MeshBasicMaterial({color:0x14100e});
+const HAIRS = ['FG_hair_short', 'FG_hair_long', 'FG_hair_buzz'];
 class Person{
-  constructor({shirt, pants=0x2b2f3a, skin=SKIN[0], hair=0x2a1c14, cap=null, s=1}){
+  constructor({shirt, pants=0x2b2f3a, skin=SKIN[0], hair=0x2a1c14, cap=null, s=1, style=null}){
     this.g = new THREE.Group(); this.root = new THREE.Group(); this.g.add(this.root); this.g.scale.setScalar(s);
+    const ms = std(shirt, 0.85), mp = std(pants, 0.85), mk = std(skin, 0.7), mh = std(hair, 0.9), mc = cap ? std(cap, 0.7) : mh;
+    if (FIG){
+      const MAP = {shirt:ms, pants:mp, skin:mk, hair:mh, cap:mc, shoe:FIG_SHOE, eye:FIG_EYE};
+      const part = n => { const o = FIG[n].clone(); o.traverse(c => { if (c.isMesh){ c.material = MAP[c.material.name] || c.material; c.castShadow = true; } }); return o; };
+      this.legs = [-1,1].map(sx => { const p = new THREE.Group(); p.position.set(sx*0.11, 0.84, 0); p.add(part('FG_leg')); this.root.add(p); return p; });
+      this.torso = new THREE.Group(); this.torso.position.y = 0.84; this.root.add(this.torso); this.torso.add(part('FG_torso'));
+      this.head = new THREE.Group(); this.head.position.y = 0.84; this.torso.add(this.head); this.head.add(part('FG_head'));
+      this.head.add(part(cap ? 'FG_cap' : (style || HAIRS[((hair ^ (shirt >>> 3)) >>> 0) % 3])));
+      this.arms = [-1,1].map(sx => { const p = new THREE.Group(); p.position.set(sx*0.27, 0.6, 0); p.add(part('FG_arm')); this.torso.add(p); return p; });
+    } else {
     const cap_ = (r, l, m) => { const x = new THREE.Mesh(new THREE.CapsuleGeometry(r, l, 2, 7), m); x.castShadow = true; return x; };
-    const ms = std(shirt, 0.85), mp = std(pants, 0.85), mk = std(skin, 0.7), mh = std(hair, 0.9);
     this.legs = [-1,1].map(sx => { const p = new THREE.Group(); p.position.set(sx*0.11, 0.84, 0); const m = cap_(0.08, 0.62, mp); m.position.y = -0.4; p.add(m); this.root.add(p); return p; });
     this.torso = new THREE.Group(); this.torso.position.y = 0.84; this.root.add(this.torso);
     const t = cap_(0.2, 0.3, ms); t.position.y = 0.36; this.torso.add(t);
@@ -424,6 +445,7 @@ class Person{
     const hr = new THREE.Mesh(new THREE.SphereGeometry(0.158, 8, 6, 0, Math.PI*2, 0, Math.PI/2), cap ? std(cap, 0.7) : mh); hr.position.y = 0.84; hr.rotation.x = -0.25; this.torso.add(hr);
     this.arms = [-1,1].map(sx => { const p = new THREE.Group(); p.position.set(sx*0.27, 0.6, 0); const m = cap_(0.065, 0.48, ms); m.position.y = -0.28; p.add(m);
       const hnd = new THREE.Mesh(new THREE.IcosahedronGeometry(0.06, 0), mk); hnd.position.y = -0.58; p.add(hnd); this.torso.add(p); return p; });
+    }
     this.show = true; this.pose = 'idle'; this.rest = 'idle'; this.phase = Math.random()*9; this.path = []; this.speed = 1.2; this.face = 0; this.v = {};
     scene.add(this.g); people.push(this);
   }

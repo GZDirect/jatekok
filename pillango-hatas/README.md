@@ -39,7 +39,7 @@ Indításkor választható. Az egyik játékos az **Angyal**, aki épségben kij
 
 ## Grafika
 
-Az 1. pálya háza (homlokzat, tűzlépcső, tetőépítmények) Blenderben készült, és `haz.glb` fájlként töltődik be. Ha a fájl nem érhető el, a játék a kódból rajzolt egyszerűbb házzal indul.
+Az 1. pálya háza (homlokzat, tűzlépcső, tetőépítmények) és mindhárom pálya figurái Blenderben készültek (`haz.glb`, `emberek.glb`). A figurák testrészekből állnak, a színeket és a mozgást a játék adja. Ha a fájlok nem érhetők el, a játék a kódból rajzolt egyszerűbb változattal indul.
 
 ## Irányítás
 
