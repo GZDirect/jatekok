@@ -43,6 +43,6 @@ Az épületek (az 1. pálya háza, a bank, a börtön cellaépülete, kerítőfa
 
 ## Irányítás
 
-Forgatás a jobb oldali nyilakkal, húzással vagy Q/E billentyűvel · nagyítás görgővel vagy csípéssel · alul az ikonsor kapcsolói (kék) és eseményei (rózsaszín) · a felső sávra koppintva megnyílik a napló · hang az első koppintásra indul.
+Forgatás a jobb oldali nyilakkal, húzással vagy Q/E billentyűvel · a „Kívül” gombbal a falak nem süllyednek le, így kívülről látod az épületet · nagyítás görgővel vagy csípéssel · alul az ikonsor kapcsolói (kék) és eseményei (rózsaszín) · a felső sávra koppintva megnyílik a napló · hang az első koppintásra indul.
 
 © 2026 Fejes Géza. Minden jog fenntartva. Lásd: [LICENSE](LICENSE).

@@ -80,6 +80,7 @@ button:disabled{opacity:.3;cursor:default}
 .vb svg{width:18px;height:18px}
 .vb.txt{font-family:var(--display);font-size:12px;line-height:1}
 .vb.muted{color:var(--muted)}
+.vb.on{border-color:rgba(69,224,255,.6);color:var(--cyan);background:rgba(69,224,255,.12)}
 #hint{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(130px + env(safe-area-inset-bottom,0px));background:var(--panel);border:1px solid var(--line);
   border-radius:8px;padding:6px 10px;font-size:13px;color:var(--ink);pointer-events:none;white-space:nowrap;transition:opacity .2s}
 .status span{white-space:nowrap}
@@ -119,6 +120,7 @@ button:disabled{opacity:.3;cursor:default}
   <button class="vb txt" id="vLvl" aria-label="Látható szintek">3 szint</button>
   <a class="vb" href="bank.html" aria-label="2. pálya: Duna Bank">2.<br>pálya</a>
   <a class="vb" href="borton.html" aria-label="3. pálya: C-blokk">3.<br>pálya</a>
+  <button class="vb txt" id="vOut" aria-label="Homlokzat mutatása kívülről" aria-pressed="false">Kívül</button>
   <button class="vb" id="vRe" aria-label="Újrakezdés"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v6h6"/><path d="M20 20v-6h-6"/><path d="M5 15a8 8 0 0 0 14 2M19 9A8 8 0 0 0 5 7"/></svg></button>
 </div>
 <div id="endcard" hidden><h2 id="endT"></h2><p id="endP"></p><button id="again">Újra</button></div>
@@ -539,7 +541,7 @@ class Person{
     else if (P === 'wave'){ T.aR = -2.7 + 0.35*Math.sin(t*9); T.zR = 0.2; }
     else if (P === 'panic'){ T.aL = T.aR = -2.4 + 0.2*Math.sin(t*12); T.zL = -0.4; T.zR = 0.4; T.head = 0.3*Math.sin(t*6); }
     else { T.aL = 0.05*Math.sin(t*1.5+this.phase); T.aR = -T.aL; }
-    const k = Math.min(1, dt*12), v = this.v;
+    const k = Math.min(1, Math.max(dt, 1/60)*12), v = this.v;
     for (const key in T) v[key] = (v[key] ?? 0) + (T[key] - (v[key] ?? 0))*k;
     this.legs[0].rotation.x = v.lL; this.legs[1].rotation.x = v.lR;
     this.arms[0].rotation.x = v.aL; this.arms[1].rotation.x = v.aR; this.arms[0].rotation.z = v.zL; this.arms[1].rotation.z = v.zR;
@@ -1153,6 +1155,9 @@ cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
 cv.addEventListener('wheel', e => { e.preventDefault(); setZoom(cam.zoom*(e.deltaY < 0 ? 1.1 : 0.9)); }, {passive:false});
 function setZoom(z){ cam.zoom = THREE.MathUtils.clamp(z, 0.75, 3); cam.updateProjectionMatrix(); }
 
+let showOutside = false;
+$('vOut').onclick = () => { showOutside = !showOutside; $('vOut').classList.toggle('on', showOutside); $('vOut').setAttribute('aria-pressed', showOutside);
+  hint ? hint(showOutside ? 'Homlokzat: a falak állnak, kívülről látod az épületet' : 'Metszet: a kamera felőli falak lesüllyednek') : 0; };
 // ================= main loop
 await document.fonts.ready;
 $('loading').hidden = true;
@@ -1167,7 +1172,7 @@ renderer.setAnimationLoop(() => {
   cam.position.set(target.x + 40*Math.sin(theta)*Math.cos(PHI), target.y + 40*Math.sin(PHI), target.z + 40*Math.cos(theta)*Math.cos(PHI));
   cam.lookAt(target);
   const sx = Math.sin(theta), cz = Math.cos(theta);
-  walls.forEach(w => { const goal = (w.nx*sx + w.nz*cz) > 0.25 ? 0.07 : 1; w.s += (goal - w.s)*Math.min(1, dtR*8); w.g.scale.y = w.s; });
+  walls.forEach(w => { const goal = !showOutside && (w.nx*sx + w.nz*cz) > 0.25 ? 0.07 : 1; w.s += (goal - w.s)*Math.min(1, dtR*8); w.g.scale.y = w.s; });
   { const goal = sx < -0.3 ? 0.12 : 1; nbBrick.opacity += (goal - nbBrick.opacity)*Math.min(1, dtR*6); nbBrick.depthWrite = nbBrick.opacity > 0.95;
     nb.children.forEach(c => { if (!Array.isArray(c.material)) c.visible = nbBrick.opacity > 0.5; }); }
   // lights & environment visuals
