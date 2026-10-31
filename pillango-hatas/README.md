@@ -1,8 +1,10 @@
-# Túszhelyzet
+# Pillangó-hatás
 
-Forgatható 3D dioráma-játék három pályával, ahol **csak a környezetet irányítod**. A túszok, a túszejtők és a kommandó maguktól döntenek: a túszok akkor szöknek, amikor alkalmat látnak, a kommandó akkor megy be, amikor jónak látja. A feladatod a megfelelő pillanatok megteremtése, úgy, hogy a feszültség ne szaladjon el.
+![Pillangó-hatás borítókép](nyitokep-kicsi.jpg)
 
-**Játék:** https://gzdirect.github.io/jatekok/tuszhelyzet/
+Egy apró változás a környezetben, és minden másképp alakul. Forgatható 3D dioráma-játék három pályával, ahol **csak a környezetet irányítod**. A túszok, a túszejtők és a kommandó maguktól döntenek: a túszok akkor szöknek, amikor alkalmat látnak, a kommandó akkor megy be, amikor jónak látja. A feladatod a megfelelő pillanatok megteremtése, úgy, hogy a feszültség ne szaladjon el.
+
+**Játék:** https://gzdirect.github.io/jatekok/pillango-hatas/
 
 ## Pályák
 
