@@ -1006,6 +1006,7 @@ const Duel = (() => {
 #title .choices{display:grid;gap:8px}
 #title .choices button{min-height:50px;justify-content:center;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);font-family:var(--display);font-size:18px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center}
 #title .choices button.duo{border-color:rgba(255,215,106,.5);background:linear-gradient(90deg,rgba(255,215,106,.16),rgba(255,74,74,.16))}
+#title .copy{margin:4px 0 0;font-size:12px;color:var(--muted);opacity:.8}
 #title details{color:var(--muted);font-size:13.5px;line-height:1.45}
 #title summary{cursor:pointer;font-family:var(--display);font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink)}
 #title details ul{margin:8px 0;padding-left:18px;display:flex;flex-direction:column;gap:4px} #title details p{margin:6px 0 0}
@@ -1047,7 +1048,7 @@ const Duel = (() => {
       <li>Lépés után 12 másodpercig fut a szimuláció, és látszik, mit okozott.</li>
       <li>Amit az ellenfél épp most állított át, ahhoz a következő lépésben nem nyúlhatsz.</li>
       <li>8 kör után, vagy ha a helyzet véget ér, a pontok döntenek.</li></ul>
-      <p><b>Pontozás.</b> Angyal: +10 minden kijutott túszért, és minden lépés után +0–4 a nyugalomért (alacsony feszültség). Démon: +6 minden lebukott szökésért, és minden lépés után +0–4 a káoszért (magas feszültség). Végkimenetel: jó befejezés +25 Angyal, kockázatos behatolás +12 Angyal és +6 Démon, meglógás +20 Démon, elfajult helyzet +30 Démon. Ha a 8 kör letelik, minden bent maradt túsz +5 a Démonnak.</p></details></div>`;
+      <p><b>Pontozás.</b> Angyal: +10 minden kijutott túszért, és minden lépés után +0–4 a nyugalomért (alacsony feszültség). Démon: +6 minden lebukott szökésért, és minden lépés után +0–4 a káoszért (magas feszültség). Végkimenetel: jó befejezés +25 Angyal, kockázatos behatolás +12 Angyal és +6 Démon, meglógás +20 Démon, elfajult helyzet +30 Démon. Ha a 8 kör letelik, minden bent maradt túsz +5 a Démonnak.</p></details><p class="copy">© 2026 Fejes Géza. Minden jog fenntartva.</p></div>`;
     titleEl.hidden = false; modal.hidden = true;
     $d('mSolo').onclick = () => { titleEl.hidden = true; stop(); };
     $d('mDuo').onclick = () => { titleEl.hidden = true; start(); };

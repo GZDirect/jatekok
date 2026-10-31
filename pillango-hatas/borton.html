@@ -350,6 +350,35 @@ const tBeam = new THREE.Mesh(new THREE.ConeGeometry(1.6, 1, 24, 1, true), new TH
 const floods = [-7, 0, 7].map(x => { box(0.6, 0.3, 0.4, std(0x22252c, 0.4, 0.6), x, 4.4, 3.2, block); const lens = box(0.5, 0.2, 0.04, glowMat(0xffffff, 0.3), x, 4.32, 3.42, block);
   const l = new THREE.SpotLight(0xf4f0e0, 0, 18, 0.8, 0.6, 1.2); l.position.set(x, 4.4, 3.4); l.target.position.set(x*0.8, 0, 9); scene.add(l); scene.add(l.target); return {l, lens}; });
 
+
+// ================= buildings modelled in Blender (falls back to the code-built walls if missing)
+const EP = await (async () => {
+  try {
+    const gl = new GLTFLoader();
+    const g = window.EP_GLB ? await gl.parseAsync(Uint8Array.from(atob(window.EP_GLB), c => c.charCodeAt(0)).buffer, '') : await gl.loadAsync('epuletek.glb');
+    const o = {}; [...g.scene.children].forEach(c => { o[c.name] = c; }); return o;
+  } catch (e) { console.warn('epuletek.glb nem töltődött be, maradnak az egyszerű falak', e); return null; }
+})();
+const EXTRA = {glass_tower: std(0x9fc0d8, 0.1, 0.3, {transparent:true, opacity:0.4, side:THREE.DoubleSide}), lamp: glowMat(0xfff2c8, 1.6)};
+function useModel(node, SWAP){
+  node.traverse(o => { if (!o.isMesh) return; o.castShadow = o.receiveShadow = true; const n = o.material.name;
+    if (SWAP[n] || EXTRA[n]) o.material = SWAP[n] || EXTRA[n]; else { o.material.flatShading = true; o.material.needsUpdate = true; } });
+  return node;
+}
+if (EP && EP.PR_wall_front){
+  walls.forEach(w => w.g.parent && w.g.parent.remove(w.g)); walls.length = 0;
+  const SWAP = {cinder:blockMat, paint_hall:paintHall, paint_kitchen:paintKitchen, paint_cell:paintCell, paint_wing:paintWing, glass_win:glassWin};
+  glassWin.side = THREE.DoubleSide;
+  for (const [side, nx, nz] of [['front', 0, 1], ['right', 1, 0], ['back', 0, -1], ['left', -1, 0]]){
+    const node = useModel(EP['PR_wall_' + side], SWAP); block.add(node); walls.push({g:node, nx, nz, s:1});
+  }
+  for (const [side, nx, nz] of [['far', 0, 1], ['east', 1, 0], ['west', -1, 0]]){
+    const node = useModel(EP['PR_perim_' + side], SWAP); yardWall.add(node); walls.push({g:node, nx, nz, s:1});
+  }
+  tower.children.filter(c => c !== towerLamp).forEach(c => tower.remove(c));
+  tower.add(useModel(EP.PR_tower, SWAP));
+}
+
 // ================= vehicles and people outside
 function car(col, x, z, ry, kind='sedan', parent=world){
   const g = new THREE.Group(), body = std(col, 0.35, 0.4), glass = std(0x0f1626, 0.1, 0.8), dark = std(0x0d0d10, 0.8);
@@ -989,6 +1018,7 @@ const Duel = (() => {
 #title .choices{display:grid;gap:8px}
 #title .choices button{min-height:50px;justify-content:center;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);font-family:var(--display);font-size:18px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center}
 #title .choices button.duo{border-color:rgba(255,215,106,.5);background:linear-gradient(90deg,rgba(255,215,106,.16),rgba(255,74,74,.16))}
+#title .copy{margin:4px 0 0;font-size:12px;color:var(--muted);opacity:.8}
 #title details{color:var(--muted);font-size:13.5px;line-height:1.45}
 #title summary{cursor:pointer;font-family:var(--display);font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink)}
 #title details ul{margin:8px 0;padding-left:18px;display:flex;flex-direction:column;gap:4px} #title details p{margin:6px 0 0}
@@ -1030,7 +1060,7 @@ const Duel = (() => {
       <li>Lépés után 12 másodpercig fut a szimuláció, és látszik, mit okozott.</li>
       <li>Amit az ellenfél épp most állított át, ahhoz a következő lépésben nem nyúlhatsz.</li>
       <li>8 kör után, vagy ha a helyzet véget ér, a pontok döntenek.</li></ul>
-      <p><b>Pontozás.</b> Angyal: +10 minden kijutott túszért, és minden lépés után +0–4 a nyugalomért (alacsony feszültség). Démon: +6 minden lebukott szökésért, és minden lépés után +0–4 a káoszért (magas feszültség). Végkimenetel: jó befejezés +25 Angyal, kockázatos behatolás +12 Angyal és +6 Démon, meglógás +20 Démon, elfajult helyzet +30 Démon. Ha a 8 kör letelik, minden bent maradt túsz +5 a Démonnak.</p></details></div>`;
+      <p><b>Pontozás.</b> Angyal: +10 minden kijutott túszért, és minden lépés után +0–4 a nyugalomért (alacsony feszültség). Démon: +6 minden lebukott szökésért, és minden lépés után +0–4 a káoszért (magas feszültség). Végkimenetel: jó befejezés +25 Angyal, kockázatos behatolás +12 Angyal és +6 Démon, meglógás +20 Démon, elfajult helyzet +30 Démon. Ha a 8 kör letelik, minden bent maradt túsz +5 a Démonnak.</p></details><p class="copy">© 2026 Fejes Géza. Minden jog fenntartva.</p></div>`;
     titleEl.hidden = false; modal.hidden = true;
     $d('mSolo').onclick = () => { titleEl.hidden = true; stop(); };
     $d('mDuo').onclick = () => { titleEl.hidden = true; start(); };
