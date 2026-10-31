@@ -236,6 +236,27 @@ function glow(hex, x, z, s, y=0.05){
   m.rotation.x = -Math.PI/2; m.position.set(x, y, z); world.add(m); return m;
 }
 
+// ================= furniture modelled in Blender (falls back to simple boxes if missing)
+const PROPS = await (async () => {
+  try {
+    const gl = new GLTFLoader();
+    const g = window.PROPS_GLB ? await gl.parseAsync(Uint8Array.from(atob(window.PROPS_GLB), c => c.charCodeAt(0)).buffer, '') : await gl.loadAsync('berendezes.glb');
+    const o = {}; [...g.scene.children].forEach(c => { c.position.set(0, 0, 0); o[c.name] = c; }); return o;
+  } catch (e) { console.warn('berendezes.glb nem töltődött be, maradnak az egyszerű bútorok', e); return null; }
+})();
+const PGLOW = {P_screen: glowMat(0x7ac8ff, 0.7), P_led_g: glowMat(0x5fe08e, 1.6), P_led_b: glowMat(0x45e0ff, 1.6),
+  P_washer_door: std(0x22324a, 0.1, 0.5, {emissive:0x0a2a50, emissiveIntensity:0.6}), P_glass: std(0x9fc0d8, 0.1, 0.3, {transparent:true, opacity:0.35})};
+function prop(name, x, y, z, ry, parent, o = {}){
+  const src = PROPS && PROPS['P_' + name]; if (!src) return null;
+  const g = src.clone();
+  const tint = o.color != null ? std(o.color, 0.95) : null, tint2 = o.color != null ? std(new THREE.Color(o.color).offsetHSL(0, 0, 0.07).getHex(), 0.95) : null;
+  g.traverse(c => { if (!c.isMesh) return; c.castShadow = c.receiveShadow = true; const n = c.material.name;
+    if (tint && n === 'P_fabric') c.material = tint; else if (tint2 && n === 'P_cushion') c.material = tint2;
+    else if (PGLOW[n]){ c.material = PGLOW[n]; if (n === 'P_screen' && o.screens) o.screens.push(c); }
+    else if (!c.material.flatShading){ c.material.flatShading = true; c.material.needsUpdate = true; } });
+  g.position.set(x, y, z); g.rotation.y = ry || 0; parent.add(g); return g;
+}
+
 // ================= cell block (22 × 10 m) and the yard wall
 const block = new THREE.Group(); scene.add(block);
 const WH = 4.6, PH = 2.9;
@@ -283,15 +304,15 @@ for (let i=0;i<5;i++){
   const door = new THREE.Group(); for (let bx = 0.0; bx < 0.95; bx += 0.18) box(0.05, 2.3, 0.05, bars, bx, 1.15, 0, door);
   box(1.0, 0.06, 0.06, bars, 0.47, 2.3, 0, door); box(1.0, 0.06, 0.06, bars, 0.47, 0.15, 0, door);
   door.position.set(x0+1.0, 0, -3.92); cellBars.add(door); cellDoors.push({g:door, x:x0+1.0});
-  box(0.85, 0.35, 1.9, std(0x5b6a7a, 0.9), x0+0.5, 0.45, -5.9, block);                 // bunk
-  box(0.85, 0.08, 1.9, std(0x2e3138), x0+0.5, 0.2, -5.9, block);
-  box(0.4, 0.45, 0.45, std(0xe8ecef, 0.3), x0+1.65, 0.3, -6.4, block);                 // toilet
+  if (PROPS){ prop('bunk', x0+0.5, 0.1, -5.9, 0, block); prop('toilet', x0+1.65, 0.1, -6.55, 0, block); }
+  else { box(0.85, 0.35, 1.9, std(0x5b6a7a, 0.9), x0+0.5, 0.45, -5.9, block); box(0.85, 0.08, 1.9, std(0x2e3138), x0+0.5, 0.2, -5.9, block);
+  box(0.4, 0.45, 0.45, std(0xe8ecef, 0.3), x0+1.65, 0.3, -6.4, block); }
   box(0.4, 0.08, 0.3, glowMat(0xffe9c0, 0.6), x0+1.0, PH-0.1, -5.4, block);             // cell light
 }
 box(10, 0.18, 0.1, bars, 2, PH, -4.0, cellBars);
 // hall furniture: steel tables with fixed stools
 const steelT = std(0x8a9199, 0.35, 0.7);
-function table(x, z){ const g = new THREE.Group(); box(1.6, 0.06, 0.9, steelT, 0, 0.78, 0, g); box(0.14, 0.75, 0.14, steelT, 0, 0.4, 0, g);
+function table(x, z){ if (PROPS) return prop('steel_table', x, 0.1, z, 0, block); const g = new THREE.Group(); box(1.6, 0.06, 0.9, steelT, 0, 0.78, 0, g); box(0.14, 0.75, 0.14, steelT, 0, 0.4, 0, g);
   for (const [sx,sz] of [[-0.55,-0.75],[0.55,-0.75],[-0.55,0.75],[0.55,0.75]]){ const s = new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.06,10), steelT); s.position.set(sx,0.48,sz); g.add(s); box(0.06,0.45,0.06,steelT,sx,0.24,sz,g); }
   g.position.set(x, 0.1, z); block.add(g); }
 table(-0.5, -1.2); table(2.5, 0.8); table(5.2, -1.4); table(5.0, 1.6);
@@ -303,20 +324,22 @@ const rungs = []; for (let i=0;i<12;i++){ const r = box(0.5, 0.05, 0.05, steelT,
 ladderBuild.rotation.z = 1.35; ladderBuild.position.y = 0.2;
 // control room: monitor desk + door panel
 const monitors = [];
-box(3.0, 0.06, 0.8, std(0x4a4f57), -8.2, 0.85, -6.1, block); box(3.0, 0.8, 0.06, std(0x4a4f57), -8.2, 0.45, -6.48, block);
+if (PROPS) prop('console', -8.2, 0.1, -6.05, 0, block); else { box(3.0, 0.06, 0.8, std(0x4a4f57), -8.2, 0.85, -6.1, block); box(3.0, 0.8, 0.06, std(0x4a4f57), -8.2, 0.45, -6.48, block); }
 for (let i=0;i<4;i++){ box(0.7, 0.45, 0.05, std(0x111), -9.3 + i*0.75, 1.35, -6.5, block);
   const s = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.38), new THREE.MeshBasicMaterial({color:0x6ad6a0, toneMapped:false})); s.position.set(-9.3 + i*0.75, 1.35, -6.46); block.add(s); monitors.push(s); }
 const doorPanel = new THREE.Group(); doorPanel.position.set(-10.78, 1.7, -4.4); doorPanel.rotation.y = Math.PI/2; block.add(doorPanel);
 box(2.0, 1.0, 0.06, std(0x2a2e36), 0, 0, 0, doorPanel);
 const panelLeds = []; for (let i=0;i<5;i++){ const l = box(0.14, 0.14, 0.04, glowMat(0xff3030, 2), -0.7 + i*0.35, 0.1, 0.05, doorPanel); panelLeds.push(l); }
-box(0.5, 0.5, 0.5, std(0x22252c), -8.0, 0.35, -5.2, block);
+if (PROPS) prop('office_chair', -8.0, 0.1, -5.1, Math.PI, block); else box(0.5, 0.5, 0.5, std(0x22252c), -8.0, 0.35, -5.2, block);
 // staff room: lockers, bench
-for (let i=0;i<5;i++) box(0.5, 1.9, 0.5, std(0x5a7a8a, 0.5, 0.5), -10.4 + i*0.55, 1.05, 2.4, block);
-box(2.2, 0.45, 0.4, std(0x6b4a33), -7.5, 0.33, 1.6, block);
+if (PROPS){ prop('lockers', -9.3, 0.1, 2.4, Math.PI, block); prop('locker_bench', -7.5, 0.1, 1.6, 0, block); }
+else { for (let i=0;i<5;i++) box(0.5, 1.9, 0.5, std(0x5a7a8a, 0.5, 0.5), -10.4 + i*0.55, 1.05, 2.4, block);
+box(2.2, 0.45, 0.4, std(0x6b4a33), -7.5, 0.33, 1.6, block); }
 // kitchen: counters, stove, serving hatch, pantry shelves
-box(3.6, 0.9, 0.7, std(0xd0d4d8, 0.35, 0.6), 9.0, 0.55, 2.45, block); box(0.8, 0.95, 0.7, std(0x2a2e36, 0.4, 0.6), 10.5, 0.55, -0.8, block);
+if (PROPS){ prop('kitchen_steel', 9.0, 0.1, 2.45, Math.PI, block); prop('stove', 10.5, 0.1, -0.8, -Math.PI/2, block); prop('fridge', 10.6, 0.1, 0.4, -Math.PI/2, block); prop('shelf', 9.4, 0.1, -6.4, 0, block); }
+else { box(3.6, 0.9, 0.7, std(0xd0d4d8, 0.35, 0.6), 9.0, 0.55, 2.45, block); box(0.8, 0.95, 0.7, std(0x2a2e36, 0.4, 0.6), 10.5, 0.55, -0.8, block);
 box(0.7, 1.8, 0.6, std(0xe8ecf0, 0.3, 0.5), 10.6, 1.0, 0.4, block);
-for (let i=0;i<3;i++) box(1.6, 0.06, 0.5, std(0x6b4a33), 9.4, 0.6 + i*0.6, -6.4, block);
+for (let i=0;i<3;i++) box(1.6, 0.06, 0.5, std(0x6b4a33), 9.4, 0.6 + i*0.6, -6.4, block); }
 const smokeHaze = new THREE.Mesh(new THREE.SphereGeometry(1.2, 12, 8), new THREE.MeshBasicMaterial({color:0xaaaaaa, transparent:true, opacity:0, depthWrite:false})); smokeHaze.position.set(9, 1.2, -5.5); block.add(smokeHaze);
 // interior lights
 const roomLights = [[0,-1.5],[5,-1.5],[2,-5.5],[-7,-4],[-7,1.2],[9,0]].map(([x,z]) => { const l = new THREE.PointLight(0xfff2d8, 9, 9, 1.3); l.position.set(x, 3.4, z); block.add(l); return l; });

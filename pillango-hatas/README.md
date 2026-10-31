@@ -39,7 +39,7 @@ Indításkor választható. Az egyik játékos az **Angyal**, aki épségben kij
 
 ## Grafika
 
-Az épületek (az 1. pálya háza, a bank, a börtön cellaépülete, kerítőfala és őrtornya) és mindhárom pálya figurái Blenderben készültek (`haz.glb`, `epuletek.glb`, `emberek.glb`). A figurák testrészekből állnak, a színeket és a mozgást a játék adja. Ha a fájlok nem érhetők el, a játék a kódból rajzolt egyszerűbb változattal indul.
+Az épületek (az 1. pálya háza, a bank, a börtön cellaépülete, kerítőfala és őrtornya) a berendezés és mindhárom pálya figurái Blenderben készültek (`haz.glb`, `epuletek.glb`, `berendezes.glb`, `emberek.glb`). A figurák testrészekből állnak, a színeket és a mozgást a játék adja. Ha a fájlok nem érhetők el, a játék a kódból rajzolt egyszerűbb változattal indul.
 
 ## Irányítás
 
