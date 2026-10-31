@@ -133,6 +133,7 @@ import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
 import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
 const $ = id => document.getElementById(id);
 const FH = 3;                          // storey height
@@ -320,6 +321,45 @@ const ladder = new THREE.Group(); fe.add(ladder);
 box(0.04, 2.9, 0.04, iron, -0.22, 0, 0, ladder); box(0.04, 2.9, 0.04, iron, 0.22, 0, 0, ladder);
 for (let i=0;i<9;i++) box(0.44, 0.03, 0.03, iron, 0, -1.3+i*0.33, 0, ladder);
 ladder.position.set(2.15, 4.5, 3.75); let ladderY = 4.5;
+
+// ================= Blender model: facade, fire escape, rooftop (the box house stays as a fallback)
+const HAZ = await (async () => {
+  try {
+    const gl = new GLTFLoader();
+    if (window.HAZ_GLB) return (await gl.parseAsync(Uint8Array.from(atob(window.HAZ_GLB), c => c.charCodeAt(0)).buffer, '')).scene;
+    return (await gl.loadAsync('haz.glb')).scene;
+  } catch (e) { console.warn('haz.glb nem töltődött be, marad a dobozos ház', e); return null; }
+})();
+if (HAZ){
+  walls.length = 0; glassByFloor.forEach(a => a.length = 0); blinds.length = 0;
+  levels.forEach(L => L.children.slice(0, 4).forEach(c => L.remove(c)));   // the four outer walls the loop added first
+  roof.clear(); fe.children.filter(c => c !== ladder).forEach(c => fe.remove(c));
+  glassLit.forEach(m => m.side = THREE.DoubleSide); glassDark.side = THREE.DoubleSide;
+  const SWAP = {brick, paint_f0:paints[0], paint_f1:paints[1], paint_f2:paints[2]};
+  const nodes = {};
+  [...HAZ.children].forEach(o => { nodes[o.name] = o; });
+  const NORM = {front:[0,1], right:[1,0], back:[0,-1], left:[-1,0]};
+  for (const [name, node] of Object.entries(nodes)){
+    const m = name.match(/^HZ_wall_f(\d)_(\w+)$/);
+    node.traverse(o => { if (!o.isMesh) return; o.castShadow = o.receiveShadow = true;
+      const n = o.material.name, g = n.match(/^glass_f(\d)$/);
+      if (g){ o.material = glassLit[+g[1]]; glassByFloor[+g[1]].push(o); o.castShadow = false; }
+      else if (SWAP[n]) o.material = SWAP[n];
+      else { o.material.flatShading = true; o.material.needsUpdate = true; } });
+    if (m){
+      const f = +m[1], side = m[2]; levels[f].add(node); walls.push({g:node, nx:NORM[side][0], nz:NORM[side][1], s:1});
+      if (f === 2) plan[2][side].forEach(o => { if (!o.glass) return;
+        const bl = new THREE.Mesh(new THREE.PlaneGeometry(o.w*0.98, o.y1-o.y0), std(0xd9cfb8, 0.9, 0, {side:THREE.DoubleSide, emissive:0x3a2a14, emissiveIntensity:0.4}));
+        bl.position.set(o.x, o.y1, -0.13); bl.userData.h = o.y1-o.y0; bl.scale.y = 0.001; node.add(bl); blinds.push(bl); });
+    }
+    else if (name === 'HZ_roof') roof.add(node);
+    else if (name === 'HZ_fireescape') fe.add(node);
+  }
+}
+// path down the fire escape: the model has its stair on the outer strip of the platforms
+const FE_PATH = HAZ
+  ? [[2.9, 3.3, fy(2)], [3.9, 3.3, fy(2)-0.03], [3.92, 3.68, fy(2)-0.03], [2.45, 3.68, fy(1)-0.03], [2.15, 3.72, fy(1)-0.03]]
+  : [[2.9, 3.4, fy(2)], [3.7, 3.4, fy(2)-0.03], [2.15, 3.45, fy(1)-0.03], [2.15, 3.72, fy(1)-0.03]];
 
 // ================= interiors (simple stylised furniture)
 function sofa(x,z,r,c,P){ const g = new THREE.Group(); const m = std(c, 0.9);
@@ -705,7 +745,7 @@ async function escape(h, route){
   if (rec.caught || S.ended) return;
   rec.phase = 'out';
   if (route === 'window'){
-    await h.go([[2.9, 3.4, Y2], [3.7, 3.4, fy(2)-0.03], [2.15, 3.45, fy(1)-0.03], [2.15, 3.72, fy(1)-0.03]], 1.4);
+    await h.go(FE_PATH, 1.4);
     Snd.play('clang'); await h.go([[2.15, 3.72, 0.14]], 1.6);
     await h.go([[2.3, 4.5, 0.14], [6.2, 5.3, 0.14]], 3.0);
   } else {

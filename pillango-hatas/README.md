@@ -37,6 +37,10 @@ Indításkor választható. Az egyik játékos az **Angyal**, aki épségben kij
 | A helyzet elfajul (feszültség 100, vagy sikertelen behatolás) | | +30 |
 | A 8 kör végén bent maradt túszok | | +5 / fő |
 
+## Grafika
+
+Az 1. pálya háza (homlokzat, tűzlépcső, tetőépítmények) Blenderben készült, és `haz.glb` fájlként töltődik be. Ha a fájl nem érhető el, a játék a kódból rajzolt egyszerűbb házzal indul.
+
 ## Irányítás
 
 Forgatás a jobb oldali nyilakkal, húzással vagy Q/E billentyűvel · nagyítás görgővel vagy csípéssel · alul az ikonsor kapcsolói (kék) és eseményei (rózsaszín) · a felső sávra koppintva megnyílik a napló · hang az első koppintásra indul.
