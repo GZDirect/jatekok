@@ -126,6 +126,13 @@ Délben, a hegyek között. Kuroda jobbkeze, Mori, a cég iratait a magánvonat�
 - **Pecsétek:** Árnyék (nem volt riasztás), Tiszta kéz (senki sem halt meg), Gyors (7 percen belül).
 - **Teszt:** `?palya=vonat&aetest`, `window.AE_VONAT`.
 
+## 2f. Magyar szinkron (Piper TTS)
+
+- A szereplők mondatai előre legenerált hangfájlok: `hang/<hang>-<hash>.mp3` (a hash a magyar szöveg FNV-1a kódja), a lista a `src/hang_lista.js` (`window.AE_HANG`). Kb. 100 fájl, 1 MB.
+- Hangok: `g` őrök és rendőrök (Imre), `f` tanítványok és a kalauz (Anna), `m` a mester (Imre, mélyebb és lassabb), `b` Kuroda és Mori (Imre, kissé mélyebb). Az őrök hangmagassága személyenként kicsit más (lejátszási sebesség), és térben szól (bal–jobb).
+- A pálya indulásakor a játék betölti az adott pályához kellő hangokat (`preloadHang`). Ha egy mondat nincs meg (vagy még nem töltődött be), a böngésző felolvasója szól helyette (`speak`).
+- **Új vagy módosított mondat után** újra kell generálni: `python3 arnyekerdo/src/hangok.py /mappa/a/modellekkel` (a `hu_HU-imre-medium.onnx` és `hu_HU-anna-medium.onnx` + `.json` a huggingface.co/rhasspy/piper-voices oldalról; a repóban nincsenek). Kell hozzá `pip install piper-tts` és `ffmpeg`. Csak a hiányzó fájlokat készíti el, és újraírja a listát; utána `build.py`.
+
 ## 3. Fájlok
 
 A `GZDirect/jatekok` repóban minden játék külön mappában van. A GitHub Pages a `main` ágból közvetlenül szolgálja ki őket.
@@ -135,6 +142,7 @@ arnyekerdo/
   index.html      ← GENERÁLT, ezt szolgálja ki a GitHub Pages. Kézzel ne szerkeszd.
   LICENSE, README.md, FEJLESZTES.md
   nyitokep.jpg, nyitokep-kicsi.jpg  ← a nyitókép
+  hang/           ← a szereplők magyar hangfájljai (generált, lásd 2f)
   manifest.webmanifest, icon-180/192/512.png  ← főképernyőre tett webalkalmazás (fekvő, teljes képernyő)
   src/
     shell.html    ← HTML, CSS, HUD, kezdő és záró képernyő; a /*@@JATEK@@*/ jelölő helyére kerül a JS
@@ -155,6 +163,8 @@ arnyekerdo/
     vonat.js      ← a 4. pálya díszlete: kocsik, belső terek, mozdony, mozgó táj, alagút (AE.VONAT)
     vonat_game.js ← a 4. pálya menete: őrök, Mori napirendje, alagutak és sötétség, aktatáska, vészfék, pecsétek
     falu_game.js  ← a 2. pálya próbái, a mester szövegei, hiba és újrakezdés, pecsétek
+    hangok.py     ← a hangfájlok generálása Piperrel (lásd 2f)
+    hang_lista.js ← GENERÁLT: a meglévő hangfájlok listája
     build.py      ← összeállítja az index.html-t (sorrend: world, actors, falu, varos, vonat, parkolt, game, falu_game, varos_game, vonat_game)
 ```
 

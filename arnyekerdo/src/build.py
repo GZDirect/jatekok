@@ -9,7 +9,17 @@ import os
 D = os.path.dirname(os.path.abspath(__file__))
 rd = lambda n: open(os.path.join(D, n), encoding='utf-8').read()
 shell = rd('shell.html')
-js = '\n'.join(rd(n) for n in ('world.js', 'actors.js', 'falu.js', 'varos.js', 'vonat.js', 'parkolt.js', 'game.js', 'falu_game.js', 'varos_game.js', 'vonat_game.js')) + '\n'
+js = '\n'.join(rd(n) for n in ('hang_lista.js', 'world.js', 'actors.js', 'falu.js', 'varos.js', 'vonat.js', 'parkolt.js', 'game.js', 'falu_game.js', 'varos_game.js', 'vonat_game.js')) + '\n'
+# Tömörítés (a GitHub Pages-en kisebb, gyorsabban töltődik): terser, a © megjegyzés megmarad. --plain: tömörítés nélkül.
+import subprocess, sys as _s, tempfile as _t
+if '--plain' not in _s.argv:
+    try:
+        with _t.NamedTemporaryFile('w', suffix='.js', delete=False, encoding='utf-8') as f: f.write(js); src = f.name
+        r = subprocess.run(['npx', '-y', 'terser@5.31.0', src, '-c', 'passes=1', '-m', '--comments', '/©/'], capture_output=True, timeout=300)
+        if r.returncode == 0 and len(r.stdout) > 1000:
+            js = '/* Shinobi · © 2026 Fejes Géza. Minden jog fenntartva. */\n' + r.stdout.decode('utf-8') + '\n'
+        else: print('terser hiba, tömörítés nélkül:', r.stderr.decode('utf-8')[:300])
+    except Exception as e: print('tömörítés kihagyva:', e)
 assert '/*@@JATEK@@*/' in shell, 'hiányzik a /*@@JATEK@@*/ jelölő a shell.html-ből'
 page = shell.replace('/*@@JATEK@@*/', js)
 # GitHub Pages-hez kell egy teljes HTML-váz (a claude.ai artifact ezt magától adja hozzá).

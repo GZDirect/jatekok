@@ -81,10 +81,20 @@ const LINES={
 let ac=null,noiseBuf=null;
 function say(c,kind){const now=S.time;if(now-c.saidT<2.5)return;c.saidT=now;const L=LINES[kind],l=L[Math.floor(Math.random()*L.length)];
   const d=Math.hypot(c.x-P.x,c.z-P.z);if(d>45)return;
-  showSub(l[2],2.6);speak(l[2],1.1,0.8+c.id*0.06,clamp(1.1-d/40,0.15,1));}
+  const v=LV==='falu'||(A.ROOF&&A.ROOF.actors[c.id]==='conductor')?'f':'g';
+  showSub(l[2],2.6);speak(l[2],1.1,0.8+c.id*0.06,clamp(1.1-d/40,0.15,1),v,panOf(c.x,c.z),0.94+((c.id*37)%13)/100);}
 /* mindenki magyarul beszél: felirat és felolvasás magyar hanggal (ha a készüléken nincs magyar hang, az alapértelmezett szól) */
 function showSub(t,dur){const sub=$('sub');sub.innerHTML='<b>„'+t+'”</b>';sub.style.opacity=1;S.subT=dur;}
-function speak(t,rate,pitch,vol){try{if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='hu-HU';u.rate=rate;u.pitch=pitch;u.volume=vol;
+/* előre legenerált magyar hangfájlok (hang/<hang>-<hash>.mp3, lista: hang_lista.js); ha egy mondat nincs meg, a böngésző felolvasója szól */
+const HANG={buf:{},loading:{},cur:null};
+function fnv(t){let h=0x811c9dc5;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return('0000000'+h.toString(16)).slice(-8);}
+function loadHang(k){if(!ac||HANG.buf[k]||HANG.loading[k]||!window.AE_HANG||!AE_HANG[k])return;HANG.loading[k]=1;
+  fetch('hang/'+k+'.mp3').then(r=>{if(!r.ok)throw 0;return r.arrayBuffer();}).then(b=>new Promise((ok,no)=>ac.decodeAudioData(b,ok,no))).then(d=>{HANG.buf[k]=d;}).catch(()=>{HANG.loading[k]=0;});}
+function preloadHang(){if(!window.AE_HANG)return;const pre=LV==='falu'?'mf':LV==='erdo'?'g':'gfb';Object.keys(AE_HANG).forEach(k=>{if(pre.indexOf(k[0])>=0)loadHang(k);});}
+function playClip(v,t,vol,pan,rate){if(!v||!ac)return false;const k=v+'-'+fnv(t.trim()),b=HANG.buf[k];if(!b){loadHang(k);return false;}
+  try{if(HANG.cur)try{HANG.cur.stop();}catch(e){}const s=ac.createBufferSource();s.buffer=b;s.playbackRate.value=rate||1;const g=ac.createGain();g.gain.value=Math.min(1,vol*1.25);s.connect(g);
+    if(ac.createStereoPanner){const p=ac.createStereoPanner();p.pan.value=(pan||0)*0.7;g.connect(p);p.connect(ac.destination);}else g.connect(ac.destination);s.start();HANG.cur=s;try{window.speechSynthesis&&speechSynthesis.cancel();}catch(e){}return true;}catch(e){return false;}}
+function speak(t,rate,pitch,vol,voice,pan,prate){if(playClip(voice,t,vol,pan,prate))return;try{if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='hu-HU';u.rate=rate;u.pitch=pitch;u.volume=vol;
   const v=speechSynthesis.getVoices().find(v=>/^hu/i.test(v.lang));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
 function audioInit(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume();if(!noiseBuf){noiseBuf=ac.createBuffer(1,ac.sampleRate*0.6,ac.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;}}catch(e){ac=null;}}
 function env(g,t,a,peak,dec){g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+dec);}
@@ -362,7 +372,7 @@ function newRound(){
   S.running=true;
 }
 function startGame(){
-  goFull();audioInit();ambStart();try{speechSynthesis&&speechSynthesis.getVoices();}catch(e){}
+  goFull();audioInit();preloadHang();ambStart();try{speechSynthesis&&speechSynthesis.getVoices();}catch(e){}
   try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{});}catch(e){}
   document.body.classList.remove('menu');$('start').hidden=true;$('end').hidden=true;$('joyHint').hidden=false;A.hands.visible=true;newRound();Q.frames=0;Q.acc=0;
 }
@@ -701,10 +711,10 @@ function setDaylight(on){const sky=A.sky.material.uniforms;
   ALLCOPS.forEach(c=>{c.pool.visible=!on;const R=c.mesh.userData.R;if(R&&R.lensGlow)R.lensGlow.visible=!on;});document.body.classList.toggle('day',on);}
 function raiseAlarm(x,z){if(S.alarm<=0)S.alarms++;S.alarm=40;alertAll(null,x,z,'cam');}
 /* a falu (kiképzés) logikája ezen keresztül éri el a játék belsejét */
-function sayLine(l,x,z,pitch){const d=Math.hypot(x-P.x,z-P.z);showSub(l[2],Math.max(3.2,l[2].length*0.075));speak(l[2],0.95,pitch||0.6,clamp(1.1-d/40,0.25,1));}
+function sayLine(l,x,z,pitch,voice){const d=Math.hypot(x-P.x,z-P.z);showSub(l[2],Math.max(3.2,l[2].length*0.075));speak(l[2],0.95,pitch||0.6,clamp(1.1-d/40,0.25,1),voice||(LV==='falu'?'m':'b'),panOf(x,z),1);}
 Object.assign(G,{setDaylight,raiseAlarm,alertAll,blocked,smokeBlocks,takeDown,spotted,clampField,isTouch,TS,tutEnd,D:()=>D,DIFF,setDiffName:k=>{D=DIFF[k];},clearSpikes,SPK,DART,LINES,setDiff:k=>{D=DIFF[k];},P,S,COPS,ALLCOPS,GOAL,START,ITEMS,showMsg,sayLine,say,selectItem,updateButtons,pushOut,inBush,bodyNear,tone,thump,noiseHit,endGame,eyePos,fwd,resetCop,nextWaypoint,fmt,wrapA,rnd,STONE,startGame,
   setStones:n=>{S.stones=n;updateButtons();},setSpikes:n=>{S.spikes=n;updateButtons();},setDarts:n=>{S.darts=n;updateButtons();},setStars:n=>{S.stars=n;updateButtons();},setSmoke:n=>{S.smoke=n;updateButtons();}});
 /* Tesztelési horog: csak ?aetest címparaméterrel él, az élő játékban nincs. */
-if(/[?&]aetest/.test(location.search))window.AE_TEST={throwStar,STARS,blowDart,useSpikes,SPK,DART,P,S,COPS,ALLCOPS,DIFF,setD:k=>{D=DIFF[k];},toggleDrag,throwStone,STONE,TS,drawRadar,startGame,useItem,selectItem,dropDown,startHook,startClimb,giants,stepCop,blocked,perchFor,arrivePerch,tick:(dt,n)=>{for(let i=0;i<(n||1);i++){if(!S.running)break;update(dt);COPS.forEach(c=>syncCop(c,dt));}},frame:()=>frame(performance.now())};
+if(/[?&]aetest/.test(location.search))window.AE_TEST={HANG,playClip,throwStar,STARS,blowDart,useSpikes,SPK,DART,P,S,COPS,ALLCOPS,DIFF,setD:k=>{D=DIFF[k];},toggleDrag,throwStone,STONE,TS,drawRadar,startGame,useItem,selectItem,dropDown,startHook,startClimb,giants,stepCop,blocked,perchFor,arrivePerch,tick:(dt,n)=>{for(let i=0;i<(n||1);i++){if(!S.running)break;update(dt);COPS.forEach(c=>syncCop(c,dt));}},frame:()=>frame(performance.now())};
 requestAnimationFrame(frame);
 })();
