@@ -2,7 +2,7 @@
 
 ![Cincin a padláson](cover.jpg)
 
-> ⚠️ **Design előtti verzió – v0.5 (2026. november 1.)**
+> ⚠️ **Design előtti verzió – v0.5.1 (2026. november 1.)**
 > A játékmenet és mind a tíz pálya végigjátszható. Az első két helyiség (a padlás és a gyerekszoba) már az új, festett grafikát kapta; a többi nyolc még ideiglenes, programmal rajzolt képekkel fut.
 
 Cincin, a kis sálas egér egy hatalmas, régi házban lakik. A padlástól a kertig tíz helyiségen kell átjutnia, és mindegyik végén egy furfangos ellenfél vár rá: az alvó macska, a felhúzható óriásrobot, a bagoly, a szakács, a kutya, a patkány… Gyűjtsd a magokat, keresd meg minden szobában a rejtett sajtot, kússz be a bútorok alá, és találd ki, hogyan jutsz túl a szoba urán.
@@ -40,6 +40,7 @@ A szünet menü **Teszt-adatok** gombja kimásolja, hol és mitől buktál el a 
 
 ## Változások
 
+- **v0.5.1** – Gyerekszoba-javítások: a háttér padlója most egy vonalban van a játék padlójával (a várudvar magjai már láthatóan elérhetők), az ablakpad rajza a helyére került, eltűnt a fölösleges második egérlyuk a robot előtt, sűrűbben gurulnak a golyók, a golyós polctorony festett kockákat és könyveket kapott, és gyorsabb, keményebb az óriásrobot.
 - **v0.5** – A gyerekszoba festett grafikát kapott (háttér, játékok, babaház, ágy, óriásrobot). A képek külön fájlokba kerültek, a játék pályánként tölti be őket. A pályák sorban nyílnak meg. Új kezdőképernyő, nagyobb ugrógomb, ritkább golyók a polctornyon.
 - **v0.4** – A padlás teljesen festett grafikát kapott; új egér (mozgó végtagokkal) és új macska; hibajavítások a mentőpontoknál és elérhetetlen magoknál.
 - **v0.3** – Mobil- és tabletbarát, teljes képernyős változat menükkel, érintéses irányítással és teszt-naplóval.
