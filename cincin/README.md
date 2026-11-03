@@ -2,8 +2,8 @@
 
 ![Cincin a padláson](cover.jpg)
 
-> ⚠️ **Design előtti verzió – v0.7 (2026. november 2.)**
-> A játékmenet és mind a tíz pálya végigjátszható. Az első négy helyiség (a padlás, a gyerekszoba, a könyvtár és a fürdőszoba) már az új, festett grafikát kapta; a többi hat még ideiglenes, programmal rajzolt képekkel fut.
+> ⚠️ **Design előtti verzió – v0.8 (2026. november 3.)**
+> A játékmenet és mind a tíz pálya végigjátszható, és már mind a tíz helyiség festett grafikát kapott. Minden helyiségnek saját zenéje van.
 
 Cincin, a kis sálas egér egy hatalmas, régi házban lakik. A padlástól a kertig tíz helyiségen kell átjutnia, és mindegyik végén egy furfangos ellenfél vár rá: az alvó macska, a felhúzható óriásrobot, a bagoly, a szakács, a kutya, a patkány… Gyűjtsd a magokat, keresd meg minden szobában a rejtett sajtot, kússz be a bútorok alá, és találd ki, hogyan jutsz túl a szoba urán.
 
@@ -26,6 +26,7 @@ Nyisd meg a játékot a böngészőben. Telefonon és tableten teljes képernyő
 | Lelépés platformról | ↓ + ugrás | |
 | Vissza az egérlyukhoz | R | szünet menü |
 | Szünet | Esc / P | ⏸ gomb |
+| Hang ki/be | M | szünet menü (a zene külön is kikapcsolható) |
 
 Kontrollerrel is működik.
 
@@ -40,6 +41,7 @@ A szünet menü **Teszt-adatok** gombja kimásolja, hol és mitől buktál el a 
 
 ## Változások
 
+- **v0.8** – Festett grafikát kapott a konyha, a kamra, a nappali, a garázs, a pince és a kert is: új hátterek és padlók, bútorok, edények, befőttek, zsákok, kandalló, zongora, állóóra belseje, öreg autó, kerti növények – és az új ellenfelek: a szakács, a csótányok, a kutya, a bogarak és ászkák, a patkány és a csigák. Minden helyiségnek saját, régi rajzfilmes zenéje van, a főellenségnél gyorsabb és sötétebb; a szünet menüben külön kikapcsolható.
 - **v0.7** – A fürdőszoba festett grafikát kapott: új háttér, hatszögletű csempepadló, festett víz és hullámok, gumikacsa, szappanok, szivacs, buborékok, mosdó, kád, csapok, üvegcsék, zuhanyfüggöny-karikák, a vizes akna csempéi és a rézszelep. A könyvtár padlója is festett deszkát kapott.
 - **v0.6** – A könyvtár festett grafikát kapott: új háttér, nyíló és morzsolódó könyvek, tintás polcok és tintacseppek, görgős létra, könyvmolyok, guruló földgömb, sámlik, bőrfotel, íróasztal zöld lámpával, kalitka – és az új bagoly.
 - **v0.5.1** – Gyerekszoba-javítások: a háttér padlója most egy vonalban van a játék padlójával (a várudvar magjai már láthatóan elérhetők), az ablakpad rajza a helyére került, eltűnt a fölösleges második egérlyuk a robot előtt, sűrűbben gurulnak a golyók, a golyós polctorony festett kockákat és könyveket kapott, és gyorsabb, keményebb az óriásrobot.
