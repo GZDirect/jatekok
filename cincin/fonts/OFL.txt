@@ -2,7 +2,7 @@ Betűtípusok / Fonts – SIL Open Font License 1.1
 
 IM Fell English, IM Fell English SC (fell.woff, fell-italic.woff, fell-sc.woff) – Copyright (c) 2010, Igino Marini (mail@iginomarini.com)
 Figtree (figtree.woff) – Copyright 2022 The Figtree Project Authors (https://github.com/erikdkennedy/figtree)
-IBM Plex Mono (plexmono.woff) – Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"
+Lodger Mono (lodgermono.woff) – az IBM Plex Mono átnevezett részhalmaza; a licenc a „Plex” nevet fenntartja, ezért a módosított változat más néven szerepel. / A renamed subset of IBM Plex Mono (Reserved Font Name "Plex"). Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"
 
 A fájlok a fenti betűtípusok részhalmazai (subset) woff formátumban. / The files are woff subsets of the fonts above.
 A teljes licencszövegek alább / Full licence texts below.
