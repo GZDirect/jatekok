@@ -2,7 +2,7 @@
 
 ![Cincin a padláson](cover.jpg)
 
-> ⚠️ **Design előtti verzió – v0.11 (2026. november 4.)**
+> ⚠️ **Design előtti verzió – v0.11.1 (2026. november 4.)**
 > A játékmenet és mind a tíz pálya végigjátszható, és már mind a tíz helyiség festett grafikát kapott. Minden helyiségnek saját zenéje van, és mindegyikben elrejtettünk egy titkos egérjáratot. Magyarul és angolul is játszható.
 
 Cincin, a kis sálas egér egy hatalmas, régi házban lakik. A padlástól a kertig tíz helyiségen kell átjutnia, és mindegyik végén egy furfangos ellenfél vár rá: az alvó macska, a felhúzható óriásrobot, a bagoly, a szakács, a kutya, a patkány… Gyűjtsd a magokat, keresd meg minden szobában a rejtett sajtot, kússz be a bútorok alá, és találd ki, hogyan jutsz túl a szoba urán.
@@ -40,10 +40,16 @@ A tesztelők ezt a címet kapják: `…/cincin/?teszt` – így a szünet menüb
 
 - `index.html` – a játék
 - `art/` – a képek (a játék pályánként tölti be őket, ezért ennek a mappának is fent kell lennie)
-- `fonts/` – a betűtípusok (IM Fell English, Figtree, IBM Plex Mono – SIL Open Font License)
+- `fonts/` – a betűtípusok (IM Fell English, IM Fell English SC, Figtree, IBM Plex Mono – SIL Open Font License, lásd `fonts/OFL.txt`)
+- `manifest.webmanifest` – a telepíthető (kezdőképernyőre tehető) változat leírója
+- `sw.js` – a service worker: a címképernyő és a padlás internet nélkül is indul, a többi kép az első megnézéskor kerül gyorsítótárba
+- `favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `icon-512-maskable.png` – ikonok
+- `social-preview.jpg` – megosztási előnézet (1200×630)
+- `LICENSE` – felhasználási feltételek
 
 ## Változások
 
+- **v0.11.1** – Betűtípusok pótlása, ikonok, megosztási előnézet, telepíthető és offline is induló változat.
 - **v0.11** – Új név: **The Littlest Lodger** (a főszereplő továbbra is Cincin). Festett címképernyő logóval és élő Cincinnel, a pályaválasztó egy kettévágott ház, amelyben a szobákra kell kattintani, festett menük, gombok, csúszkák és ikonok, festett eredmény-jelvények, hat új mesekönyv-oldal. Cincin új, festett pózokat kapott: futás, ugrás, esés, landolás, megtorpanás, guggolás, kúszás, tolás, pislogás, nézelődés, ütés, szédülés, győzelmi ugrás.
 - **v0.10** – Új, teljes alakos szakács a konyhában (járás, seprűemelés, söprés, tüsszentés, menekülés repülő sapkával), a seprű porfelhőt sodor a padlón. Tíz titkos egérjárat a falak mögött: gyufásdoboz-ágyak, cérnaorsók, gyűszűk, kupakpolcok, dominólépcső, zokniágy, gyufásdoboz-lift, szardíniásdoboz-csónak, csipeszlétra; Nagyapó és a két egérgyerek tanácsot ad. Ajándékba öt új sál (pöttyös piros, csíkos zöld, csillagos kék, kockás lila, koronás sárga) és öt új festmény a galériában, két új eredmény.
 - **v0.9** – Profibb megjelenés: a tesztelői és fejlesztői gombok csak a `?teszt` / `?dev` címmel látszanak, a billentyűlista egy „?” gomb mögé került, a betűtípusok a játékkal együtt töltődnek. Új: mesekönyves bevezető és befejezés, galéria, eredmények, angol nyelv, zene- és hangerő-csúszkák, írisz-áttűnés haláknál és újrakezdésnél, ünneplés a szoba végén, előtérben szálló por, ráugrásnál rövid megállás, mentőpont-csillogás, gombhangok, töltőcsík. Javítva: a könyvtári fotel magja, a dupla egérlyuk, a lebegő háttértárgyak, a kád ritmusa, a konyhai szagelszívó és a karikák elérése.

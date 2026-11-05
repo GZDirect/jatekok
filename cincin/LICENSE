@@ -1,4 +1,4 @@
-Cincin
+The Littlest Lodger (Cincin)
 Copyright © 2026 Fejes Géza. Minden jog fenntartva.
 
 MAGYARUL
@@ -43,4 +43,5 @@ Permission requests: via the GitHub account GZDirect.
 
 THIRD-PARTY COMPONENTS (not covered by the above)
 
-- IM Fell English fonts – SIL Open Font License, loaded from Google Fonts.
+- A fonts/ mappában lévő betűtípusok (IM Fell English, IM Fell English SC, Figtree, IBM Plex Mono) a saját licencük, a SIL Open Font License 1.1 alatt állnak, lásd fonts/OFL.txt.
+- The fonts in the fonts/ folder (IM Fell English, IM Fell English SC, Figtree, IBM Plex Mono) are licensed under the SIL Open Font License 1.1, see fonts/OFL.txt.
