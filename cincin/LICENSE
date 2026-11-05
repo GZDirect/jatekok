@@ -43,5 +43,5 @@ Permission requests: via the GitHub account GZDirect.
 
 THIRD-PARTY COMPONENTS (not covered by the above)
 
-- A fonts/ mappában lévő betűtípusok (IM Fell English, IM Fell English SC, Figtree, IBM Plex Mono) a saját licencük, a SIL Open Font License 1.1 alatt állnak, lásd fonts/OFL.txt.
-- The fonts in the fonts/ folder (IM Fell English, IM Fell English SC, Figtree, IBM Plex Mono) are licensed under the SIL Open Font License 1.1, see fonts/OFL.txt.
+- A fonts/ mappában lévő betűtípusok (IM Fell English, IM Fell English SC, Figtree, valamint a Lodger Mono, az IBM Plex Mono átnevezett és megvágott változata) a saját licencük, a SIL Open Font License 1.1 alatt állnak, lásd fonts/OFL.txt.
+- The fonts in the fonts/ folder (IM Fell English, IM Fell English SC, Figtree, and Lodger Mono, a renamed subset of IBM Plex Mono) are licensed under the SIL Open Font License 1.1, see fonts/OFL.txt.

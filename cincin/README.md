@@ -40,7 +40,7 @@ A tesztelők ezt a címet kapják: `…/cincin/?teszt` – így a szünet menüb
 
 - `index.html` – a játék
 - `art/` – a képek (a játék pályánként tölti be őket, ezért ennek a mappának is fent kell lennie)
-- `fonts/` – a betűtípusok (IM Fell English, IM Fell English SC, Figtree, IBM Plex Mono – SIL Open Font License, lásd `fonts/OFL.txt`)
+- `fonts/` – a betűtípusok (IM Fell English, IM Fell English SC, Figtree, Lodger Mono – SIL Open Font License, lásd `fonts/OFL.txt`)
 - `manifest.webmanifest` – a telepíthető (kezdőképernyőre tehető) változat leírója
 - `sw.js` – a service worker: a címképernyő és a padlás internet nélkül is indul, a többi kép az első megnézéskor kerül gyorsítótárba
 - `favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `icon-512-maskable.png` – ikonok
