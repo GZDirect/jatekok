@@ -249,8 +249,13 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 
 ## 2i. Felszerelés-választó, füstbomba, ugrás
 
-- Az Indulás után a `#gear` képernyőn legfeljebb 4 féle eszköz választható (`GEAR_MAX`). A választás pályánként megmarad (`ae-gear-<pálya>`). Kötelező eszköz: `GEAR_REQ` (az Üvegtoronyban a kampó). A falu kiképzésén és az első pálya bemutatójában nincs választás, minden nálad van (`GEAR=null`).
+- Az Indulás után a `#gear` képernyőn legfeljebb 4 féle eszköz választható (`gearMax()`; ha az aktuális mentésben bármelyik pálya Árnyék/Árnyékmester ranggal kész, 5). A választás pályánként megmarad (`ae-gear-<pálya>`). Kötelező eszköz: `GEAR_REQ` (az Üvegtoronyban a kampó). A falu kiképzésén és az első pálya bemutatójában nincs választás, minden nálad van (`GEAR=null`).
 - A nem vitt fogyóeszközök (kavics, tüske, nyíl, csillag, füstbomba) száma 0, a gombjuk el van rejtve, a billentyű sem választja ki őket.
 - A füstbomba a 9. eszköz (`fust`, billentyű: 9, az F közvetlenül dobja, ha nálad van).
 - Ugrás: `P.jy`/`P.jv`, kb. 0,7 m-es szökkenés, földet éréskor zaj. Gépen szóköz.
 - Grafika: a háttér `felszereles.jpg` (amíg nincs, a nyitókép látszik), az eszközképek `eszkozok/<id>.webp` (tanto, tekko, kampo, karom, kavics, tuske, fukiya, shuriken, fust); ha a `tanto.webp` betölthető, a kártyák képet kapnak.
+- Ajánlott eszközök pályánként: `GEAR_HINT` (a kártyán „Ajánlott itt:” felirat). Pályaszabályok, amik erősítik őket:
+  - Üvegtorony: a shuriken kiiktatja a kamerát (`G.hooks.starFly`, `c.dead`).
+  - Hegyi expressz: a kocsiban dobott füstbomba az egész kocsit betölti, mindenki megvakul benne, aki nem a tetőn van (`G.hooks.smoke`).
+- Ugrás közben (`P.jy>0.28`) a `low` jelölésű akadályok (rönk, kis kő, láda, ülés) nem állítanak meg: `pushOut(p,rad,air)`.
+- Érintőn a legyező gombjai és az eszközgomb az eszközképet mutatják háttérként.

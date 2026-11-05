@@ -11,8 +11,9 @@ const G={LV,day:false,hooks:{},goalName:LV==='falu'?'Mester':LV==='varos'?'Kurod
 
 /* ---------- Térbeli segédek ---------- */
 function clampField(p){if(A.ROOF){A.ROOF.clampRoof(p);return;}p.x=clamp(p.x,-XW-1,XW+1);p.z=clamp(p.z,-ZN-16,ZS+2);if(p.z<-ZN+1&&Math.abs(p.x)>5)p.z=-ZN+1;if(p.z<-ZN-0.5)p.x=clamp(p.x,-3.4,3.4);}
-function pushOut(p,rad){
-  near(grid,p.x,p.z,t=>{if(t.off)return;const dx=p.x-t.x,dz=p.z-t.z,d=Math.hypot(dx,dz),m=(t.col||t.r)+rad;if(d<m&&d>1e-4){p.x=t.x+dx/d*m;p.z=t.z+dz/d*m;}});
+/* air: a levegőben (ugrás közben) az alacsony akadályok (rönk, kő, láda, ülés) fölött átjutsz */
+function pushOut(p,rad,air){
+  near(grid,p.x,p.z,t=>{if(t.off||(air&&t.low))return;const dx=p.x-t.x,dz=p.z-t.z,d=Math.hypot(dx,dz),m=(t.col||t.r)+rad;if(d<m&&d>1e-4){p.x=t.x+dx/d*m;p.z=t.z+dz/d*m;}});
   clampField(p);
 }
 function blocked(ax,az,bx,bz,skip){
@@ -36,7 +37,9 @@ const S={running:false,time:0,smoke:2,smokeT:0,sx:0,sz:0,msgT:0,subT:0,threat:0,
 
 /* ---------- Rendőrök ---------- */
 /* felszerelés: a küldetésre vitt eszközök indexei (legfeljebb 4 féle); a falu kiképzésén és a bemutatóban minden nálad van */
-const GEAR_MAX=4;let GEAR=null;const hasGear=i=>!GEAR||GEAR.indexOf(i)>=0;
+/* Árnyék rang (bármelyik pályán, az aktuális mentésben) egy ötödik helyet ad */
+const shadowRank=()=>{const sv=loadSave(slotNo());return ['r1','r2','r3','r4'].some(k=>sv[k]==='Árnyék'||sv[k]==='Árnyékmester');};
+const gearMax=()=>shadowRank()?5:4;let GEAR=null;const hasGear=i=>!GEAR||GEAR.indexOf(i)>=0;
 const DIFF={konnyu:{name:'Könnyű',n:4,see:0.8,hear:0.8,aw:0.75,dmg:0.7,smoke:3,stones:8,spikes:3,darts:4,stars:6},normal:{name:'Normál',n:6,see:1,hear:1,aw:1,dmg:1,smoke:2,stones:6,spikes:2,darts:3,stars:5},nehez:{name:'Nehéz',n:8,see:1.2,hear:1.25,aw:1.3,dmg:1.25,smoke:2,stones:5,spikes:2,darts:2,stars:4}};
 let D=DIFF.normal;try{const k=localStorage.getItem('ae-diff');if(DIFF[k])D=DIFF[k];}catch(e){}
 /* riasztásjelző a rendőr feje fölött: kérdőjel, ami a gyanúval telik, riadóban vörös felkiáltójel */
@@ -169,7 +172,7 @@ document.querySelectorAll('#tools .tool').forEach(b=>tap(b,()=>{selectItem(+b.da
 touch.addEventListener('pointerdown',()=>{if(document.body.classList.contains('fan'))closeFan();},{capture:true});
 function updateButtons(){
   $('bCrouch').classList.toggle('on',P.crouch&&P.mode==='ground');$('bCrouch').firstChild.textContent=P.mode==='perch'?'Le':'Guggol';
-  {const it=ITEMS[P.item],n=it.id==='kavics'?S.stones:it.id==='tuske'?S.spikes:it.id==='fukiya'?S.darts:it.id==='shuriken'?S.stars:it.id==='fust'?S.smoke:null;$('toolName').textContent=it.name;$('toolSub').textContent=(n!==null?'×'+n+' ':'')+'▴';}$('smokeN').textContent='×'+S.smoke;$('stoneN').textContent='×'+S.stones;$('spikeN').textContent='×'+S.spikes;$('dartN').textContent='×'+S.darts;$('starN').textContent='×'+S.stars;$('bJump').firstChild.textContent=P.mode==='perch'?'Le':'Ugrás';
+  {const it=ITEMS[P.item],n=it.id==='kavics'?S.stones:it.id==='tuske'?S.spikes:it.id==='fukiya'?S.darts:it.id==='shuriken'?S.stars:it.id==='fust'?S.smoke:null;$('toolName').textContent=it.name;$('bTool').style.backgroundImage='url(eszkozok/'+it.id+'.webp)';$('toolSub').textContent=(n!==null?'×'+n+' ':'')+'▴';}$('smokeN').textContent='×'+S.smoke;$('stoneN').textContent='×'+S.stones;$('spikeN').textContent='×'+S.spikes;$('dartN').textContent='×'+S.darts;$('starN').textContent='×'+S.stars;$('bJump').firstChild.textContent=P.mode==='perch'?'Le':'Ugrás';
   document.querySelectorAll('#tools .tool').forEach(b=>{b.classList.toggle('on',+b.dataset.i===P.item);b.hidden=!hasGear(+b.dataset.i);});
 }
 const fwd=()=>({x:-Math.sin(P.yaw),z:-Math.cos(P.yaw)});
@@ -263,6 +266,7 @@ function stepStars(dt){for(let i=STARS.length-1;i>=0;i--){const k=STARS[i];
   let gone=false;for(let s=0;s<3;s++){const h=dt/3;k.t+=h;k.vy-=4*h;k.x+=k.vx*h;k.y+=k.vy*h;k.z+=k.vz*h;
     let hit=null;COPS.forEach(c=>{if(hit||c.down||c.active===false)return;const cy=H(c.x,c.z);if(k.y<cy+0.1||k.y>cy+1.85)return;if(Math.hypot(k.x-c.x,k.z-c.z)<0.45)hit=c;});
     if(hit){starHit(hit);scene.remove(k.m);STARS.splice(i,1);gone=true;break;}
+    if(G.hooks.starFly&&G.hooks.starFly(k)){scene.remove(k.m);STARS.splice(i,1);gone=true;break;}
     const gy=H(k.x,k.z);let wall=k.y<=gy+0.03||k.t>2.5;if(!wall&&k.y<gy+4)near(grid,k.x,k.z,t=>{if(!wall&&!t.off&&!(t.low&&k.y>gy+1.3)&&Math.hypot(k.x-t.x,k.z-t.z)<(t.col||t.r)*0.95)wall=true;});
     if(wall){k.fly=false;const o={x:k.x,z:k.z};pushOut(o,0.2);if(A.ROOF&&!A.ROOF.walkable(k.x,k.z)){scene.remove(k.m);STARS.splice(i,1);gone=true;break;}
       k.x=o.x;k.z=o.z;k.m.position.set(k.x,H(k.x,k.z)+0.03,k.z);k.m.rotation.set(Math.PI/2,0,Math.random()*6);noiseHit(0.12,4200,'bandpass',0.06,3);
@@ -342,7 +346,7 @@ $('tutNext').addEventListener('click',()=>tutNext(false));
 function useSmoke(){
   if(S.smoke<=0||!S.running)return;S.smoke--;S.smokeT=7;S.sx=P.x;S.sz=P.z;A.puffSmoke(P.x,H(P.x,P.z),P.z);noiseHit(0.3,500,'lowpass',0.5);
   COPS.forEach(c=>{if(c.down)return;const d=Math.hypot(c.x-P.x,c.z-P.z);if(d<8){c.blind=4.5;c.aimT=0;c.shootCd=Math.max(c.shootCd,2);if(c.st==='alert'){c.lostT=5;}say(c,'smoke');}});
-  showMsg('Füst!');updateButtons();
+  showMsg('Füst!');if(G.hooks.smoke)G.hooks.smoke();updateButtons();
 }
 
 /* ---------- Kampó, mászás, fán ülés, leugrás ---------- */
@@ -402,17 +406,23 @@ function startGame(){
 /* ---------- Felszerelés-választó (minden küldetés előtt, a falu kiképzése és az első pálya bemutatója kivételével) ---------- */
 const GEAR_TXT=['hátulról egy szúrással végez','leüt, de nem öl','felkapaszkodsz vele a magasba','fatörzsön, oszlopon felmászol','a koppanása odacsalja az őröket','aki belelép, megáll','altatónyíl: akit eltalál, elalszik','sebez; ha nem talál, odacsal','elvakítja a közelieket, eltakar'];
 const GEAR_REQ={varos:[2]},GEAR_DEF=[0,2,4,8];
+/* pályánként ajánlott eszközök: itt különösen jól jönnek (a vonaton és a toronyban külön szabály is erősíti őket) */
+const GEAR_HINT={
+  erdo:{2:'az óriásfák ágairól látatlanul figyelhetsz',4:'a sűrű erdőben messzire elcsalja az őröket',5:'az ösvényen megállítja az üldözőt'},
+  varos:{7:'itt a kamerát is leveri: egy dobás, és vak',3:'a víztorony lábán és az antenna oszlopán felmászol',6:'csendben altat a nyitott tetőn'},
+  vonat:{8:'a szűk kocsiban az egészet betölti: mindenki vak benne',6:'a folyosón egyenként, hang nélkül altatsz',1:'leütéssel tiszta marad a kezed'}};
 const gearAmmo=i=>i===4?D.stones:i===5?D.spikes:i===6?D.darts:i===7?D.stars:i===8?D.smoke:null;
 let GPICK=[],GIMG=false;{const im=new Image();im.onload=()=>{GIMG=true;};im.src='eszkozok/tanto.webp';}
-function gearLoad(){const req=GEAR_REQ[LV]||[];let v=null;try{v=JSON.parse(lsGet('ae-gear-'+LV));}catch(e){}
-  if(!Array.isArray(v))v=GEAR_DEF.slice();v=v.filter(i=>i>=0&&i<ITEMS.length);req.forEach(i=>{if(v.indexOf(i)<0)v.unshift(i);});return v.filter((i,k)=>v.indexOf(i)===k).slice(0,GEAR_MAX);}
-function gearDraw(){const box=$('gearGrid'),req=GEAR_REQ[LV]||[];box.innerHTML='';
-  ITEMS.forEach((it,i)=>{const on=GPICK.indexOf(i)>=0,r=req.indexOf(i)>=0,b=document.createElement('button');b.type='button';b.className='gItem'+(r?' req':'')+(!on&&GPICK.length>=GEAR_MAX?' full':'');b.setAttribute('aria-pressed',on?'true':'false');
-    const n=gearAmmo(i);b.innerHTML=(GIMG?'<img alt="" src="eszkozok/'+it.id+'.webp">':'')+'<b>'+it.name+(n!==null?'<small>×'+n+'</small>':'')+'</b><span>'+GEAR_TXT[i]+'</span>';
-    b.addEventListener('click',()=>{if(r)return;const k=GPICK.indexOf(i);if(k>=0)GPICK.splice(k,1);else if(GPICK.length<GEAR_MAX)GPICK.push(i);else{showGearFull();return;}gearDraw();});box.appendChild(b);});
-  $('gearN').textContent=GPICK.length+' / '+GEAR_MAX;$('gearGo').disabled=!GPICK.length;
+function gearLoad(){const req=GEAR_REQ[LV]||[],GM=gearMax();let v=null;try{v=JSON.parse(lsGet('ae-gear-'+LV));}catch(e){}
+  if(!Array.isArray(v))v=GEAR_DEF.slice();v=v.filter(i=>i>=0&&i<ITEMS.length);req.forEach(i=>{if(v.indexOf(i)<0)v.unshift(i);});return v.filter((i,k)=>v.indexOf(i)===k).slice(0,GM);}
+function gearDraw(){const box=$('gearGrid'),req=GEAR_REQ[LV]||[],hint=GEAR_HINT[LV]||{},GM=gearMax();box.innerHTML='';
+  ITEMS.forEach((it,i)=>{const on=GPICK.indexOf(i)>=0,r=req.indexOf(i)>=0,b=document.createElement('button');b.type='button';b.className='gItem'+(r?' req':'')+(!on&&GPICK.length>=GM?' full':'')+(hint[i]?' hint':'');b.setAttribute('aria-pressed',on?'true':'false');
+    const n=gearAmmo(i);b.innerHTML=(GIMG?'<img alt="" src="eszkozok/'+it.id+'.webp">':'')+'<b>'+it.name+(n!==null?'<small>×'+n+'</small>':'')+'</b><span>'+(hint[i]?'<em>Ajánlott itt:</em> '+hint[i]:GEAR_TXT[i])+'</span>';
+    b.addEventListener('click',()=>{if(r)return;const k=GPICK.indexOf(i);if(k>=0)GPICK.splice(k,1);else if(GPICK.length<GM)GPICK.push(i);else{showGearFull();return;}gearDraw();});box.appendChild(b);});
+  $('gearN').textContent=GPICK.length+' / '+GM;
+  $('gearLead').textContent=GM>4?'Árnyék rangot szereztél, ezért ötféle eszközt vihetsz. Amit itthon hagysz, az a küldetésben nem lesz nálad.':'Legfeljebb négyféle eszközt vihetsz. Amit itthon hagysz, az nem lesz nálad. Ha bármelyik küldetést Árnyék ranggal teljesíted, öt fér el.';$('gearGo').disabled=!GPICK.length;
   $('gearGoSub').textContent=GPICK.length?GPICK.slice().sort((a,b)=>a-b).map(i=>ITEMS[i].name).join(' · '):'Válassz legalább egy eszközt';}
-function showGearFull(){const el=$('gearN');el.style.color='var(--blood)';setTimeout(()=>{el.style.color='';},500);$('gearGoSub').textContent='Legfeljebb négyféle fér el. Előbb tegyél vissza egyet.';}
+function showGearFull(){const el=$('gearN');el.style.color='var(--blood)';setTimeout(()=>{el.style.color='';},500);$('gearGoSub').textContent='Legfeljebb '+(gearMax()>4?'ötféle':'négyféle')+' fér el. Előbb tegyél vissza egyet.';}
 function openGear(){GPICK=gearLoad();$('gearEyebrow').textContent=$('startEyebrow').textContent+' · Felszerelés';$('start').hidden=true;$('gear').hidden=false;gearDraw();}
 $('gearBack').addEventListener('click',()=>{$('gear').hidden=true;$('start').hidden=false;});
 $('gearGo').addEventListener('click',()=>{if(!GPICK.length)return;GEAR=GPICK.slice();lsSet('ae-gear-'+LV,JSON.stringify(GEAR));$('gear').hidden=true;startGame();});
@@ -637,7 +647,7 @@ function update(dt){
     const running=!P.drag&&(P.run||joy.run||keys.ShiftLeft||keys.ShiftRight)&&!P.tired&&mag>0.2;P.running=running;
     const speed=P.drag?1.5:P.crouch?2.2:running?6.6:4.2;
     const f=-jy,s=jx,sy=Math.sin(P.yaw),cy=Math.cos(P.yaw);
-    P.x+=(-sy*f+cy*s)*speed*dt;P.z+=(-cy*f-sy*s)*speed*dt;pushOut(P,0.45);
+    P.x+=(-sy*f+cy*s)*speed*dt;P.z+=(-cy*f-sy*s)*speed*dt;pushOut(P,0.45,P.jy>0.28);
     P.moving=mag>0.12;P.stam=clamp(P.stam+(running?-20:11)*dt,0,100);if(P.stam<=1&&P.run){P.run=false;updateButtons();}
     P.noise=P.moving?(P.drag?6:P.crouch?4:running?27:12)*mag:0;if(G.hooks.noiseMul&&P.noise>0)P.noise*=G.hooks.noiseMul(P.x,P.z);if(P.moving)P.bob+=dt*speed*2.2;
     {const ph=Math.floor(P.bob/Math.PI);if(ph!==P.stepPh){P.stepPh=ph;if(P.moving&&!(P.jy>0))footstep();}}
@@ -770,6 +780,6 @@ function sayLine(l,x,z,pitch,voice){const d=Math.hypot(x-P.x,z-P.z);showSub(l[2]
 Object.assign(G,{setDaylight,raiseAlarm,alertAll,blocked,smokeBlocks,takeDown,spotted,clampField,isTouch,TS,tutEnd,D:()=>D,DIFF,setDiffName:k=>{D=DIFF[k];},clearSpikes,SPK,DART,LINES,setDiff:k=>{D=DIFF[k];},P,S,COPS,ALLCOPS,GOAL,START,ITEMS,showMsg,sayLine,say,selectItem,updateButtons,pushOut,inBush,bodyNear,tone,thump,noiseHit,endGame,eyePos,fwd,resetCop,nextWaypoint,fmt,wrapA,rnd,STONE,startGame,
   setStones:n=>{S.stones=n;updateButtons();},setSpikes:n=>{S.spikes=n;updateButtons();},setDarts:n=>{S.darts=n;updateButtons();},setStars:n=>{S.stars=n;updateButtons();},setSmoke:n=>{S.smoke=n;updateButtons();}});
 /* Tesztelési horog: csak ?aetest címparaméterrel él, az élő játékban nincs. */
-if(/[?&]aetest/.test(location.search))window.AE_TEST={HANG,playClip,throwStar,STARS,blowDart,useSpikes,SPK,DART,P,S,COPS,ALLCOPS,DIFF,setD:k=>{D=DIFF[k];},toggleDrag,throwStone,STONE,TS,drawRadar,startGame,useItem,selectItem,dropDown,startHook,startClimb,giants,stepCop,blocked,perchFor,arrivePerch,tick:(dt,n)=>{for(let i=0;i<(n||1);i++){if(!S.running)break;update(dt);COPS.forEach(c=>syncCop(c,dt));}},frame:()=>frame(performance.now())};
+if(/[?&]aetest/.test(location.search))window.AE_TEST={HANG,playClip,jumpOrDrop,pushOut,G,throwStar,STARS,blowDart,useSpikes,SPK,DART,P,S,COPS,ALLCOPS,DIFF,setD:k=>{D=DIFF[k];},toggleDrag,throwStone,STONE,TS,drawRadar,startGame,useItem,selectItem,dropDown,startHook,startClimb,giants,stepCop,blocked,perchFor,arrivePerch,tick:(dt,n)=>{for(let i=0;i<(n||1);i++){if(!S.running)break;update(dt);COPS.forEach(c=>syncCop(c,dt));}},frame:()=>frame(performance.now())};
 requestAnimationFrame(frame);
 })();

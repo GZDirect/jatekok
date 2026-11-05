@@ -143,6 +143,11 @@ $('lead').textContent='Délben, a hegyek között. Kuroda jobbkeze, Mori, a cég
 document.querySelectorAll('#diff [data-d] small').forEach(s=>{const k=s.parentNode.dataset.d;s.textContent=(12-NP[k].length-2)+' ember a vonaton';});
 {const dts=document.querySelectorAll('.how dt');dts.forEach(dt=>{if(dt.textContent==='Kampó')dt.nextElementSibling.textContent='a pőrekocsi két konténerének tetejére kapaszkodhatsz fel, onnan felülről támadhatsz';if(dt.textContent==='Karmok')dt.nextElementSibling.textContent='a konténerek oldalán felmászhatsz (1–8: eszközváltás)';});}
 $('go').querySelector('span').textContent='Cél: Mori aktatáskája, aztán a vészfék a mozdonyban.';
+/* füstbomba a kocsiban: a zárt kocsit végig betölti, mindenki megvakul benne, aki ugyanott (nem a tetőn) van */
+G.hooks.smoke=()=>{if(H(P.x,P.z)>0.9)return;const ci=carIdx(P.z),c0=CL[ci];if(!c0||c0.h>0.9)return;S.smokeT=9;
+  for(let z=Math.max(c0.z0+1.5,P.z-6);z<=Math.min(c0.z1-1.5,P.z+6);z+=4)if(Math.abs(z-P.z)>1.5)A.puffSmoke(P.x*0.3,H(P.x,z),z);
+  let n=0;G.ALLCOPS.forEach(c=>{if(c.down||c.active===false||c.civ)return;if(carIdx(c.z)!==ci||H(c.x,c.z)>0.9)return;if(Math.hypot(c.x-P.x,c.z-P.z)<8)return;c.blind=6;c.aimT=0;c.shootCd=Math.max(c.shootCd||0,2.5);if(c.st==='alert')c.lostT=6;n++;G.say(c,'smoke');});
+  if(n)G.showMsg('A füst betöltötte a kocsit.');};
 G.hooks.setup();
 if(/[?&]aetest/.test(location.search))window.AE_VONAT={T,V,setPhase,boss,finish,applyDark};
 })();

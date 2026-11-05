@@ -56,7 +56,8 @@ const CALL=['Igen… Nem, a nindzsa halott. A rendőrség elintézte.','A völgy
 
 /* ---------- kamerák ---------- */
 function stepCams(dt,t){const ey=P.mode==='ground'?H(P.x,P.z)+P.camY:P.py;
-  V.CAMS.forEach(c=>{c.yawNow=c.yaw+c.amp*Math.sin(t*Math.PI*2/c.per+c.ph);c.head.rotation.y=c.yawNow;
+  V.CAMS.forEach(c=>{if(c.dead){c.cone.visible=false;c.led.material.color.setHex(0x181010);c.head.rotation.x+=(0.55-c.head.rotation.x)*Math.min(1,dt*3);return;}
+    c.yawNow=c.yaw+c.amp*Math.sin(t*Math.PI*2/c.per+c.ph);c.head.rotation.y=c.yawNow;
     const blindBySmoke=S.smokeT>0&&Math.hypot(S.sx-c.x,S.sz-c.z)<6;let see=false;
     if(!blindBySmoke&&S.running&&P.mode==='ground'&&!P.hidden){const dx=P.x-c.x,dz=P.z-c.z,d=Math.hypot(dx,dz);
       if(d<c.range&&d>0.5){const fx=-Math.sin(c.yawNow),fz=-Math.cos(c.yawNow),a=Math.acos(clamp((fx*dx+fz*dz)/d,-1,1));
@@ -70,7 +71,7 @@ function stepCams(dt,t){const ey=P.mode==='ground'?H(P.x,P.z)+P.camY:P.py;
 
 /* ---------- körönként ---------- */
 G.hooks.newRound=()=>{Object.assign(T,{killed:false,bodyFound:false,ph:0,phT:0,reinfT:-1,reinf:false,zip:null,rideT:0,callT:0,panelT:12});
-  V.GOND.z=V.GOND.z0;V.GOND.dir=0;V.stepGondola(0);V.CAMS.forEach(c=>{c.aw=0;c.alarmT=0;});G.goalName='Kuroda';V.ANCHOR.spr.material.opacity=0;
+  V.GOND.z=V.GOND.z0;V.GOND.dir=0;V.stepGondola(0);V.CAMS.forEach(c=>{c.aw=0;c.alarmT=0;c.dead=false;c.cone.visible=true;c.head.rotation.x=0;});G.goalName='Kuroda';V.ANCHOR.spr.material.opacity=0;
   setPhase(0);
   if(T.fromCp){T.fromCp=false;P.x=6.5;P.z=5;P.yaw=Math.PI*0.9;G.showMsg('A céltorony tetején vagy. Kuroda a penthouse-ban ül.');}
   else{T.cp=false;P.yaw=Math.PI;G.showMsg('Kuroda a szomszéd torony tetején ül. Kampózz át a darun.');P.yaw=0;}
@@ -135,6 +136,8 @@ $('go').querySelector('span').textContent='Cél: Kuroda. Utána a kábel a teras
 try{const rt=new THREE.WebGLCubeRenderTarget(256,{generateMipmaps:true,minFilter:THREE.LinearMipmapLinearFilter});const cc=new THREE.CubeCamera(0.5,900,rt);cc.position.set(6,2.2,-37);A.scene.add(cc);
   const gm=V.glassM,vis=gm.visible;gm.visible=false;ALLCOPS.forEach(c=>c.mesh.visible=false);cc.update(A.renderer,A.scene);gm.visible=vis;G.hooks.setup();
   gm.envMap=rt.texture;gm.reflectivity=0.55;gm.combine=THREE.MixOperation;gm.needsUpdate=true;}catch(e){}
+/* dobócsillag a kamerába: a lencse betörik, a kamera lekonyul és vak marad */
+G.hooks.starFly=k=>{for(const c of V.CAMS){if(c.dead)continue;if(Math.hypot(k.x-c.x,k.z-c.z)<0.5&&Math.abs(k.y-c.y)<0.45){c.dead=true;c.aw=0;c.alarmT=0;G.tone(0.06,2400,900,0.12,'square');G.showMsg('Kamera kiiktatva.');return true;}}return false;};
 G.hooks.setup();
 if(/[?&]aetest/.test(location.search))window.AE_VAROS={T,V,setPhase,boss,path,finish};
 })();

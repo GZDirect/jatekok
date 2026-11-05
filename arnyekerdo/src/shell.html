@@ -88,7 +88,11 @@ body.day #fxVig{opacity:0.35;}
 body:not(.desk) #tools{display:none;grid-template-columns:repeat(4,58px);gap:6px;direction:rtl;right:calc(env(safe-area-inset-right,0px) + 14px);bottom:calc(env(safe-area-inset-bottom,0px) + 186px);padding:8px;border-radius:14px;background:rgba(5,8,10,0.45);}
 body:not(.desk) #tools .tool{direction:ltr;}
 body.fan:not(.desk) #tools{display:grid;}
-body:not(.desk) .tool{width:58px;height:58px;border-radius:50%;flex-direction:column;gap:0;font-size:10.5px;line-height:1.15;}
+body:not(.desk) .tool{width:58px;height:58px;border-radius:50%;flex-direction:column;gap:0;font-size:9.5px;line-height:1.1;justify-content:flex-end;padding-bottom:5px;background-color:#0b0d0e;background-size:118% auto;background-position:center 30%;background-repeat:no-repeat;color:var(--moon);text-shadow:0 1px 2px #000,0 0 6px #000;}
+body:not(.desk) .tool small{font-size:9px;}
+body:not(.desk) .tool[data-i="0"]{background-image:url(eszkozok/tanto.webp);}body:not(.desk) .tool[data-i="1"]{background-image:url(eszkozok/tekko.webp);}body:not(.desk) .tool[data-i="2"]{background-image:url(eszkozok/kampo.webp);}body:not(.desk) .tool[data-i="3"]{background-image:url(eszkozok/karom.webp);}body:not(.desk) .tool[data-i="4"]{background-image:url(eszkozok/kavics.webp);}body:not(.desk) .tool[data-i="5"]{background-image:url(eszkozok/tuske.webp);}body:not(.desk) .tool[data-i="6"]{background-image:url(eszkozok/fukiya.webp);}body:not(.desk) .tool[data-i="7"]{background-image:url(eszkozok/shuriken.webp);}body:not(.desk) .tool[data-i="8"]{background-image:url(eszkozok/fust.webp);}
+/* eszközgomb: a kézben lévő eszköz képe */
+#bTool{background-color:#0b0d0e;background-size:120% auto;background-position:center 35%;background-repeat:no-repeat;justify-content:flex-end;padding-bottom:6px;text-shadow:0 1px 2px #000,0 0 6px #000;font-size:10.5px;}
 body:not(.desk) .tool.hov{border-color:var(--lantern);color:var(--lantern);}
 @media (max-height:400px){body:not(.desk) #tools{bottom:calc(env(safe-area-inset-bottom,0px) + 176px);grid-template-columns:repeat(4,54px);}body:not(.desk) .tool{width:54px;height:54px;}}
 .b{width:64px;height:64px;border-radius:50%;border:2px solid rgba(236,229,211,0.45);background:var(--panel);color:var(--moon);font-family:var(--ui);font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;touch-action:none;}
@@ -137,6 +141,8 @@ h2{font-size:40px;}
 .gItem.req::after{content:'kötelező';font-size:9.5px;letter-spacing:1px;text-transform:uppercase;top:11px;}
 .gItem.req b{padding-right:64px;}
 .gItem.full{opacity:0.45;}
+.gItem span em{font-style:normal;font-weight:600;color:var(--lantern);}
+.gItem.hint{border-color:rgba(224,164,58,0.38);}
 .gItem:focus-visible,#gearBack:focus-visible{outline:2px solid var(--lantern);outline-offset:3px;}
 #gear .gFoot{display:flex;gap:10px;justify-content:flex-end;align-items:stretch;}
 #gear .gFoot .choice{min-width:240px;}
@@ -301,7 +307,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
       <dt>Shuriken</dt><dd>dobócsillag: sebez; ha nem talál, a csattanása odacsal, és felveheted (8)</dd>
       <dt>Köpőcső</dt><dd>altatónyíl: akit eltalálsz, elalszik (7)</dd>
       <dt>Füstbomba</dt><dd>elvakítja a közeli rendőröket, és eltakar (9 vagy F)</dd>
-      <dt>Ugrás</dt><dd>Ugrás gomb vagy szóköz; a fáról leugrasz vele</dd>
+      <dt>Ugrás</dt><dd>Ugrás gomb vagy szóköz: rönkön, kövön, ládán átugrasz; a fáról leugrasz vele</dd>
       <dt>? és !</dt><dd>a rendőr feje fölött: a kérdőjel a gyanúval telik, a vörös felkiáltójel riadó</dd>
     </dl>
   </div>
@@ -310,7 +316,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
 <div class="screen" id="gear" hidden>
   <div class="gIn">
     <div class="gHead"><div><div class="eyebrow" id="gearEyebrow">Felszerelés</div><h2>Mit viszel magaddal?</h2></div><div id="gearN">0 / 4</div></div>
-    <p class="gLead">Legfeljebb négyféle eszközt vihetsz. Amit itthon hagysz, az a küldetésben nem lesz nálad.</p>
+    <p class="gLead" id="gearLead"></p>
     <div id="gearGrid" role="group" aria-label="Eszközök"></div>
     <div class="gFoot"><button class="tB2" id="gearBack" type="button">Vissza</button><button class="choice" id="gearGo" type="button"><b>Indulás</b><span id="gearGoSub">Válassz legalább egy eszközt</span></button></div>
   </div>
