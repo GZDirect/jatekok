@@ -232,3 +232,10 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 ---
 
 © 2026 Fejes Géza. Minden jog fenntartva. A játék és a leírás engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető.
+
+
+## 2g. Csomagolás és offline mód
+
+- A three.js (`three.min.js`) és a betűtípusok (`fonts/`, EB Garamond és IBM Plex Sans, latin + latin-ext) a repóban vannak, a játék semmit nem tölt be más oldalról.
+- Ikonok: `favicon-32.png`, `icon-180/192/512.png`, `icon-512-maskable.png`; megosztási kép: `social-preview.jpg` (1200×630).
+- A `build.py` a `src/sw_minta.js` alapján legenerálja az `sw.js`-t: az előre letöltött fájlok listája (benne a `hang/` összes mp3-ja) és a tár neve (a tartalom ujjlenyomata) automatikusan frissül. Az oldal netről töltődik, ha van net, a többi fájl a tárból jön.

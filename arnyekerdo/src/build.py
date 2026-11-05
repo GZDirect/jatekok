@@ -34,14 +34,39 @@ wrap_head = ('<!doctype html>\n<html lang="hu">\n<head>\n<meta charset="utf-8">\
   '<meta name="apple-mobile-web-app-title" content="Shinobi">\n'
   '<link rel="manifest" href="manifest.webmanifest">\n'
   '<link rel="apple-touch-icon" href="icon-180.png">\n'
-  '<link rel="icon" href="icon-192.png">\n'
+  '<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">\n'
+  '<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">\n'
+  '<meta name="description" content="Lopakodó nindzsakaland a böngészőben, négy pályán: éjszakai erdő, nappali vizsga a faluban, felhőkarcolók teteje és egy száguldó vonat. Magyar hangokkal, telefonon is.">\n'
+  '<meta property="og:type" content="website">\n'
+  '<meta property="og:title" content="Shinobi">\n'
+  '<meta property="og:description" content="Lopakodó nindzsakaland a böngészőben, négy pályán: éjszakai erdő, nappali vizsga a faluban, felhőkarcolók teteje és egy száguldó vonat. Magyar hangokkal, telefonon is.">\n'
+  '<meta property="og:url" content="https://gzdirect.github.io/jatekok/arnyekerdo/">\n'
+  '<meta property="og:image" content="https://gzdirect.github.io/jatekok/arnyekerdo/social-preview.jpg">\n'
+  '<meta property="og:image:width" content="1200">\n'
+  '<meta property="og:image:height" content="630">\n'
+  '<meta property="og:locale" content="hu_HU">\n'
+  '<meta name="twitter:card" content="summary_large_image">\n'
+  '<meta name="twitter:image" content="https://gzdirect.github.io/jatekok/arnyekerdo/social-preview.jpg">\n'
   '<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}'
   'body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>\n'
   '</head>\n<body>\n')
-out = wrap_head + page + '\n</body>\n</html>\n'
+SWREG = ("<script>/* offline mód */if('serviceWorker' in navigator&&location.protocol!=='file:'){addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}})}</script>\n")
+out = wrap_head + page + '\n' + SWREG + '</body>\n</html>\n'
 open(os.path.join(D, '..', 'index.html'), 'w', encoding='utf-8').write(out)
 # claude.ai artifactként közzétehető változat (váz nélkül): python3 build.py --artifact /utvonal/arnyekerdo.html
 import sys
 if '--artifact' in sys.argv:
-    open(sys.argv[sys.argv.index('--artifact') + 1], 'w', encoding='utf-8').write(page)
-print('kész:', len(out), 'bájt')
+    open(sys.argv[sys.argv.index('--artifact') + 1], 'w', encoding='utf-8').write(page.replace('<script src="three.min.js"></script>', '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>'))
+# Offline mód: sw.js a minta alapján, a tár neve a tartalomból számolt ujjlenyomat.
+import hashlib, glob, json
+A = os.path.join(D, '..')
+pre = ['./', 'index.html', 'three.min.js', 'manifest.webmanifest', 'favicon-32.png', 'icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'nyitokep.jpg', 'nyitokep-kicsi.jpg']
+pre += sorted('fonts/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'fonts', '*.woff2')))
+pre += sorted('hang/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'hang', '*.mp3')))
+hsh = hashlib.sha1()
+for p in pre[1:]:
+    fp = os.path.join(A, p)
+    if os.path.exists(fp): hsh.update(open(fp, 'rb').read())
+sw = rd('sw_minta.js').replace('@@NAME@@', 'Shinobi').replace('@@PREFIX@@', 'shinobi-').replace('@@CACHE@@', 'shinobi-' + hsh.hexdigest()[:10]).replace('@@PRE@@', json.dumps(pre))
+open(os.path.join(A, 'sw.js'), 'w', encoding='utf-8').write(sw)
+print('kész:', len(out), 'bájt; sw.js:', len(pre), 'fájl előre')

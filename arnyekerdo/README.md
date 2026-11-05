@@ -13,6 +13,8 @@ A negyedik pálya (**Hegyi expressz**) egy száguldó magánvonaton játszódik 
 
 **Játék:** https://gzdirect.github.io/jatekok/arnyekerdo/
 
+Telefonon a böngésző menüjében a **Hozzáadás a kezdőképernyőhöz** paranccsal alkalmazásként is telepíthető, és az első megnyitás után net nélkül is elindul.
+
 Fejlesztéshez: [FEJLESZTES.md](FEJLESZTES.md). A forrás az `src/` mappában van, az `index.html` generált (`python3 arnyekerdo/src/build.py`).
 
 ---

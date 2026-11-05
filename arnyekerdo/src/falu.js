@@ -113,7 +113,7 @@ function house(x,z,ry,w,d,lit){const g=new THREE.Group();g.position.set(x,H(x,z)
   for(let k=0;k<3;k++){const st=new THREE.Mesh(new THREE.BoxGeometry(4,0.23,0.5),lam(0x8a8478));st.position.set(0,0.12+k*0.23,D/2+1.0+1.2-k*0.45);st.receiveShadow=true;g.add(st);}
   [-1,1].forEach(s=>{const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,4.6,6),timberM);pole.position.set(s*3.4,2.3,D/2+2.6);g.add(pole);
     const fl=new THREE.Mesh(new THREE.PlaneGeometry(0.7,3.0),new THREE.MeshLambertMaterial({color:s<0?0x2a3a6a:0x7a2a24,side:THREE.DoubleSide}));fl.position.set(s*3.4+0.37*s,2.9,D/2+2.6);g.add(fl);});roof.rotation.y=Math.PI/2;roof.castShadow=true;g.add(roof);
-  const sign=new THREE.Mesh(new THREE.PlaneGeometry(2.2,0.7),new THREE.MeshBasicMaterial({map:canvasTex(256,80,(c,w,h)=>{c.fillStyle='#2a1d14';c.fillRect(0,0,w,h);c.fillStyle='#e8dcc0';c.font='700 56px "Noto Serif JP",serif';c.textAlign='center';c.textBaseline='middle';c.fillText('影道場',w/2,h/2+3);})}));
+  const sign=new THREE.Mesh(new THREE.PlaneGeometry(2.2,0.7),new THREE.MeshBasicMaterial({map:canvasTex(256,80,(c,w,h)=>{c.fillStyle='#2a1d14';c.fillRect(0,0,w,h);c.fillStyle='#e8dcc0';c.font='700 40px "EB Garamond",Georgia,serif';c.textAlign='center';c.textBaseline='middle';c.fillText('DÓDZSÓ',w/2,h/2+3);})}));
   sign.position.set(0,4.15,D/2+1.05);g.add(sign);
   const light=new THREE.PointLight(0xffb070,1.4,22,1.6);light.position.set(0,2.6,D/2+2.2);g.add(light);LIGHTS.push(light);
   wallCol(-W/2-1,dz+D/2+1.05,W/2+1,dz+D/2+1.05,0.45,0.6,false);}

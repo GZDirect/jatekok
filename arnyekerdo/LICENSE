@@ -43,5 +43,5 @@ Permission requests: via the GitHub account GZDirect.
 
 THIRD-PARTY COMPONENTS (not covered by the above)
 
-- three.js (https://threejs.org) – MIT License, loaded from a public CDN.
-- EB Garamond, IBM Plex Sans and Noto Serif JP fonts – SIL Open Font License, loaded from Google Fonts.
+- three.js r128 (https://threejs.org) – MIT License, included as three.min.js, see three-LICENSE.txt.
+- EB Garamond and IBM Plex Sans fonts (fonts/) – SIL Open Font License 1.1, unmodified files from the Fontsource distribution, see fonts/OFL-*.txt.

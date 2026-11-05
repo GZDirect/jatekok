@@ -1,0 +1,30 @@
+{
+ "name": "Pihe odúja",
+ "short_name": "Pihe odúja",
+ "id": "./",
+ "description": "Hangulatos 3D gondozós játék: egy apró lény a saját odújában, négy forgatható diorámában. Etesd, tanítsd beszélni, rendezd be a kertjét – a napszak és az évszak a valódi időt követi. © 2026 Fejes Géza.",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#f3eee2",
+ "theme_color": "#f3eee2",
+ "lang": "hu",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512-maskable.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

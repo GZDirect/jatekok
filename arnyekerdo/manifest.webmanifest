@@ -1,7 +1,7 @@
 {
  "name": "Shinobi",
  "short_name": "Shinobi",
- "description": "Tenchu-stílusú lopakodó küldetés egy éjszakai japán hegyi erdőben. © 2026 Fejes Géza.",
+ "description": "Lopakodó nindzsakaland négy pályán: éjszakai erdő, nappali vizsga a faluban, felhőkarcolók és egy száguldó vonat. Magyar hangokkal. © 2026 Fejes Géza.",
  "start_url": "./",
  "scope": "./",
  "display": "fullscreen",
@@ -19,6 +19,13 @@
    "src": "icon-512.png",
    "sizes": "512x512",
    "type": "image/png"
+  },
+  {
+   "src": "icon-512-maskable.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
   }
- ]
+ ],
+ "id": "./"
 }

@@ -4,6 +4,8 @@ Telefonos tamagocsi forgatható 3D diorámában. Négy helyszín közül válasz
 
 **Játék:** https://gzdirect.github.io/jatekok/pihe/
 
+Telefonon a böngésző menüjében a **Hozzáadás a kezdőképernyőhöz** paranccsal alkalmazásként is telepíthető, és az első megnyitás után net nélkül is elindul.
+
 ---
 
 © 2026 Fejes Géza. Minden jog fenntartva. A játék engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető. Részletek: [LICENSE](LICENSE).
