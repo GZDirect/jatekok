@@ -384,7 +384,17 @@ function lockL(){try{screen.orientation&&screen.orientation.lock&&screen.orienta
    Gépen nincs fekvőre rögzítés; ha a játékos Esc-kel kilép, a következő kattintás a menüben újra teljes képernyőre vált. */
 function goFull(){try{const el=document.documentElement,rq=el.requestFullscreen||el.webkitRequestFullscreen;const fs=document.fullscreenElement||document.webkitFullscreenElement;
   if(!fs&&rq){const r=rq.call(el,{navigationUI:'hide'});if(r&&r.then)r.then(()=>{if(isTouch)lockL();},()=>{});}else if(isTouch)lockL();}catch(e){}}
-document.addEventListener('pointerdown',()=>{if(!S.running&&!document.fullscreenElement)goFull();},{capture:true});
+/* érintésnél a böngésző csak az ujj felemelésekor (pointerup/click) engedi a teljes képernyőt, egérnél már lenyomáskor;
+   ezért mindhárom eseményre figyelünk. Pályaváltáskor (új oldal) így az első érintés visszakapcsolja. */
+['pointerdown','pointerup','click'].forEach(ev=>document.addEventListener(ev,()=>{if(!S.running&&!(document.fullscreenElement||document.webkitFullscreenElement))goFull();},{capture:true}));
+/* telepítés alkalmazásként (PWA): ott nincs böngészősáv, a pályaváltás sem lép ki a teljes képernyőből */
+const INST={ev:null};
+const standalone=()=>{try{return matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;}catch(e){return false;}};
+const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function showInstall(){const b=$('tInstall');if(!b)return;b.hidden=standalone()||!(INST.ev||isIOS);
+  if(isIOS&&!INST.ev)$('tInstallSub').textContent='Safariban: Megosztás gomb → Főképernyőhöz adás';}
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();INST.ev=e;showInstall();});
+addEventListener('appinstalled',()=>{INST.ev=null;showInstall();});
 /* nehézség és bemutató a kezdőképernyőn */
 function showDiff(){document.querySelectorAll('#diff [data-d]').forEach(b=>b.setAttribute('aria-checked',DIFF[b.dataset.d]===D?'true':'false'));$('copsN').textContent=D.n;}
 document.querySelectorAll('#diff [data-d]').forEach(b=>b.addEventListener('click',()=>{D=DIFF[b.dataset.d];try{localStorage.setItem('ae-diff',b.dataset.d);}catch(e){}showDiff();}));
@@ -415,6 +425,8 @@ function drawSlots(){const box=$('slots');box.innerHTML='';const cur=slotNo();
 function showTitle(on){$('title').hidden=!on;$('start').hidden=on;if(on){$('saves').hidden=true;$('title').classList.remove('sv');}refreshLvl();}
 $('tStart').addEventListener('click',()=>{const sv=G.loadSave();if(sv.t===undefined&&!sv.l1)saveProgress({});const want=!sv.l1?'erdo':!sv.l2?'falu':!sv.l3?'varos':!sv.l4?'vonat':LV;
   if(want!==LV){location.href='?palya='+want;return;}showTitle(false);goFull();});
+$('tInstall').addEventListener('click',()=>{if(INST.ev){const e=INST.ev;INST.ev=null;try{e.prompt();e.userChoice.finally(showInstall);}catch(x){showInstall();}}});
+showInstall();
 $('tSaves').addEventListener('click',()=>{drawSlots();$('saves').hidden=false;$('title').classList.add('sv');});
 $('sBack').addEventListener('click',()=>{$('saves').hidden=true;$('title').classList.remove('sv');refreshLvl();});
 showTitle(!/[?&]palya=/.test(location.search));
