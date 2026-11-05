@@ -239,3 +239,10 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - A three.js (`three.min.js`) és a betűtípusok (`fonts/`, EB Garamond és IBM Plex Sans, latin + latin-ext) a repóban vannak, a játék semmit nem tölt be más oldalról.
 - Ikonok: `favicon-32.png`, `icon-180/192/512.png`, `icon-512-maskable.png`; megosztási kép: `social-preview.jpg` (1200×630).
 - A `build.py` a `src/sw_minta.js` alapján legenerálja az `sw.js`-t: az előre letöltött fájlok listája (benne a `hang/` összes mp3-ja) és a tár neve (a tartalom ujjlenyomata) automatikusan frissül. Az oldal netről töltődik, ha van net, a többi fájl a tárból jön.
+
+## 2h. Érintős irányítás (2026. november)
+
+- Bal hüvelykujj: joystick. Kis kitérés lopakodás, nagyobb séta, előre a FUT ívig (80 px, visszafelé 64 px-ig tart) futás; elengedve a futás megszűnik. Kifulladás után 25-ös erőig nem lehet futni (`P.tired`).
+- Jobb hüvelykujj: nézelődés bárhol a jobb oldalon. Az akciógomb (`#bUse`) lenyomásra használ, és ugyanazzal az ujjal tovább húzva forgatja a kamerát.
+- Az akciógomb körül: Guggol, Füst, eszközgomb (`#bTool`). Az eszközgomb koppintásra nyitja a legyezőt (`body.fan`, a `#tools` 4×2-es rácsként), vagy az ujjat a kívánt eszközre csúsztatva választ.
+- A Fut gomb megszűnt; gépen a Q és a Shift ugyanúgy működik.

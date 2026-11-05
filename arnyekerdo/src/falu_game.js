@@ -51,7 +51,7 @@ const ST=[
   {name:'Test',say:['倒れた者を隠せ。','Taoreta mono o kakuse.','Rejtsd el a földön fekvőt, mielőtt meglátják.'],
     task:'Egy „leütött” tanítvány fekszik az udvar közepén. Fogd meg ('+K('Húz gomb','G')+'), húzd be egy bokorba, és engedd el, mielőtt a járőr meglátja.'},
   {name:'Füst',say:['見つかったら、煙だ。','Mitsukattara, kemuri da.','Ha meglátnak: füst, és fuss.'],
-    task:'Két idősebb tanítvány vár, és azonnal meglát. Várd meg, amíg egészen közel érnek, és akkor dobj füstöt ('+K('Füst gomb','F')+'): csak a közelieket vakítja el. Aztán fuss ('+K('Fut gomb','Q')+') közöttük a mögöttük lévő kapuig.',open:true,pass:true},
+    task:'Két idősebb tanítvány vár, és azonnal meglát. Várd meg, amíg egészen közel érnek, és akkor dobj füstöt ('+K('Füst gomb','F')+'): csak a közelieket vakítja el. Aztán fuss ('+K('told ki a joystickot előre a FUT ívig','Q')+') közöttük a mögöttük lévő kapuig.',open:true,pass:true},
   {name:'Köpőcső',say:['吹き矢で眠らせろ。','Fukiya de nemurasero.','Altasd el a köpőcsővel.'],
     task:'Az őr a kapu előtt áll, és messzire ellát. Guggolj le, válaszd a köpőcsövet ('+K('Köpőcső','7')+'), célozz rá, és fújd ki az altatónyilat ('+K('Fúj gomb','kattintás')+'). Ha a célkereszt felderül, talál. Három nyilad van.'},
   {name:'Tüskék',say:['追われたら、まきびしだ。','Owaretara, makibishi da.','Ha üldöznek: tüskék.'],

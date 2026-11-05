@@ -62,7 +62,7 @@ body.day #fxVig{opacity:0.35;}
 .tool{width:64px;height:40px;border-radius:6px;border:1.5px solid rgba(236,229,211,0.3);background:var(--panel);color:var(--mist);font-family:var(--ui);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:4px;touch-action:none;}
 .tool kbd{font-family:var(--ui);font-size:10px;opacity:0.6;}
 .tool.on{border-color:var(--goal);color:var(--goal);}
-@media (max-height:520px){.tool{width:54px;font-size:10px;flex-direction:column;gap:0;line-height:1.1;}.tool kbd{display:none!important;}#tools{flex-direction:row;gap:4px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);right:calc(env(safe-area-inset-right,0px) + 172px);}#sub{bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}}
+@media (max-height:520px){.tool{width:54px;font-size:10px;flex-direction:column;gap:0;line-height:1.1;}.tool kbd{display:none!important;}body.desk #tools{flex-direction:row;gap:4px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);right:calc(env(safe-area-inset-right,0px) + 172px);}#sub{bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}}
 @media (max-width:560px){#top{top:calc(env(safe-area-inset-top,0px) + 90px);}}
 @media (pointer:fine){.tool kbd{display:inline;}}
 @media (pointer:coarse){.tool kbd{display:none;}}
@@ -71,7 +71,26 @@ body.day #fxVig{opacity:0.35;}
 #joy{position:fixed;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:2px solid rgba(236,229,211,0.35);background:rgba(5,8,10,0.25);pointer-events:none;}
 #knob{position:absolute;left:34px;top:34px;width:52px;height:52px;border-radius:50%;background:rgba(236,229,211,0.55);}
 #joyHint{left:calc(env(safe-area-inset-left,0px) + 26px);bottom:calc(env(safe-area-inset-bottom,0px) + 30px);font-size:12px;color:var(--mist);width:120px;height:120px;border-radius:50%;border:1.5px dashed rgba(236,229,211,0.22);display:flex;align-items:center;justify-content:center;text-align:center;}
-#btns{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 22px);display:grid;grid-template-columns:repeat(2,64px);gap:12px;}
+#btns{position:fixed;right:calc(env(safe-area-inset-right,0px) + 14px);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:230px;height:220px;pointer-events:none;}
+#btns .b{position:absolute;pointer-events:auto;}
+/* jobb hüvelykujj: a nagy akciógomb a sarokban, körülötte ívben a többi */
+#bUse{right:0;bottom:0;width:88px;height:88px;font-size:16px;border-width:2.5px;}
+#bCrouch{right:104px;bottom:2px;}
+#bSmoke{right:92px;bottom:86px;}
+#bTool{right:6px;bottom:104px;}
+#bTool small{font-size:10px;}
+#joyRun{position:absolute;left:-28px;top:-28px;width:176px;height:176px;border-radius:50%;border:3px solid transparent;border-top-color:rgba(224,164,58,0.45);box-sizing:border-box;font-size:0;}
+#joyRun::before{content:'FUT';position:absolute;left:0;right:0;top:-16px;text-align:center;font-size:11px;font-weight:700;letter-spacing:1.5px;color:rgba(224,164,58,0.7);}
+#joy.run #joyRun{border-top-color:var(--lantern);border-left-color:rgba(224,164,58,0.35);border-right-color:rgba(224,164,58,0.35);}
+#joy.run #joyRun::before{color:var(--lantern);}
+#joy.run #knob{background:rgba(224,164,58,0.75);}
+/* eszközlegyező érintőn: az eszközgomb fölött nyílik, egy sorban */
+body:not(.desk) #tools{display:none;grid-template-columns:repeat(4,58px);gap:6px;direction:rtl;right:calc(env(safe-area-inset-right,0px) + 14px);bottom:calc(env(safe-area-inset-bottom,0px) + 186px);padding:8px;border-radius:14px;background:rgba(5,8,10,0.45);}
+body:not(.desk) #tools .tool{direction:ltr;}
+body.fan:not(.desk) #tools{display:grid;}
+body:not(.desk) .tool{width:58px;height:58px;border-radius:50%;flex-direction:column;gap:0;font-size:10.5px;line-height:1.15;}
+body:not(.desk) .tool.hov{border-color:var(--lantern);color:var(--lantern);}
+@media (max-height:400px){body:not(.desk) #tools{bottom:calc(env(safe-area-inset-bottom,0px) + 176px);grid-template-columns:repeat(4,54px);}body:not(.desk) .tool{width:54px;height:54px;}}
 .b{width:64px;height:64px;border-radius:50%;border:2px solid rgba(236,229,211,0.45);background:var(--panel);color:var(--moon);font-family:var(--ui);font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;touch-action:none;}
 .b small{font-size:11px;font-weight:400;color:var(--mist);}
 .b.on{border-color:var(--lantern);color:var(--lantern);}
@@ -135,7 +154,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
 .tutB{grid-column:2;grid-row:1 / span 2;align-self:center;display:flex;flex-direction:column;gap:6px;}
 #tutNext,#tutSkip{pointer-events:auto;padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--mist);font-family:var(--ui);font-size:12px;cursor:pointer;touch-action:manipulation;}
 #tutNext{border-color:var(--goal);color:var(--goal);font-weight:600;}
-#bDrag{position:fixed;right:calc(env(safe-area-inset-right,0px) + 92px);bottom:calc(env(safe-area-inset-bottom,0px) + 174px);border-color:var(--goal);}
+#bDrag{position:fixed;right:calc(env(safe-area-inset-right,0px) + 200px);bottom:calc(env(safe-area-inset-bottom,0px) + 60px);width:56px;height:56px;border-color:var(--goal);color:var(--goal);}
 #bDrag[hidden]{display:none;}
 .tool small{font-size:10px;color:var(--mist);font-weight:400;}
 #rotate{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--night);text-align:center;padding:24px;}
@@ -192,7 +211,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
 <div class="hud" id="prompt" hidden></div>
 <div class="hud" id="sub"></div>
 <div class="hud" id="joyHint">Mozgás</div>
-<div id="joy" hidden><div id="knob"></div></div>
+<div id="joy" hidden><div id="joyRun"></div><div id="knob"></div></div>
 
 <div id="tools" role="toolbar" aria-label="Eszköztár">
   <button class="tool on" type="button" data-i="0">Tantó<kbd>1</kbd></button>
@@ -205,10 +224,10 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
   <button class="tool" type="button" data-i="7">Shuriken<small id="starN">×5</small><kbd>8</kbd></button>
 </div>
 <div id="btns">
-  <button class="b" id="bCrouch" type="button">Guggol</button>
-  <button class="b" id="bRun" type="button">Fut</button>
-  <button class="b" id="bSmoke" type="button">Füst<small id="smokeN">×2</small></button>
   <button class="b" id="bUse" type="button">Szúr</button>
+  <button class="b" id="bCrouch" type="button">Guggol</button>
+  <button class="b" id="bSmoke" type="button">Füst<small id="smokeN">×2</small></button>
+  <button class="b" id="bTool" type="button"><span id="toolName">Tantó</span><small id="toolSub">▴ eszköz</small></button>
 </div>
 <button class="b" id="bDrag" type="button" hidden>Húz</button>
 
@@ -243,7 +262,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
       <dt>Bal hüvelykujj</dt><dd>mozgás (gép: W A S D)</dd>
       <dt>Jobb hüvelykujj</dt><dd>körülnézés (gép: kattints a játéktérre, utána az egérrel nézel körül; Esc elengedi)</dd>
       <dt>Guggolás</dt><dd>halk vagy, bokorban nem látszol (jobb egérgomb vagy C)</dd>
-      <dt>Futás</dt><dd>gyors, de hangos (Q vagy Shift)</dd>
+      <dt>Futás</dt><dd>gyors, de hangos: told ki a joystickot előre a FUT ívig (gép: Q vagy Shift)</dd>
       <dt>Tantó, tekko</dt><dd>hátulról egy csapás: a tantó öl, a tekko csak leüt (kattintás vagy E)</dd>
       <dt>Kampó</dt><dd>célozz egy sűrű lombú óriásfára: ha halványan felderül, fel tudsz kapaszkodni</dd>
       <dt>Karmok</dt><dd>az óriásfa törzsén felmászhatsz (1–8: eszközváltás)</dd>

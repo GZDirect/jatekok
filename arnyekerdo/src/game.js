@@ -109,7 +109,7 @@ function whistle(d){if(!ac)return;const v=clamp(1-d/80,0.05,0.5);try{const t=ac.
   o.connect(g);g.connect(ac.destination);o.start(t);lfo.start(t);o.stop(t+0.9);lfo.stop(t+0.9);}catch(e){}}
 
 /* ---------- Irányítás ---------- */
-const joy={id:null,ox:0,oy:0,x:0,y:0},look={id:null,lx:0,ly:0,sx:0,sy:0,t0:0,mouse:false},keys={};
+const joy={id:null,ox:0,oy:0,x:0,y:0,run:false},look={id:null,lx:0,ly:0,sx:0,sy:0,t0:0,mouse:false},keys={};
 const touch=$('touch'),joyEl=$('joy'),knob=$('knob');
 touch.addEventListener('pointerdown',e=>{
   if(!S.running)return;
@@ -119,11 +119,14 @@ touch.addEventListener('pointerdown',e=>{
   else if(look.id===null){look.id=e.pointerId;look.lx=look.sx=e.clientX;look.ly=look.sy=e.clientY;look.t0=performance.now();look.mouse=e.pointerType==='mouse';}
   try{touch.setPointerCapture(e.pointerId);}catch(_){}
 });
-touch.addEventListener('pointermove',e=>{
-  if(e.pointerId===joy.id){let dx=e.clientX-joy.ox,dy=e.clientY-joy.oy;const d=Math.hypot(dx,dy),m=50;if(d>m){dx=dx/d*m;dy=dy/d*m;}joy.x=dx/m;joy.y=dy/m;knob.style.transform='translate('+dx+'px,'+dy+'px)';}
+window.addEventListener('pointermove',e=>{
+  if(e.pointerId===joy.id){let dx=e.clientX-joy.ox,dy=e.clientY-joy.oy;const d=Math.hypot(dx,dy),m=50;
+    /* futás: a joystickot előre, a FUT ívig kihúzva (kicsit visszaengedve is fut még, hogy ne szakadozzon) */
+    const fw=dy<-d*0.45,run=fw&&d>(joy.run?64:80);if(run!==joy.run){joy.run=run;joyEl.classList.toggle('run',run);if(run&&P.mode==='ground'&&!P.drag)P.crouch=false;updateButtons();}
+    const mk=joy.run?66:m;let kx=dx,ky=dy;if(d>mk){kx=dx/d*mk;ky=dy/d*mk;}if(d>m){dx=dx/d*m;dy=dy/d*m;}joy.x=dx/m;joy.y=dy/m;knob.style.transform='translate('+kx+'px,'+ky+'px)';}
   else if(e.pointerId===look.id){const dx=e.clientX-look.lx,dy=e.clientY-look.ly;look.lx=e.clientX;look.ly=e.clientY;const k=look.mouse?MOUSE_K:1;P.yaw-=dx*0.0058*k;P.pitch=clamp(P.pitch-dy*0.0045*k,-1.25,1.3);P.lookDX+=dx*0.01*k;}
 });
-function endPtr(e){if(e.pointerId===joy.id){joy.id=null;joy.x=joy.y=0;joyEl.hidden=true;}
+function endPtr(e){if(e.pointerId===joy.id){joy.id=null;joy.x=joy.y=0;joyEl.hidden=true;if(joy.run){joy.run=false;joyEl.classList.remove('run');updateButtons();}}
   if(e.pointerId===look.id){/* egérrel egy rövid kattintás húzás nélkül = használat */
     if(look.mouse&&e.type==='pointerup'&&document.pointerLockElement!==touch&&Math.hypot(e.clientX-look.sx,e.clientY-look.sy)<6&&performance.now()-look.t0<350&&S.running)useItem();look.id=null;}}
 /* egér: a játéktérre kattintva rögzül (pointer lock), onnantól húzás nélkül nézel körül, kattintás = használat, Esc elengedi.
@@ -134,7 +137,7 @@ document.addEventListener('contextmenu',e=>{if(!isTouch)e.preventDefault();});if
 touch.addEventListener('mousedown',e=>{if(!S.running||isTouch)return;if(e.button===2){e.preventDefault();crouchOrDrop();return;}if(e.button!==0)return;if(document.pointerLockElement!==touch){goFull();try{const r=touch.requestPointerLock();if(r&&r.catch)r.catch(()=>{});}catch(_){}}else useItem();});
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement!==touch||!S.running)return;const dx=clamp(e.movementX,-200,200),dy=clamp(e.movementY,-200,200);
   P.yaw-=dx*0.0058*MOUSE_K;P.pitch=clamp(P.pitch-dy*0.0045*MOUSE_K,-1.25,1.3);P.lookDX+=dx*0.01*MOUSE_K;});
-touch.addEventListener('pointerup',endPtr);touch.addEventListener('pointercancel',endPtr);
+window.addEventListener('pointerup',endPtr);window.addEventListener('pointercancel',endPtr);
 touch.addEventListener('wheel',e=>{if(S.running)selectItem((P.item+(e.deltaY>0?1:ITEMS.length-1))%ITEMS.length);},{passive:true});
 window.addEventListener('keydown',e=>{keys[e.code]=true;if(!S.running||e.repeat)return;
   if(e.code==='KeyC')crouchOrDrop();if(e.code==='KeyF')useSmoke();if(e.code==='KeyE')useItem();if(e.code==='Space'){e.preventDefault();if(P.mode==='perch')dropDown();else useItem();}
@@ -144,11 +147,25 @@ function tap(el,fn){el.addEventListener('pointerdown',e=>{e.preventDefault();e.s
 function crouchOrDrop(){if(P.mode==='perch'){dropDown();return;}if(P.mode!=='ground')return;P.crouch=!P.crouch;if(P.crouch)P.run=false;updateButtons();}
 function toggleRun(){if(P.mode!=='ground'||P.drag)return;P.run=!P.run;if(P.run)P.crouch=false;updateButtons();}
 function selectItem(i){P.item=i;A.setHandItem(ITEMS[i].id);updateButtons();}
-tap($('bCrouch'),crouchOrDrop);tap($('bRun'),toggleRun);tap($('bSmoke'),useSmoke);tap($('bUse'),useItem);tap($('bDrag'),toggleDrag);
-document.querySelectorAll('#tools .tool').forEach(b=>tap(b,()=>selectItem(+b.dataset.i)));
+tap($('bCrouch'),crouchOrDrop);tap($('bSmoke'),useSmoke);tap($('bDrag'),toggleDrag);
+/* akciógomb: lenyomásra azonnal használ, és ha az ujj rajta marad és mozog, közben forgatja a kamerát (egy ujjal célzol és dobsz) */
+$('bUse').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!S.running)return;closeFan();useItem();
+  if(look.id===null){look.id=e.pointerId;look.lx=look.sx=e.clientX;look.ly=look.sy=e.clientY;look.t0=performance.now();look.mouse=false;try{$('bUse').setPointerCapture(e.pointerId);}catch(_){}}});
+$('bUse').addEventListener('click',e=>{if(e.detail===0&&S.running)useItem();});
+/* eszközlegyező: koppintásra nyílik/zárul, vagy az eszközgombról az ujjat a kívánt eszközre csúsztatva választasz */
+const FAN={id:null,moved:false,hov:null};
+function openFan(){document.body.classList.add('fan');}
+function closeFan(){document.body.classList.remove('fan');if(FAN.hov){FAN.hov.classList.remove('hov');FAN.hov=null;}}
+function toolAt(x,y){const el=document.elementFromPoint(x,y);return el&&el.closest?el.closest('#tools .tool'):null;}
+$('bTool').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!S.running)return;const was=document.body.classList.contains('fan');openFan();FAN.id=e.pointerId;FAN.moved=false;FAN.was=was;try{$('bTool').setPointerCapture(e.pointerId);}catch(_){}});
+$('bTool').addEventListener('pointermove',e=>{if(e.pointerId!==FAN.id)return;const t=toolAt(e.clientX,e.clientY);if(t!==FAN.hov){if(FAN.hov)FAN.hov.classList.remove('hov');FAN.hov=t;if(t){t.classList.add('hov');FAN.moved=true;}}});
+function fanUp(e){if(e.pointerId!==FAN.id)return;FAN.id=null;const t=toolAt(e.clientX,e.clientY);if(t){selectItem(+t.dataset.i);closeFan();}else if(FAN.was&&!FAN.moved)closeFan();else if(FAN.moved)closeFan();if(FAN.hov){FAN.hov.classList.remove('hov');FAN.hov=null;}}
+$('bTool').addEventListener('pointerup',fanUp);$('bTool').addEventListener('pointercancel',e=>{if(e.pointerId===FAN.id){FAN.id=null;}});
+document.querySelectorAll('#tools .tool').forEach(b=>tap(b,()=>{selectItem(+b.dataset.i);closeFan();}));
+touch.addEventListener('pointerdown',()=>{if(document.body.classList.contains('fan'))closeFan();},{capture:true});
 function updateButtons(){
   $('bCrouch').classList.toggle('on',P.crouch&&P.mode==='ground');$('bCrouch').firstChild.textContent=P.mode==='perch'?'Le':'Guggol';
-  $('bRun').classList.toggle('on',P.run);$('smokeN').textContent='×'+S.smoke;$('stoneN').textContent='×'+S.stones;$('spikeN').textContent='×'+S.spikes;$('dartN').textContent='×'+S.darts;$('starN').textContent='×'+S.stars;$('bSmoke').disabled=S.smoke<=0;$('bSmoke').style.opacity=S.smoke>0?1:0.4;
+  {const it=ITEMS[P.item],n=it.id==='kavics'?S.stones:it.id==='tuske'?S.spikes:it.id==='fukiya'?S.darts:it.id==='shuriken'?S.stars:null;$('toolName').textContent=it.name;$('toolSub').textContent=(n!==null?'×'+n+' ':'')+'▴';}$('smokeN').textContent='×'+S.smoke;$('stoneN').textContent='×'+S.stones;$('spikeN').textContent='×'+S.spikes;$('dartN').textContent='×'+S.darts;$('starN').textContent='×'+S.stars;$('bSmoke').disabled=S.smoke<=0;$('bSmoke').style.opacity=S.smoke>0?1:0.4;
   document.querySelectorAll('#tools .tool').forEach(b=>b.classList.toggle('on',+b.dataset.i===P.item));
 }
 const fwd=()=>({x:-Math.sin(P.yaw),z:-Math.cos(P.yaw)});
@@ -299,10 +316,10 @@ function ambStep(dt){if(!ac||!AMB.on)return;
 /* ---------- Bemutató az első percben ---------- */
 
 const TUT=[
-  {t:isTouch?'Mozogj: húzd a bal hüvelykujjadat a képernyő bal oldalán.':'Mozogj a W A S D billentyűkkel.',done:()=>Math.hypot(P.x-START.x,P.z-START.z)>4},
-  {t:isTouch?'Nézz körül: húzd a jobb hüvelykujjadat.':'Nézz körül: kattints a játéktérre, és mozgasd az egeret (Esc elengedi).',done:()=>TS.yaw>1.2},
+  {t:isTouch?'Mozogj: húzd a bal hüvelykujjadat a képernyő bal oldalán. Ha előre egészen a FUT ívig kihúzod, futsz.':'Mozogj a W A S D billentyűkkel.',done:()=>Math.hypot(P.x-START.x,P.z-START.z)>4},
+  {t:isTouch?'Nézz körül: húzd a jobb hüvelykujjadat. Az akciógombot nyomva tartva is forgathatod a kamerát.':'Nézz körül: kattints a játéktérre, és mozgasd az egeret (Esc elengedi).',done:()=>TS.yaw>1.2},
   {t:isTouch?'Guggolj le a Guggol gombbal. Guggolva halkabb vagy, bokorban nem látnak.':'Guggolj le a jobb egérgombbal (vagy C). Guggolva halkabb vagy, bokorban nem látnak. Futás: Q.',done:()=>P.crouch},
-  {t:isTouch?'Válaszd a Kampót, és célozz a közeli óriásfa lombjára. Ha a lomb felderül, nyomd meg a Kampó gombot.':'Válaszd a kampót (3), célozz a közeli óriásfa lombjára, és ha felderül, kattints.',done:()=>P.mode==='perch'},
+  {t:isTouch?'Koppints az eszközgombra (az akciógomb fölött), válaszd a Kampót, és célozz a közeli óriásfa lombjára. Ha a lomb felderül, nyomd meg a Kampó gombot.':'Válaszd a kampót (3), célozz a közeli óriásfa lombjára, és ha felderül, kattints.',done:()=>P.mode==='perch'},
   {t:'Fent vagy a lombban: innen csak akkor látnak meg, ha rád világítanak. Ugorj le ('+(isTouch?'Le gomb':'szóköz')+'). Ha alattad rendőr áll, felülről támadsz.',done:()=>P.mode==='ground'},
   {t:'Válaszd a kavicsot ('+(isTouch?'Kavics':'5')+'), és dobj el egyet ('+(isTouch?'Dob gomb':'kattintás')+'). A koppanása odacsalja a közeli rendőröket.',done:()=>TS.thrown},
   {t:'A tantóval (1) hátulról egy szúrással végzel egy rendőrrel, a tekkóval (2) csak leütöd. Válaszd ki a tantót.',done:()=>P.item===0},
@@ -593,7 +610,8 @@ function update(dt){
   if(joy.id===null){jx=(keys.KeyD?1:0)-(keys.KeyA?1:0);jy=(keys.KeyS?1:0)-(keys.KeyW?1:0);const l=Math.hypot(jx,jy);if(l>1){jx/=l;jy/=l;}}
   const mag=Math.min(1,Math.hypot(jx,jy));
   if(P.mode==='ground'){
-    const running=!P.drag&&(P.run||keys.ShiftLeft||keys.ShiftRight)&&P.stam>1&&mag>0.2;P.running=running;
+    if(P.stam<=1)P.tired=true;else if(P.stam>25)P.tired=false;
+    const running=!P.drag&&(P.run||joy.run||keys.ShiftLeft||keys.ShiftRight)&&!P.tired&&mag>0.2;P.running=running;
     const speed=P.drag?1.5:P.crouch?2.2:running?6.6:4.2;
     const f=-jy,s=jx,sy=Math.sin(P.yaw),cy=Math.cos(P.yaw);
     P.x+=(-sy*f+cy*s)*speed*dt;P.z+=(-cy*f-sy*s)*speed*dt;pushOut(P,0.45);
