@@ -403,12 +403,12 @@ function startGame(){
 const GEAR_TXT=['hátulról egy szúrással végez','leüt, de nem öl','felkapaszkodsz vele a magasba','fatörzsön, oszlopon felmászol','a koppanása odacsalja az őröket','aki belelép, megáll','altatónyíl: akit eltalál, elalszik','sebez; ha nem talál, odacsal','elvakítja a közelieket, eltakar'];
 const GEAR_REQ={varos:[2]},GEAR_DEF=[0,2,4,8];
 const gearAmmo=i=>i===4?D.stones:i===5?D.spikes:i===6?D.darts:i===7?D.stars:i===8?D.smoke:null;
-let GPICK=[],GIMG=false;{const im=new Image();im.onload=()=>{GIMG=true;};im.src='eszkozok/tanto.png';}
+let GPICK=[],GIMG=false;{const im=new Image();im.onload=()=>{GIMG=true;};im.src='eszkozok/tanto.webp';}
 function gearLoad(){const req=GEAR_REQ[LV]||[];let v=null;try{v=JSON.parse(lsGet('ae-gear-'+LV));}catch(e){}
   if(!Array.isArray(v))v=GEAR_DEF.slice();v=v.filter(i=>i>=0&&i<ITEMS.length);req.forEach(i=>{if(v.indexOf(i)<0)v.unshift(i);});return v.filter((i,k)=>v.indexOf(i)===k).slice(0,GEAR_MAX);}
 function gearDraw(){const box=$('gearGrid'),req=GEAR_REQ[LV]||[];box.innerHTML='';
   ITEMS.forEach((it,i)=>{const on=GPICK.indexOf(i)>=0,r=req.indexOf(i)>=0,b=document.createElement('button');b.type='button';b.className='gItem'+(r?' req':'')+(!on&&GPICK.length>=GEAR_MAX?' full':'');b.setAttribute('aria-pressed',on?'true':'false');
-    const n=gearAmmo(i);b.innerHTML=(GIMG?'<img alt="" src="eszkozok/'+it.id+'.png">':'')+'<b>'+it.name+(n!==null?'<small>×'+n+'</small>':'')+'</b><span>'+GEAR_TXT[i]+'</span>';
+    const n=gearAmmo(i);b.innerHTML=(GIMG?'<img alt="" src="eszkozok/'+it.id+'.webp">':'')+'<b>'+it.name+(n!==null?'<small>×'+n+'</small>':'')+'</b><span>'+GEAR_TXT[i]+'</span>';
     b.addEventListener('click',()=>{if(r)return;const k=GPICK.indexOf(i);if(k>=0)GPICK.splice(k,1);else if(GPICK.length<GEAR_MAX)GPICK.push(i);else{showGearFull();return;}gearDraw();});box.appendChild(b);});
   $('gearN').textContent=GPICK.length+' / '+GEAR_MAX;$('gearGo').disabled=!GPICK.length;
   $('gearGoSub').textContent=GPICK.length?GPICK.slice().sort((a,b)=>a-b).map(i=>ITEMS[i].name).join(' · '):'Válassz legalább egy eszközt';}

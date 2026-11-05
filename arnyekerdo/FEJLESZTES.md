@@ -253,4 +253,4 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - A nem vitt fogyóeszközök (kavics, tüske, nyíl, csillag, füstbomba) száma 0, a gombjuk el van rejtve, a billentyű sem választja ki őket.
 - A füstbomba a 9. eszköz (`fust`, billentyű: 9, az F közvetlenül dobja, ha nálad van).
 - Ugrás: `P.jy`/`P.jv`, kb. 0,7 m-es szökkenés, földet éréskor zaj. Gépen szóköz.
-- Grafika: a háttér `felszereles.jpg` (amíg nincs, a nyitókép látszik), az eszközképek `eszkozok/<id>.png` (tanto, tekko, kampo, karom, kavics, tuske, fukiya, shuriken, fust); ha a `tanto.png` betölthető, a kártyák képet kapnak.
+- Grafika: a háttér `felszereles.jpg` (amíg nincs, a nyitókép látszik), az eszközképek `eszkozok/<id>.webp` (tanto, tekko, kampo, karom, kavics, tuske, fukiya, shuriken, fust); ha a `tanto.webp` betölthető, a kártyák képet kapnak.
