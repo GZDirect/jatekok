@@ -76,7 +76,7 @@ body.day #fxVig{opacity:0.35;}
 /* jobb hüvelykujj: a nagy akciógomb a sarokban, körülötte ívben a többi */
 #bUse{right:0;bottom:0;width:88px;height:88px;font-size:16px;border-width:2.5px;}
 #bCrouch{right:104px;bottom:2px;}
-#bSmoke{right:92px;bottom:86px;}
+#bJump{right:92px;bottom:86px;}
 #bTool{right:6px;bottom:104px;}
 #bTool small{font-size:10px;}
 #joyRun{position:absolute;left:-28px;top:-28px;width:176px;height:176px;border-radius:50%;border:3px solid transparent;border-top-color:rgba(224,164,58,0.45);box-sizing:border-box;font-size:0;}
@@ -116,6 +116,33 @@ h2{font-size:40px;}
 #endFoe{font-family:var(--display);font-size:22px;color:var(--lantern);}
 @media (prefers-reduced-motion:reduce){#msg,#kiRing,#kiChar,#fxLeaf,#sub{transition:none;}}
 .stats{font-size:13px;color:var(--mist);}
+/* felszerelés-választó: a szekrény belseje a háttér, előtte az eszközkártyák */
+#gear{background:url(felszereles.jpg) center/cover no-repeat,url(nyitokep-kicsi.jpg) center/cover no-repeat,#07090a;align-items:stretch;}
+#gear::before{content:'';position:fixed;inset:0;background:linear-gradient(90deg,rgba(5,7,8,0.88),rgba(5,7,8,0.55) 60%,rgba(5,7,8,0.7));pointer-events:none;}
+#gear .gIn{position:relative;width:100%;max-width:980px;margin:auto;display:flex;flex-direction:column;gap:12px;}
+#gear .gHead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;}
+#gear h2{margin:2px 0 0;}
+#gearN{font-family:var(--display);font-size:30px;font-weight:700;color:var(--lantern);font-variant-numeric:tabular-nums;}
+#gear .gLead{margin:0;font-size:14px;color:#d6d0c0;}
+#gearGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+.gItem{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:10px 12px 11px;min-height:118px;text-align:left;border-radius:8px;border:1.5px solid rgba(236,229,211,0.22);background:rgba(8,10,12,0.62);color:var(--moon);font-family:var(--ui);cursor:pointer;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);touch-action:manipulation;}
+.gItem img{width:100%;height:64px;object-fit:contain;margin-bottom:2px;}
+.gItem b{font-family:var(--display);font-size:19px;font-weight:700;}
+.gItem span{font-size:12px;line-height:1.35;color:var(--mist);}
+.gItem b small{font-family:var(--ui);font-size:12px;font-weight:500;color:var(--mist);margin-left:4px;}
+.gItem b{padding-right:22px;}
+.gItem[aria-pressed="true"]{border-color:var(--lantern);background:rgba(60,40,12,0.62);box-shadow:inset 0 0 0 1px rgba(224,164,58,0.35);}
+.gItem[aria-pressed="true"] b{color:var(--lantern);}
+.gItem[aria-pressed="true"]::after{content:'✓';position:absolute;top:8px;right:10px;font-size:16px;font-weight:700;color:var(--lantern);}
+.gItem.req::after{content:'kötelező';font-size:9.5px;letter-spacing:1px;text-transform:uppercase;top:11px;}
+.gItem.req b{padding-right:64px;}
+.gItem.full{opacity:0.45;}
+.gItem:focus-visible,#gearBack:focus-visible{outline:2px solid var(--lantern);outline-offset:3px;}
+#gear .gFoot{display:flex;gap:10px;justify-content:flex-end;align-items:stretch;}
+#gear .gFoot .choice{min-width:240px;}
+#gear .gFoot .choice:disabled{opacity:0.45;cursor:default;}
+.tB2{padding:10px 18px;border-radius:6px;border:1.5px solid rgba(236,229,211,0.35);background:rgba(8,10,12,0.5);color:var(--moon);font-family:var(--ui);font-size:15px;font-weight:600;cursor:pointer;}
+@media (max-height:520px){#gear .gIn{gap:7px;}#gear h2{font-size:24px;}#gear .gLead{font-size:12px;}#gearGrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;}.gItem{min-height:0;padding:6px 8px 8px;}.gItem img{height:34px;}.gItem b{font-size:15px;}.gItem span{font-size:10.5px;line-height:1.25;}#gearN{font-size:24px;}#gear .gFoot .choice{min-width:200px;padding:7px 12px;}}
 body.desk #btns,body.desk #bDrag{display:none!important;}
 body.menu .hud,body.menu #btns,body.menu #tools,body.menu #bDrag{visibility:hidden;}
 #radar{top:calc(env(safe-area-inset-top,0px) + 86px);left:calc(env(safe-area-inset-left,0px) + 16px);width:min(27vh,120px);height:min(27vh,120px);}
@@ -222,11 +249,12 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
   <button class="tool" type="button" data-i="5">Tüskék<small id="spikeN">×2</small><kbd>6</kbd></button>
   <button class="tool" type="button" data-i="6">Köpőcső<small id="dartN">×3</small><kbd>7</kbd></button>
   <button class="tool" type="button" data-i="7">Shuriken<small id="starN">×5</small><kbd>8</kbd></button>
+  <button class="tool" type="button" data-i="8">Füstbomba<small id="smokeN">×2</small><kbd>9</kbd></button>
 </div>
 <div id="btns">
   <button class="b" id="bUse" type="button">Szúr</button>
   <button class="b" id="bCrouch" type="button">Guggol</button>
-  <button class="b" id="bSmoke" type="button">Füst<small id="smokeN">×2</small></button>
+  <button class="b" id="bJump" type="button">Ugrás</button>
   <button class="b" id="bTool" type="button"><span id="toolName">Tantó</span><small id="toolSub">▴ eszköz</small></button>
 </div>
 <button class="b" id="bDrag" type="button" hidden>Húz</button>
@@ -272,12 +300,21 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
       <dt>Tüskék</dt><dd>előre dobod, futás közben magad mögé szórod; aki belelép, megáll (6)</dd>
       <dt>Shuriken</dt><dd>dobócsillag: sebez; ha nem talál, a csattanása odacsal, és felveheted (8)</dd>
       <dt>Köpőcső</dt><dd>altatónyíl: akit eltalálsz, elalszik (7)</dd>
-      <dt>Füst</dt><dd>elvakítja a közeli rendőröket, és eltakar (F)</dd>
+      <dt>Füstbomba</dt><dd>elvakítja a közeli rendőröket, és eltakar (9 vagy F)</dd>
+      <dt>Ugrás</dt><dd>Ugrás gomb vagy szóköz; a fáról leugrasz vele</dd>
       <dt>? és !</dt><dd>a rendőr feje fölött: a kérdőjel a gyanúval telik, a vörös felkiáltójel riadó</dd>
     </dl>
   </div>
 </div>
 
+<div class="screen" id="gear" hidden>
+  <div class="gIn">
+    <div class="gHead"><div><div class="eyebrow" id="gearEyebrow">Felszerelés</div><h2>Mit viszel magaddal?</h2></div><div id="gearN">0 / 4</div></div>
+    <p class="gLead">Legfeljebb négyféle eszközt vihetsz. Amit itthon hagysz, az a küldetésben nem lesz nálad.</p>
+    <div id="gearGrid" role="group" aria-label="Eszközök"></div>
+    <div class="gFoot"><button class="tB2" id="gearBack" type="button">Vissza</button><button class="choice" id="gearGo" type="button"><b>Indulás</b><span id="gearGoSub">Válassz legalább egy eszközt</span></button></div>
+  </div>
+</div>
 <div class="screen" id="end" hidden>
   <div class="card">
     <div class="eyebrow" id="endEyebrow">Vége</div>

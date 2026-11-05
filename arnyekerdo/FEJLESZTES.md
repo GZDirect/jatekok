@@ -244,5 +244,13 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 
 - Bal hüvelykujj: joystick. Kis kitérés lopakodás, nagyobb séta, előre a FUT ívig (80 px, visszafelé 64 px-ig tart) futás; elengedve a futás megszűnik. Kifulladás után 25-ös erőig nem lehet futni (`P.tired`).
 - Jobb hüvelykujj: nézelődés bárhol a jobb oldalon. Az akciógomb (`#bUse`) lenyomásra használ, és ugyanazzal az ujjal tovább húzva forgatja a kamerát.
-- Az akciógomb körül: Guggol, Füst, eszközgomb (`#bTool`). Az eszközgomb koppintásra nyitja a legyezőt (`body.fan`, a `#tools` 4×2-es rácsként), vagy az ujjat a kívánt eszközre csúsztatva választ.
+- Az akciógomb körül: Guggol, Ugrás (`#bJump`, a fán: Le), eszközgomb (`#bTool`). Az eszközgomb koppintásra nyitja a legyezőt (`body.fan`, a `#tools` 4×2-es rácsként), vagy az ujjat a kívánt eszközre csúsztatva választ.
 - A Fut gomb megszűnt; gépen a Q és a Shift ugyanúgy működik.
+
+## 2i. Felszerelés-választó, füstbomba, ugrás
+
+- Az Indulás után a `#gear` képernyőn legfeljebb 4 féle eszköz választható (`GEAR_MAX`). A választás pályánként megmarad (`ae-gear-<pálya>`). Kötelező eszköz: `GEAR_REQ` (az Üvegtoronyban a kampó). A falu kiképzésén és az első pálya bemutatójában nincs választás, minden nálad van (`GEAR=null`).
+- A nem vitt fogyóeszközök (kavics, tüske, nyíl, csillag, füstbomba) száma 0, a gombjuk el van rejtve, a billentyű sem választja ki őket.
+- A füstbomba a 9. eszköz (`fust`, billentyű: 9, az F közvetlenül dobja, ha nálad van).
+- Ugrás: `P.jy`/`P.jv`, kb. 0,7 m-es szökkenés, földet éréskor zaj. Gépen szóköz.
+- Grafika: a háttér `felszereles.jpg` (amíg nincs, a nyitókép látszik), az eszközképek `eszkozok/<id>.png` (tanto, tekko, kampo, karom, kavics, tuske, fukiya, shuriken, fust); ha a `tanto.png` betölthető, a kártyák képet kapnak.

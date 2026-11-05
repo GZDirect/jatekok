@@ -241,7 +241,7 @@ const hands=new THREE.Group();camera.add(hands);
     const fa=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.05,0.42,8),sleeve);fa.rotation.x=Math.PI/2-0.4;fa.position.set(0,-0.08,0.2);G.add(fa);
     const band=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.044,0.08,8),wrap);band.position.set(0,-0.02,0.06);band.rotation.x=Math.PI/2-0.4;G.add(band);return G;}
   const R=arm(),Lh=arm();
-  const items={tanto:new THREE.Group(),tekko:new THREE.Group(),kampo:new THREE.Group(),karom:new THREE.Group(),kavics:new THREE.Group(),tuske:new THREE.Group(),fukiya:new THREE.Group(),shuriken:new THREE.Group()},itemsL={kampo:new THREE.Group(),karom:new THREE.Group()};
+  const items={tanto:new THREE.Group(),tekko:new THREE.Group(),kampo:new THREE.Group(),karom:new THREE.Group(),kavics:new THREE.Group(),tuske:new THREE.Group(),fukiya:new THREE.Group(),shuriken:new THREE.Group(),fust:new THREE.Group()},itemsL={kampo:new THREE.Group(),karom:new THREE.Group()};
   {const G=items.tanto;const h=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,0.12,6),grip);h.rotation.x=Math.PI/2;h.position.set(0,0.005,-0.02);G.add(h);
     const gd=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.04,0.008),L(0x6a5a3a));gd.position.set(0,0.005,-0.085);G.add(gd);
     const bl=new THREE.Mesh(new THREE.BoxGeometry(0.004,0.024,0.3),steel);bl.position.set(0,0.008,-0.24);G.add(bl);
@@ -265,6 +265,9 @@ const hands=new THREE.Group();camera.add(hands);
     [-0.02,-0.2,-0.38].forEach(z=>{const n=new THREE.Mesh(new THREE.TorusGeometry(0.0125,0.003,5,10),node);n.position.set(-0.05,0.07,z);G.add(n);});
     G.rotation.set(0.05,0.12,0);}
   {/* dobócsillag (shuriken) két ujj között */const G=items.shuriken,st=new THREE.Mesh(starGeo(),steel);st.scale.setScalar(0.06);st.rotation.set(Math.PI/2-0.3,0,0.3);st.position.set(0,0.03,-0.07);G.add(st);}
+  {/* füstbomba: égetett agyaggolyó, a tetején papírral bekötött kanóc */const G=items.fust;const ball=new THREE.Mesh(new THREE.SphereGeometry(0.036,10,8),L(0x2e2a26));ball.position.set(0,0.035,-0.04);G.add(ball);
+    const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.016,0.014,8),L(0xb8a77a));cap.position.set(0,0.073,-0.04);G.add(cap);
+    const fuse=new THREE.Mesh(new THREE.CylinderGeometry(0.0025,0.0025,0.03,4),rope);fuse.position.set(0.004,0.09,-0.04);fuse.rotation.z=0.3;G.add(fuse);}
   Object.values(items).forEach(G=>R.add(G));Object.values(itemsL).forEach(G=>Lh.add(G));
   R.position.set(0.24,-0.25,-0.42);R.rotation.set(0.12,-0.18,-0.25);hands.add(R);
   Lh.position.set(-0.3,-0.31,-0.45);Lh.rotation.set(0.25,0.35,0.3);hands.add(Lh);

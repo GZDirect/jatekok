@@ -29,12 +29,14 @@ const aimMark=new THREE.Sprite(new THREE.SpriteMaterial({map:A.glowTex,color:0xb
 const V1=new THREE.Vector3(),V2=new THREE.Vector3(),V3=new THREE.Vector3(),UPV=new THREE.Vector3(0,1,0);
 
 /* ---------- Állapot ---------- */
-const ITEMS=[{id:'tanto',name:'Tantó'},{id:'tekko',name:'Tekko'},{id:'kampo',name:'Kampó'},{id:'karom',name:'Karmok'},{id:'kavics',name:'Kavics'},{id:'tuske',name:'Tüskék'},{id:'fukiya',name:'Köpőcső'},{id:'shuriken',name:'Shuriken'}];
+const ITEMS=[{id:'tanto',name:'Tantó'},{id:'tekko',name:'Tekko'},{id:'kampo',name:'Kampó'},{id:'karom',name:'Karmok'},{id:'kavics',name:'Kavics'},{id:'tuske',name:'Tüskék'},{id:'fukiya',name:'Köpőcső'},{id:'shuriken',name:'Shuriken'},{id:'fust',name:'Füstbomba'}];
 const P={x:START.x,z:START.z,yaw:0,pitch:0,crouch:false,run:false,stam:100,camY:1.65,bob:0,noise:0,moving:false,hidden:false,running:false,lookDX:0,
   hp:100,mode:'ground',item:0,drag:null,stepPh:0,atk:0,atkCd:0,tree:null,py:0,anim:null,lit:false,hurt:0,noiseBoost:0,dirX:0,dirZ:0};
 const S={running:false,time:0,smoke:2,smokeT:0,sx:0,sz:0,msgT:0,subT:0,threat:0,alarm:0,alarms:0,kills:0,kos:0,lastKnown:{x:0,z:0},beat:0,aim:null,aimGlow:-1,shots:0,stones:6,spikes:2,darts:3,stars:5};
 
 /* ---------- Rendőrök ---------- */
+/* felszerelés: a küldetésre vitt eszközök indexei (legfeljebb 4 féle); a falu kiképzésén és a bemutatóban minden nálad van */
+const GEAR_MAX=4;let GEAR=null;const hasGear=i=>!GEAR||GEAR.indexOf(i)>=0;
 const DIFF={konnyu:{name:'Könnyű',n:4,see:0.8,hear:0.8,aw:0.75,dmg:0.7,smoke:3,stones:8,spikes:3,darts:4,stars:6},normal:{name:'Normál',n:6,see:1,hear:1,aw:1,dmg:1,smoke:2,stones:6,spikes:2,darts:3,stars:5},nehez:{name:'Nehéz',n:8,see:1.2,hear:1.25,aw:1.3,dmg:1.25,smoke:2,stones:5,spikes:2,darts:2,stars:4}};
 let D=DIFF.normal;try{const k=localStorage.getItem('ae-diff');if(DIFF[k])D=DIFF[k];}catch(e){}
 /* riasztásjelző a rendőr feje fölött: kérdőjel, ami a gyanúval telik, riadóban vörös felkiáltójel */
@@ -138,16 +140,18 @@ touch.addEventListener('mousedown',e=>{if(!S.running||isTouch)return;if(e.button
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement!==touch||!S.running)return;const dx=clamp(e.movementX,-200,200),dy=clamp(e.movementY,-200,200);
   P.yaw-=dx*0.0058*MOUSE_K;P.pitch=clamp(P.pitch-dy*0.0045*MOUSE_K,-1.25,1.3);P.lookDX+=dx*0.01*MOUSE_K;});
 window.addEventListener('pointerup',endPtr);window.addEventListener('pointercancel',endPtr);
-touch.addEventListener('wheel',e=>{if(S.running)selectItem((P.item+(e.deltaY>0?1:ITEMS.length-1))%ITEMS.length);},{passive:true});
+touch.addEventListener('wheel',e=>{if(!S.running)return;let i=P.item;for(let k=0;k<ITEMS.length;k++){i=(i+(e.deltaY>0?1:ITEMS.length-1))%ITEMS.length;if(hasGear(i))break;}selectItem(i);},{passive:true});
 window.addEventListener('keydown',e=>{keys[e.code]=true;if(!S.running||e.repeat)return;
-  if(e.code==='KeyC')crouchOrDrop();if(e.code==='KeyF')useSmoke();if(e.code==='KeyE')useItem();if(e.code==='Space'){e.preventDefault();if(P.mode==='perch')dropDown();else useItem();}
-  if(e.code==='KeyG')toggleDrag();if(e.code==='Enter'&&TS.on)tutNext(false);if(e.code==='KeyQ')toggleRun();const n=['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8'].indexOf(e.code);if(n>=0)selectItem(n);});
+  if(e.code==='KeyC')crouchOrDrop();if(e.code==='KeyF'&&hasGear(8))useSmoke();if(e.code==='KeyE')useItem();if(e.code==='Space'){e.preventDefault();jumpOrDrop();}
+  if(e.code==='KeyG')toggleDrag();if(e.code==='Enter'&&TS.on)tutNext(false);if(e.code==='KeyQ')toggleRun();const n=['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9'].indexOf(e.code);if(n>=0)selectItem(n);});
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
 function tap(el,fn){el.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(S.running)fn();});el.addEventListener('click',e=>{if(e.detail===0&&S.running)fn();});}
 function crouchOrDrop(){if(P.mode==='perch'){dropDown();return;}if(P.mode!=='ground')return;P.crouch=!P.crouch;if(P.crouch)P.run=false;updateButtons();}
 function toggleRun(){if(P.mode!=='ground'||P.drag)return;P.run=!P.run;if(P.run)P.crouch=false;updateButtons();}
-function selectItem(i){P.item=i;A.setHandItem(ITEMS[i].id);updateButtons();}
-tap($('bCrouch'),crouchOrDrop);tap($('bSmoke'),useSmoke);tap($('bDrag'),toggleDrag);
+function selectItem(i){if(!hasGear(i))return;P.item=i;A.setHandItem(ITEMS[i].id);updateButtons();}
+tap($('bCrouch'),crouchOrDrop);tap($('bJump'),jumpOrDrop);tap($('bDrag'),toggleDrag);
+/* ugrás: kis szökkenés a talajról (a fáról leugrás) */
+function jumpOrDrop(){if(P.mode==='perch'){dropDown();return;}if(P.mode!=='ground'||P.drag||P.jy>0||P.jv>0)return;P.jv=4.4;P.jy=0.001;P.crouch=false;P.stam=Math.max(0,P.stam-6);updateButtons();}
 /* akciógomb: lenyomásra azonnal használ, és ha az ujj rajta marad és mozog, közben forgatja a kamerát (egy ujjal célzol és dobsz) */
 $('bUse').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!S.running)return;closeFan();useItem();
   if(look.id===null){look.id=e.pointerId;look.lx=look.sx=e.clientX;look.ly=look.sy=e.clientY;look.t0=performance.now();look.mouse=false;try{$('bUse').setPointerCapture(e.pointerId);}catch(_){}}});
@@ -165,11 +169,11 @@ document.querySelectorAll('#tools .tool').forEach(b=>tap(b,()=>{selectItem(+b.da
 touch.addEventListener('pointerdown',()=>{if(document.body.classList.contains('fan'))closeFan();},{capture:true});
 function updateButtons(){
   $('bCrouch').classList.toggle('on',P.crouch&&P.mode==='ground');$('bCrouch').firstChild.textContent=P.mode==='perch'?'Le':'Guggol';
-  {const it=ITEMS[P.item],n=it.id==='kavics'?S.stones:it.id==='tuske'?S.spikes:it.id==='fukiya'?S.darts:it.id==='shuriken'?S.stars:null;$('toolName').textContent=it.name;$('toolSub').textContent=(n!==null?'×'+n+' ':'')+'▴';}$('smokeN').textContent='×'+S.smoke;$('stoneN').textContent='×'+S.stones;$('spikeN').textContent='×'+S.spikes;$('dartN').textContent='×'+S.darts;$('starN').textContent='×'+S.stars;$('bSmoke').disabled=S.smoke<=0;$('bSmoke').style.opacity=S.smoke>0?1:0.4;
-  document.querySelectorAll('#tools .tool').forEach(b=>b.classList.toggle('on',+b.dataset.i===P.item));
+  {const it=ITEMS[P.item],n=it.id==='kavics'?S.stones:it.id==='tuske'?S.spikes:it.id==='fukiya'?S.darts:it.id==='shuriken'?S.stars:it.id==='fust'?S.smoke:null;$('toolName').textContent=it.name;$('toolSub').textContent=(n!==null?'×'+n+' ':'')+'▴';}$('smokeN').textContent='×'+S.smoke;$('stoneN').textContent='×'+S.stones;$('spikeN').textContent='×'+S.spikes;$('dartN').textContent='×'+S.darts;$('starN').textContent='×'+S.stars;$('bJump').firstChild.textContent=P.mode==='perch'?'Le':'Ugrás';
+  document.querySelectorAll('#tools .tool').forEach(b=>{b.classList.toggle('on',+b.dataset.i===P.item);b.hidden=!hasGear(+b.dataset.i);});
 }
 const fwd=()=>({x:-Math.sin(P.yaw),z:-Math.cos(P.yaw)});
-function eyePos(out){return out.set(P.x,P.mode==='ground'?H(P.x,P.z)+P.camY:P.py,P.z);}
+function eyePos(out){return out.set(P.x,P.mode==='ground'?H(P.x,P.z)+P.camY+(P.jy||0):P.py,P.z);}
 
 /* ---------- Fegyverek ---------- */
 function meleeTarget(){const f=fwd();let best=null,bd=9;
@@ -194,6 +198,7 @@ function useItem(){
     if(!S.aim){showMsg('Nincs hová akasztani. Célozz egy sűrű lombú óriásfára.');return;}
     if(!S.aim.ok){showMsg('Túl messze van.');return;}
     startHook(S.aim.g);
+  }else if(it==='fust'){useSmoke();
   }else if(it==='kavics'){
     if(P.mode==='ground'||P.mode==='perch')throwStone();
   }else if(it==='tuske'){
@@ -361,7 +366,7 @@ function arrivePerch(g){P.mode='perch';P.tree=g;A.setRope(0,0,0,0,0,0,false);sho
 function dropDown(){if(P.mode!=='perch')return;const g=P.tree,pr=perchFor(g,P.x,P.z);let lx=g.x+pr.dx*(1.75*g.s+1.6),lz=g.z+pr.dz*(1.75*g.s+1.6);
   /* felülről támadás: van-e rendőr a földet érés közelében? */
   let tgt=null,bd=4.8;COPS.forEach(c=>{if(c.dead||c.active===false)return;const d=Math.hypot(c.x-lx,c.z-lz);if(d<bd){bd=d;tgt=c;}});
-  if(tgt&&ITEMS[P.item].id!=='tekko'&&ITEMS[P.item].id!=='tanto'){/* ha nincs fegyver a kézben, a tantót veszi elő */selectItem(0);}
+  if(tgt&&ITEMS[P.item].id!=='tekko'&&ITEMS[P.item].id!=='tanto'){/* ha nincs fegyver a kézben, a tantót (vagy a tekkót) veszi elő */selectItem(hasGear(0)?0:1);}
   if(tgt){const dx=P.x-tgt.x,dz=P.z-tgt.z,d=Math.hypot(dx,dz)||1;lx=tgt.x+dx/d*0.9;lz=tgt.z+dz/d*0.9;}
   if(A.ROOF&&!A.ROOF.walkable(lx,lz)){showMsg('Alattad a mélység. Kampózz tovább egy másik pontra.');return;}
   const o={x:lx,z:lz};pushOut(o,0.45);
@@ -375,14 +380,15 @@ function stepPlayerAnim(dt){const a=P.anim;a.t+=dt;
     const bx=a.from.x+(a.tx-a.from.x)*k1,bz=a.from.z+(a.tz-a.from.z)*k1;P.x=bx+(a.to.x-bx)*k3;P.z=bz+(a.to.z-bz)*k3;P.py=a.from.y+(a.to.y-a.from.y)*k2;
     if(Math.floor(a.t*3)!==Math.floor((a.t-dt)*3))noiseHit(0.08,2500,'bandpass',0.12,3);if(k>=1)arrivePerch(a.g);}
   else if(P.mode==='drop'){const k=clamp(a.t/a.dur,0,1);P.x=a.from.x+(a.to.x-a.from.x)*k;P.z=a.from.z+(a.to.z-a.from.z)*k;P.py=a.from.y+(a.to.y-a.from.y)*k*k;
-    if(k>=1){P.mode='ground';P.camY=0.95;P.crouch=true;thump(0.45);if(a.tgt&&!a.tgt.dead){strike(a.tgt,ITEMS[P.item].id==='tekko'?'tekko':'tanto',true);}else P.noiseBoost=16;updateButtons();}}
+    if(k>=1){P.mode='ground';P.camY=0.95;P.crouch=true;thump(0.45);if(a.tgt&&!a.tgt.dead){strike(a.tgt,ITEMS[P.item].id==='tanto'?'tanto':'tekko',true);}else P.noiseBoost=16;updateButtons();}}
 }
 
 /* ---------- Játék indítása, vége ---------- */
 function newRound(){
   S.time=0;S.smoke=D.smoke;S.stones=D.stones;S.spikes=D.spikes;S.darts=D.darts;S.stars=D.stars;S.smokeT=0;S.beat=0;S.threat=0;S.alarm=0;S.alarms=0;S.kills=0;S.kos=0;S.shots=0;S.aim=null;
   Object.assign(P,{x:START.x,z:START.z,yaw:0,pitch:0.05,crouch:false,run:false,stam:100,hp:100,mode:'ground',tree:null,anim:null,atk:0,atkCd:0,pend:null,hurt:0,noiseBoost:0,camY:1.65,drag:null});
-  selectItem(0);A.setRope(0,0,0,0,0,0,false);setupCops();A.clearPrints();STONE.on=false;STONE.m.visible=false;if(BR.b){A.shakeBush(BR.b,0,0);BR.b=null;}
+  P.jy=0;P.jv=0;if(GEAR){if(!hasGear(4))S.stones=0;if(!hasGear(5))S.spikes=0;if(!hasGear(6))S.darts=0;if(!hasGear(7))S.stars=0;if(!hasGear(8))S.smoke=0;}
+  P.item=-1;selectItem(GEAR?GEAR.slice().sort((a,b)=>a-b)[0]:0);A.setRope(0,0,0,0,0,0,false);setupCops();A.clearPrints();STONE.on=false;STONE.m.visible=false;if(BR.b){A.shakeBush(BR.b,0,0);BR.b=null;}
   $('foe').textContent=LV==='erdo'?'Rendőrök: '+COPS.length:'';updateButtons();
   if(LV!=='erdo'){tutEnd(false);if(G.hooks.newRound)G.hooks.newRound();}
   else{showMsg('A rendőrség körbezárta a völgyet. Juss el az északi útig.');if($('tutOn').checked)tutStart();else tutEnd(false);}
@@ -393,7 +399,24 @@ function startGame(){
   try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{});}catch(e){}
   document.body.classList.remove('menu');$('start').hidden=true;$('end').hidden=true;$('joyHint').hidden=false;A.hands.visible=true;newRound();Q.frames=0;Q.acc=0;
 }
-$('go').addEventListener('click',startGame);
+/* ---------- Felszerelés-választó (minden küldetés előtt, a falu kiképzése és az első pálya bemutatója kivételével) ---------- */
+const GEAR_TXT=['hátulról egy szúrással végez','leüt, de nem öl','felkapaszkodsz vele a magasba','fatörzsön, oszlopon felmászol','a koppanása odacsalja az őröket','aki belelép, megáll','altatónyíl: akit eltalál, elalszik','sebez; ha nem talál, odacsal','elvakítja a közelieket, eltakar'];
+const GEAR_REQ={varos:[2]},GEAR_DEF=[0,2,4,8];
+const gearAmmo=i=>i===4?D.stones:i===5?D.spikes:i===6?D.darts:i===7?D.stars:i===8?D.smoke:null;
+let GPICK=[],GIMG=false;{const im=new Image();im.onload=()=>{GIMG=true;};im.src='eszkozok/tanto.png';}
+function gearLoad(){const req=GEAR_REQ[LV]||[];let v=null;try{v=JSON.parse(lsGet('ae-gear-'+LV));}catch(e){}
+  if(!Array.isArray(v))v=GEAR_DEF.slice();v=v.filter(i=>i>=0&&i<ITEMS.length);req.forEach(i=>{if(v.indexOf(i)<0)v.unshift(i);});return v.filter((i,k)=>v.indexOf(i)===k).slice(0,GEAR_MAX);}
+function gearDraw(){const box=$('gearGrid'),req=GEAR_REQ[LV]||[];box.innerHTML='';
+  ITEMS.forEach((it,i)=>{const on=GPICK.indexOf(i)>=0,r=req.indexOf(i)>=0,b=document.createElement('button');b.type='button';b.className='gItem'+(r?' req':'')+(!on&&GPICK.length>=GEAR_MAX?' full':'');b.setAttribute('aria-pressed',on?'true':'false');
+    const n=gearAmmo(i);b.innerHTML=(GIMG?'<img alt="" src="eszkozok/'+it.id+'.png">':'')+'<b>'+it.name+(n!==null?'<small>×'+n+'</small>':'')+'</b><span>'+GEAR_TXT[i]+'</span>';
+    b.addEventListener('click',()=>{if(r)return;const k=GPICK.indexOf(i);if(k>=0)GPICK.splice(k,1);else if(GPICK.length<GEAR_MAX)GPICK.push(i);else{showGearFull();return;}gearDraw();});box.appendChild(b);});
+  $('gearN').textContent=GPICK.length+' / '+GEAR_MAX;$('gearGo').disabled=!GPICK.length;
+  $('gearGoSub').textContent=GPICK.length?GPICK.slice().sort((a,b)=>a-b).map(i=>ITEMS[i].name).join(' · '):'Válassz legalább egy eszközt';}
+function showGearFull(){const el=$('gearN');el.style.color='var(--blood)';setTimeout(()=>{el.style.color='';},500);$('gearGoSub').textContent='Legfeljebb négyféle fér el. Előbb tegyél vissza egyet.';}
+function openGear(){GPICK=gearLoad();$('gearEyebrow').textContent=$('startEyebrow').textContent+' · Felszerelés';$('start').hidden=true;$('gear').hidden=false;gearDraw();}
+$('gearBack').addEventListener('click',()=>{$('gear').hidden=true;$('start').hidden=false;});
+$('gearGo').addEventListener('click',()=>{if(!GPICK.length)return;GEAR=GPICK.slice();lsSet('ae-gear-'+LV,JSON.stringify(GEAR));$('gear').hidden=true;startGame();});
+$('go').addEventListener('click',()=>{if(LV==='falu'||(LV==='erdo'&&$('tutOn').checked)){GEAR=null;startGame();return;}openGear();});
 /* telefonon és tableten fekvő helyzet, teljes képernyő */
 const PORT=matchMedia('(orientation:portrait) and (pointer:coarse)');
 function lockL(){try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{});}catch(e){}}
@@ -568,7 +591,7 @@ function frame(now){
   if(S.running&&!PORT.matches){update(dt);Q.frames++;Q.acc+=raw;if(Q.frames===150){if(Q.acc/150>0.03&&Q.level>0){lowerQuality();}Q.frames=0;Q.acc=0;}}
   else{P.yaw+=dt*0.04;}
   const gy=H(P.x,P.z);
-  if(P.mode==='ground')camera.position.set(P.x,gy+P.camY+Math.sin(P.bob)*0.04,P.z);else camera.position.set(P.x,P.py,P.z);
+  if(P.mode==='ground')camera.position.set(P.x,gy+P.camY+(P.jy||0)+Math.sin(P.bob)*0.04,P.z);else camera.position.set(P.x,P.py,P.z);
   {const k=Math.abs(wrapA(P.yaw-VIEW.yaw))>1.2||Math.abs(P.pitch-VIEW.pitch)>1?1:1-Math.exp(-Math.min(raw,0.1)*32);VIEW.yaw+=wrapA(P.yaw-VIEW.yaw)*k;VIEW.pitch+=(P.pitch-VIEW.pitch)*k;}
   camera.rotation.set(VIEW.pitch,VIEW.yaw,(G.camRoll||0)+Math.sin(P.bob*0.5)*0.006*(P.moving?1:0));
   const sx=Math.round(P.x/shadowSnap)*shadowSnap,sz=Math.round(P.z/shadowSnap)*shadowSnap;
@@ -617,10 +640,11 @@ function update(dt){
     P.x+=(-sy*f+cy*s)*speed*dt;P.z+=(-cy*f-sy*s)*speed*dt;pushOut(P,0.45);
     P.moving=mag>0.12;P.stam=clamp(P.stam+(running?-20:11)*dt,0,100);if(P.stam<=1&&P.run){P.run=false;updateButtons();}
     P.noise=P.moving?(P.drag?6:P.crouch?4:running?27:12)*mag:0;if(G.hooks.noiseMul&&P.noise>0)P.noise*=G.hooks.noiseMul(P.x,P.z);if(P.moving)P.bob+=dt*speed*2.2;
-    {const ph=Math.floor(P.bob/Math.PI);if(ph!==P.stepPh){P.stepPh=ph;if(P.moving)footstep();}}
+    {const ph=Math.floor(P.bob/Math.PI);if(ph!==P.stepPh){P.stepPh=ph;if(P.moving&&!(P.jy>0))footstep();}}
     {const b=P.moving?bushAt(P.x,P.z):null;BR.in=!!b;if(b){if(BR.b&&BR.b!==b)A.shakeBush(BR.b,0,0);BR.b=b;BR.k=1;}}
     if(P.drag){const c=P.drag;if(!c.down){P.drag=null;updateButtons();}else{const f=fwd(),tx=P.x+f.x*1.0,tz=P.z+f.z*1.0,k=Math.min(1,dt*8);c.x+=(tx-c.x)*k;c.z+=(tz-c.z)*k;pushOut(c,0.35);c.ry=P.yaw+Math.PI;/* a rendőr hanyatt fekszik, a lábánál fogva húzod: a teste előtted látszik */}}
     P.camY+=((P.crouch?0.95:P.drag?1.15:1.65)-P.camY)*Math.min(1,dt*8);
+    if(P.jy>0||P.jv>0){P.jv-=13*dt;P.jy+=P.jv*dt;if(P.jy<=0){P.jy=0;P.jv=0;P.noiseBoost=Math.max(P.noiseBoost,P.running?16:9);footstep();P.camY-=0.18;}}
   }else{P.moving=false;P.running=false;P.noise=0;P.stam=clamp(P.stam+11*dt,0,100);if(P.mode!=='perch')stepPlayerAnim(dt);}
   if(P.noiseBoost>0){P.noise=Math.max(P.noise,P.noiseBoost);P.noiseBoost=Math.max(0,P.noiseBoost-dt*30);}
   P.atkCd=Math.max(0,P.atkCd-dt);
@@ -719,10 +743,11 @@ function hud(){
     else if(it==='shuriken'){if(S.stars<=0)txt='Elfogyott a dobócsillag';else{const c=dartTarget();txt=c?'Dobd: sebez':'Shuriken: ahol leesik, ott csattan';cls=c?'ok':'';}}
     else if(it==='fukiya'){if(S.darts<=0)txt='Elfogyott az altatónyíl';else{const c=dartTarget();txt=c?'Fújd: elalszik':'Köpőcső: altatónyíl';cls=c?'ok':'';}}
     else if(it==='tuske'){txt=S.spikes<=0?'Elfogyott a tüske':P.running?'Szórd magad mögé':'Dobd előre (futás közben magad mögé szórod)';}
+    else if(it==='fust'){txt=S.smoke>0?'Füstbomba: elvakítja a közelieket, és eltakar':'Elfogyott a füstbomba';}
     else if(it==='kavics'){txt=S.stones>0?(LV==='falu'?'Dobd el: a koppanás odacsalja az őrt':'Dobd el: a koppanás odacsalja a rendőröket'):'Elfogyott a kavics';}
     else{const c=meleeTarget();if(c){txt=c.down?(it==='tanto'?'Végezz vele':'Üsd le újra'):c.st!=='alert'?(it==='tanto'?'Csendes ölés':'Leütés'):(it==='tanto'?'Szúrás':'Ütés');cls='ok';}}}
   cr.className='hud '+cls;cr.hidden=!(it==='kampo'||it==='fukiya'||it==='shuriken'||cls);pr.textContent=txt;pr.hidden=!txt;
-  const ul=$('bUse');ul.firstChild.textContent=P.drag?'Elenged':P.mode==='perch'&&it!=='kampo'&&it!=='kavics'&&it!=='fukiya'&&it!=='shuriken'?'Le':it==='kampo'?'Kampó':it==='karom'?'Mászás':it==='kavics'?'Dob':it==='fukiya'?'Fúj':it==='shuriken'?'Dob':it==='tuske'?(P.running?'Szór':'Dob'):it==='tekko'?'Üt':'Szúr';
+  const ul=$('bUse');ul.firstChild.textContent=P.drag?'Elenged':P.mode==='perch'&&it!=='kampo'&&it!=='kavics'&&it!=='fukiya'&&it!=='shuriken'?'Le':it==='kampo'?'Kampó':it==='karom'?'Mászás':it==='kavics'||it==='fust'?'Dob':it==='fukiya'?'Fúj':it==='shuriken'?'Dob':it==='tuske'?(P.running?'Szór':'Dob'):it==='tekko'?'Üt':'Szúr';
   if(P.mode==='perch')updateButtons();
 }
 A.hands.visible=false;A.beacon.visible=false;
