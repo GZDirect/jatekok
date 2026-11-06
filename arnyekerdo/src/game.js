@@ -329,7 +329,7 @@ const TUT=[
   {t:isTouch?'Nézz körül: húzd a jobb hüvelykujjadat. Az akciógombot nyomva tartva is forgathatod a kamerát.':'Nézz körül: kattints a játéktérre, és mozgasd az egeret (Esc elengedi).',done:()=>TS.yaw>1.2},
   {t:isTouch?'Guggolj le a Guggol gombbal. Guggolva halkabb vagy, bokorban nem látnak.':'Guggolj le a jobb egérgombbal (vagy C). Guggolva halkabb vagy, bokorban nem látnak. Futás: Q.',done:()=>P.crouch},
   {t:isTouch?'Koppints az eszközgombra (az akciógomb fölött), válaszd a Kampót, és célozz a közeli óriásfa lombjára. Ha a lomb felderül, nyomd meg a Kampó gombot.':'Válaszd a kampót (3), célozz a közeli óriásfa lombjára, és ha felderül, kattints.',done:()=>P.mode==='perch'},
-  {t:'Fent vagy a lombban: innen csak akkor látnak meg, ha rád világítanak. Ugorj le ('+(isTouch?'Le gomb':'szóköz')+'). Ha alattad rendőr áll, felülről támadsz.',done:()=>P.mode==='ground'},
+  {t:'Fent vagy a lombban: innen csak akkor látnak meg, ha rád világítanak. Ugorj le ('+(isTouch?'Le gomb':'szóköz')+'). Ha alattad rendőr áll, és tantó vagy tekko van a kezedben, felülről támadsz.',done:()=>P.mode==='ground'},
   {t:'Válaszd a kavicsot ('+(isTouch?'Kavics':'5')+'), és dobj el egyet ('+(isTouch?'Dob gomb':'kattintás')+'). A koppanása odacsalja a közeli rendőröket.',done:()=>TS.thrown},
   {t:'A tantóval (1) hátulról egy szúrással végzel egy rendőrrel, a tekkóval (2) csak leütöd. Válaszd ki a tantót.',done:()=>P.item===0},
   {t:'A leütött rendőrt bokorba húzhatod ('+(isTouch?'Húz gomb':'G')+'), így a társai nem találják meg. A bal felső térkép mutatja a bokrokat és az óriásfákat. Ha készen állsz, nyomd meg a Tovább gombot'+(isTouch?'':' (Enter)')+', és indulj észak felé!',manual:true}];
@@ -366,7 +366,7 @@ function startHook(g){const from=eyePos(new THREE.Vector3()),pr=perchFor(g,P.x,P
   P.py=from.y;noiseHit(0.25,1400,'bandpass',0.35,2);P.noiseBoost=5;updateButtons();}
 function startClimb(g){const from=eyePos(new THREE.Vector3()),pr=perchFor(g,P.x,P.z);
   P.mode='climb';P.run=false;P.crouch=false;P.anim={t:0,g,from,to:new THREE.Vector3(pr.x,pr.y,pr.z),dur:2.4,tx:g.x+pr.dx*(g.r+0.45),tz:g.z+pr.dz*(g.r+0.45)};P.py=from.y;P.noiseBoost=4;updateButtons();}
-function arrivePerch(g){P.mode='perch';P.tree=g;if(S.trees)S.trees.add(g);A.setRope(0,0,0,0,0,0,false);showMsg(LV==='vonat'||LV==='kikoto'?'A konténer tetején vagy. Innen felülről támadhatsz.':LV==='varos'?'Fent vagy. Kampózz tovább, vagy ugorj le, ha alattad tető van.':'A lombban vagy. Innen nem látnak, csak ha rád világítanak.');thump(0.2);updateButtons();}
+function arrivePerch(g){P.mode='perch';P.tree=g;if(S.trees)S.trees.add(g);A.setRope(0,0,0,0,0,0,false);showMsg(LV==='vonat'||LV==='kikoto'?'A konténer tetején vagy. Tantóval vagy tekkóval innen felülről támadhatsz.':LV==='varos'?'Fent vagy. Kampózz tovább, vagy ugorj le, ha alattad tető van.':'A lombban vagy. Innen nem látnak, csak ha rád világítanak.');thump(0.2);updateButtons();}
 function dropDown(){if(P.mode!=='perch')return;const g=P.tree,pr=perchFor(g,P.x,P.z),dr=g.dropR||(1.75*g.s+1.6);let lx=g.x+pr.dx*dr,lz=g.z+pr.dz*dr;
   /* ha ott nem lehet földet érni (pl. a konténer hosszában), a nézés irányában, aztán körben keres helyet */
   if(A.ROOF&&!A.ROOF.walkable(lx,lz)){const f=fwd(),dirs=[[f.x,f.z]];for(let k=0;k<8;k++)dirs.push([Math.cos(k*Math.PI/4),Math.sin(k*Math.PI/4)]);
@@ -374,7 +374,7 @@ function dropDown(){if(P.mode!=='perch')return;const g=P.tree,pr=perchFor(g,P.x,
   /* felülről támadás: van-e rendőr a földet érés közelében? */
   let tgt=null,bd=4.8;COPS.forEach(c=>{if(c.dead||c.active===false)return;const d=Math.hypot(c.x-lx,c.z-lz);if(d<bd){bd=d;tgt=c;}});
   /* felülről csak akkor támadsz, ha tantó vagy tekko van a kezedben; különben csak leugrasz (lopakodva is le lehet jönni egy őr mellé) */
-  if(tgt&&ITEMS[P.item].id!=='tekko'&&ITEMS[P.item].id!=='tanto')tgt=null;
+  if(tgt&&ITEMS[P.item].id!=='tekko'&&ITEMS[P.item].id!=='tanto'){if(LV==='falu')selectItem(1);else tgt=null;}
   if(tgt){const dx=P.x-tgt.x,dz=P.z-tgt.z,d=Math.hypot(dx,dz)||1;lx=tgt.x+dx/d*0.9;lz=tgt.z+dz/d*0.9;}
   if(A.ROOF&&!A.ROOF.walkable(lx,lz)){showMsg('Alattad a mélység. Kampózz tovább egy másik pontra.');return;}
   const o={x:lx,z:lz};pushOut(o,0.45);
