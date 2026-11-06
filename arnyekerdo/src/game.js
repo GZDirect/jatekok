@@ -72,7 +72,7 @@ const copEyeY=c=>H(c.x,c.z)+1.6;
 setupCops();
 
 /* ---------- Üzenetek, feliratok, hang ---------- */
-function showMsg(t){const m=$('msg');m.textContent=t;S.msgT=3.6;m.style.opacity=$('tut').hidden?1:0;}
+function showMsg(t){const m=$('msg');m.textContent=t;S.msgT=3.6;m.style.opacity=($('tut').hidden||TS.on)?1:0;}
 const LINES={
   spot:[['いたぞ！止まれ！','Ita zo! Tomare!','Ott van! Állj!'],['動くな！警察だ！','Ugoku na! Keisatsu da!','Ne mozdulj! Rendőrség!'],['そこだ！','Soko da!','Ott van!']],
   sus:[['何だ？','Nanda?','Mi volt ez?'],['誰かいるのか？','Dareka iru no ka?','Van ott valaki?'],['ん？','N?','Hm?']],
@@ -328,7 +328,7 @@ function ambStep(dt){if(!ac||!AMB.on)return;
 /* ---------- Bemutató az első percben ---------- */
 
 const TUT=[
-  {t:isTouch?'Mozogj: húzd a bal hüvelykujjadat a képernyő bal oldalán. Ha előre egészen a FUT ívig kihúzod, futsz.':'Mozogj a W A S D billentyűkkel.',done:()=>Math.hypot(P.x-START.x,P.z-START.z)>4},
+  {t:isTouch?'Mozogj: húzd a bal hüvelykujjadat a képernyő bal oldalán. Ha előre egészen a FUT ívig kihúzod, futsz.':'Mozogj a W A S D billentyűkkel.',done:()=>Math.hypot(P.x-START.x,P.z-START.z)>2.5},
   {t:isTouch?'Nézz körül: húzd a jobb hüvelykujjadat. Az akciógombot nyomva tartva is forgathatod a kamerát.':'Nézz körül: kattints a játéktérre, és mozgasd az egeret (Esc elengedi).',done:()=>TS.yaw>1.2},
   {t:isTouch?'Guggolj le a Guggol gombbal. Guggolva halkabb vagy, bokorban nem látnak.':'Guggolj le a jobb egérgombbal (vagy C). Guggolva halkabb vagy, bokorban nem látnak. Futás: Q.',done:()=>P.crouch},
   {t:isTouch?'Koppints az eszközgombra (az akciógomb fölött), válaszd a Kampót, és célozz a közeli óriásfa lombjára. Ha a lomb felderül, nyomd meg a Kampó gombot.':'Válaszd a kampót (3), célozz a közeli óriásfa lombjára, és ha felderül, kattints.',done:()=>P.mode==='perch'},
@@ -497,7 +497,7 @@ function saveText(sv){if(!sv.t)return'Üres';const a=[];for(let i=0;i<LEVELS.len
   return (shadowMaster(sv)?'◈ Árnyékok Mestere · ':'')+a.join(' · ');}
 function refreshLvl(){const sv=G.loadSave(),nav=$('lvlNav');nav.innerHTML='';
   LEVELS.forEach((l,i)=>{const el=document.createElement('a'),here=LV===l.id,o=sv.lv[l.id],open=lvUnlocked(sv,i)||here;el.classList.toggle('on',here);
-    if(!open){el.className='locked';el.innerHTML=(i+1)+' · '+l.name+'<small>a '+i+'. pálya után nyílik</small>';}
+    if(!open){el.className='locked';el.title='a '+i+'. pálya után nyílik';el.innerHTML=(i+1)+' · '+l.name+'<small>a '+i+'. pálya után nyílik</small>';}
     else{el.href='?palya='+l.id;el.innerHTML=(i+1)+' · '+l.name+(o?'<small class="'+(o.r==='Árnyék'?'sh':'')+'">'+o.r+'</small>':'');if(here)el.classList.add('on');}
     nav.appendChild(el);});
   $('masterSeal').hidden=!shadowMaster(sv);
@@ -515,6 +515,10 @@ showInstall();
 $('tSaves').addEventListener('click',()=>{drawSlots();$('saves').hidden=false;$('title').classList.add('sv');});
 $('sBack').addEventListener('click',()=>{$('saves').hidden=true;$('title').classList.remove('sv');refreshLvl();});
 showTitle(!/[?&]palya=/.test(location.search));
+/* a hosszú irányítás-lista csak az első pályán, első alkalommal van nyitva; utána egy kattintással lenyitható */
+try{$('howBox').open=LV==='erdo'&&!lvDone(loadSave(slotNo()),'erdo');}catch(e){}
+/* ha a régi változat mentései ott vannak, a Mentések képernyő szól róla */
+try{let old=false;for(let i=0;i<localStorage.length;i++){if(/^ae-save/.test(localStorage.key(i)))old=true;}$('oldNote').hidden=!old;}catch(e){}
 showDiff();try{$('tutOn').checked=!localStorage.getItem('ae-tut-done');}catch(e){$('tutOn').checked=true;}
 $('again').addEventListener('click',()=>{$('end').hidden=true;$('start').hidden=false;});
 function endGame(win,title,text,res){
@@ -719,7 +723,7 @@ function update(dt){
   if(LV==='erdo'&&P.mode==='ground'&&P.z<-ZN-4&&Math.abs(P.x)<6){finishLevel('Kijutottál','A völgy mögötted maradt. A rendőrök még hajnalig keresnek majd, de te már a mester felé tartasz.','Küldetés teljesítve');return;}
 
   if(G.hooks.update){G.hooks.update(dt);if(!S.running)return;}
-  if(S.msgT>0){if(!$('tut').hidden)$('msg').style.opacity=0;else{$('msg').style.opacity=1;S.msgT-=dt;if(S.msgT<=0)$('msg').style.opacity=0;}}
+  if(S.msgT>0){if(!$('tut').hidden&&!TS.on)$('msg').style.opacity=0;else{$('msg').style.opacity=1;S.msgT-=dt;if(S.msgT<=0)$('msg').style.opacity=0;}}
   if(S.subT>0){S.subT-=dt;if(S.subT<=0)$('sub').style.opacity=0;}
   hudT-=dt;if(hudT<=0){hudT=0.1;hud();}
 }

@@ -107,18 +107,26 @@ body:not(.desk) .tool.hov{border-color:var(--lantern);color:var(--lantern);}
 .b:focus-visible,.choice:focus-visible,#again:focus-visible{outline:2px solid var(--lantern);outline-offset:3px;}
 .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(6,9,11,0.82);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(env(safe-area-inset-top,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 16px);overflow-y:auto;}
 .card{width:100%;max-width:420px;display:flex;flex-direction:column;gap:16px;}
+.screen>.card,.screen>.gIn{margin-block:auto;}
+.screen{align-items:flex-start;}
 .eyebrow{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--mist);}
 h1,h2{margin:0;font-family:var(--display);font-weight:700;text-wrap:balance;line-height:1.05;}
 h1{font-size:52px;}
 h2{font-size:40px;}
 .card p{margin:0;font-size:15px;line-height:1.55;color:#d6d0c0;}
-.choice{display:flex;flex-direction:column;gap:3px;text-align:left;padding:14px 16px;background:rgba(236,229,211,0.06);border:1.5px solid var(--line);border-radius:6px;color:var(--moon);font-family:var(--ui);cursor:pointer;}
+.choice{display:flex;flex-direction:column;gap:3px;text-align:left;padding:14px 16px;background:rgba(8,11,14,0.78);box-shadow:0 2px 14px rgba(0,0,0,0.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1.5px solid var(--line);border-radius:6px;color:var(--moon);font-family:var(--ui);cursor:pointer;}
 .choice b{font-family:var(--display);font-size:22px;}
 .choice span{font-size:13px;color:var(--mist);}
 .choice:active{border-color:var(--lantern);}
 .how{font-size:13px;line-height:1.6;color:var(--mist);display:grid;grid-template-columns:auto 1fr;gap:4px 12px;}
 .how dt{color:var(--moon);font-weight:600;}
 .how dd{margin:0;}
+.howBox summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--moon);padding:8px 0;list-style:none;}
+.howBox summary::-webkit-details-marker{display:none;}
+.howBox summary::before{content:'▸ ';color:var(--lantern);}
+.howBox[open] summary::before{content:'▾ ';}
+.howBox summary:focus-visible{outline:2px solid var(--lantern);outline-offset:2px;}
+.oldNote{font-size:12px;color:var(--mist);margin:4px 0 0;line-height:1.45;max-width:340px;}
 #nextLvl{display:block;text-align:center;padding:14px 16px;margin-bottom:8px;background:var(--goal);color:#0a0f13;border-radius:6px;font-family:var(--ui);font-size:16px;font-weight:600;text-decoration:none;}#nextLvl[hidden]{display:none;}
 #again{padding:14px 16px;background:var(--moon);color:#0a0f13;border:0;border-radius:6px;font-family:var(--ui);font-size:16px;font-weight:600;cursor:pointer;}
 .legal{font-size:12px;color:var(--mist);text-align:center;margin:0;}
@@ -231,6 +239,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
   #start h1{font-size:34px;} #start .card p{font-size:13px;line-height:1.42;} #start .how{font-size:11.5px;line-height:1.35;gap:3px 10px;margin:2px 0 0;}
   .col1{gap:9px;} .choice{padding:9px 12px;} .choice b{font-size:19px;} .choice span{font-size:12px;} .diff button{padding:6px 4px;font-size:13px;} .eyebrow{font-size:11px;} #end .card{max-width:520px;} h2{font-size:32px;}
   #tut{top:calc(env(safe-area-inset-top,0px) + 70px);width:min(52vw,440px);} #tutText{font-size:13px;}
+  .lvl{gap:4px;margin:0 0 4px;} .lvl a{flex:1 1 22%;padding:5px 3px;font-size:11px;line-height:1.25;} .lvl a.locked small{display:none;} .lvl a small{font-size:9.5px;}
 }
 </style>
 
@@ -296,7 +305,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
     <button class="tB" id="tInstall" type="button" hidden>Telepítés<small id="tInstallSub">alkalmazásként, mindig teljes képernyőn</small></button>
   </div>
   <p class="legal">© 2026 Fejes Géza. Minden jog fenntartva.</p>
-  <div id="saves" hidden><div class="sIn"><h2>Mentések</h2><div id="slots"></div><button class="tB" id="sBack" type="button">Vissza</button></div></div>
+  <div id="saves" hidden><div class="sIn"><h2>Mentések</h2><div id="slots"></div><p class="oldNote" id="oldNote" hidden>A korábbi, négypályás változat mentései ide nem jutnak át: a nyolc pályához új rangrendszer tartozik, ezért a történetet az elejéről kezded.</p><button class="tB" id="sBack" type="button">Vissza</button></div></div>
 </div>
 <div class="screen" id="start" hidden>
   <div class="card">
@@ -315,6 +324,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
       <button class="choice" id="go" type="button"><b>Indulás</b><span>Cél: az északi út. A rendőrök útvonala minden körben más.</span></button>
       <p class="legal">© 2026 Fejes Géza. Minden jog fenntartva.</p>
     </div>
+    <details class="howBox" id="howBox"><summary>Irányítás és eszközök</summary>
     <dl class="how">
       <dt>Bal hüvelykujj</dt><dd>mozgás (gép: W A S D)</dd>
       <dt>Jobb hüvelykujj</dt><dd>körülnézés (gép: kattints a játéktérre, utána az egérrel nézel körül; Esc elengedi)</dd>
@@ -332,7 +342,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
       <dt>Füstbomba</dt><dd>elvakítja a közeli rendőröket, és eltakar (9 vagy F)</dd>
       <dt>Ugrás</dt><dd>Ugrás gomb vagy szóköz: rönkön, kövön, ládán átugrasz; a fáról leugrasz vele</dd>
       <dt>? és !</dt><dd>a rendőr feje fölött: a kérdőjel a gyanúval telik, a vörös felkiáltójel riadó</dd>
-    </dl>
+    </dl></details>
   </div>
 </div>
 
