@@ -9,7 +9,7 @@ import os
 D = os.path.dirname(os.path.abspath(__file__))
 rd = lambda n: open(os.path.join(D, n), encoding='utf-8').read()
 shell = rd('shell.html')
-js = '\n'.join(rd(n) for n in ('hang_lista.js', 'world.js', 'actors.js', 'falu.js', 'varos.js', 'vonat.js', 'kikoto.js', 'parkolt.js', 'game.js', 'falu_game.js', 'varos_game.js', 'vonat_game.js', 'kikoto_game.js')) + '\n'
+js = '\n'.join(rd(n) for n in ('hang_lista.js', 'world.js', 'actors.js', 'falu.js', 'varos.js', 'vonat.js', 'kikoto.js', 'fesztival.js', 'parkolt.js', 'game.js', 'falu_game.js', 'varos_game.js', 'vonat_game.js', 'kikoto_game.js', 'fesztival_game.js')) + '\n'
 # Tömörítés (a GitHub Pages-en kisebb, gyorsabban töltődik): terser, a © megjegyzés megmarad. --plain: tömörítés nélkül.
 import subprocess, sys as _s, tempfile as _t
 if '--plain' not in _s.argv:

@@ -283,3 +283,15 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - Őrök nehézség szerint: 6 / 8 / 10 (`ORDER`, `NACT`). Normálon nincs bent őr az irodában.
 - Új általános szabály: fáról, tetőről csak akkor támadsz, ha tantó vagy tekko van a kezedben; különben csak leugrasz. Lapos pályán a földet érés zaja kisebb.
 - Ellenőrzött Árnyék-útvonal (normál, élő őrökkel, 3-ból 2 próbán): nyugati sáv (x=-25,5) → keresztsor (z=16) → konténer → nyugati sáv a kerítésig → karmokkal az oszlopra (-24,8; -31) → kampó az iroda tetejére → le, bokor az iroda mögött (-10; -51) → iroda → bokrok (-1,5; -47), (10; -50), (16,5; -44), (25,2; -38) → keleti sáv → kijárat. Daruval is végigjátszva (őrök nélkül).
+
+## 5. A 6. pálya: A rókák éjszakája (kastélypark, lampionos ünnep, alkonyattól sötétedésig)
+
+- Fájlok: `src/fesztival.js` (díszlet: bambuszliget, bódésorok, színpad, koi-tó híddal, teaház, szentélykert, fenyők, tűzijáték, civil sétálók), `src/fesztival_game.js`. Cím: `?palya=fesztival`.
+- Három rókamaszkos díszvendég (`vip`, ALLCOPS 0–2). Minden körben véletlenszerű, melyik Mori. Mori sántít ÉS balkezes (bal kezében a legyező); az egyik csaló csak balkezes, a másik csak sántít. A maszk miatt rövidebbre látnak (`c.seeMul`).
+- 24 mp-enként helycsere (bódék, színpad, tó); minden 3. körben Mori a teaházba megy telefonálni (a papírfal mellől kihallgatható, 3 mondat). A testőre mellette marad, a teaház ajtajánál vár.
+- Zsebből lopás: új általános horog `G.hooks.ctx()` → `{label, txt, act}`; az akciógomb ezt hajtja végre. Itt: hátulról, 1,45 m-en belül.
+- Tűzijáték 42 mp-enként 12 mp-ig: `G.hooks.noiseMul` = 0,2 (csak a hallás, a látás marad). 3 mp-cel előtte jelez.
+- Alkony: 5 perc alatt sötétedik, `G.visMul` 0,9 → 0,6, a lampionok világítanak.
+- Pecsétek: Róka szeme (elsőre Morit lopod meg), A robaj árnyékában (tűzijáték alatt futás/dobás őr közelében), Láthatatlan vendég, Békés ünnep.
+- Ellenőrizve: a teljes menet (lopás tűzijáték alatt, kijutás a hátsó kapun) Árnyék ranggal a díszvendégek élő figyelése mellett, a többi testőr nélkül. Élő testőrökkel a szkriptelt próba nem jutott át az udvaron; ezt valódi játékban kell kipróbálni.
+- Új szinkronsorok (8): `hangok.py` most a hármas első elemét hangjelnek veszi (`['g','','…']` = testőr, `['b','','…']` = Mori).

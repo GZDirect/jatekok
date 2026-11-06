@@ -36,10 +36,11 @@ for m in TRI.finditer(block(g, 'const LINES={')): add('g', m.group(3)); add('f',
 f = rd('falu_game.js'); fl = block(f, 'Object.assign(G.LINES')
 for m in TRI.finditer(fl): add('f', m.group(3))
 for m in TRI.finditer(f.replace(fl, '')): add('m', m.group(3))
-for n in ('varos_game.js', 'vonat_game.js'):
+for n in ('varos_game.js', 'vonat_game.js', 'kikoto_game.js', 'fesztival_game.js'):
     s = rd(n); lb = block(s, 'Object.assign(G.LINES')
     for m in TRI.finditer(lb): add('g', m.group(3)); add('f', m.group(3))
-    for m in TRI.finditer(s.replace(lb, '')): add('b', m.group(3))
+    # a többi mondat: ha az első elem egy hang betűje (g, f, m, b), azzal; különben Kuroda/Mori hangja (b)
+    for m in TRI.finditer(s.replace(lb, '')): add(m.group(1) if m.group(1) in ('g', 'f', 'm', 'b') else 'b', m.group(3))
     c = re.search(r"const CALL=\[(.*?)\];", s)
     if c:
         for t in re.findall(r"'([^']*)'", c.group(1)): add('b', t)

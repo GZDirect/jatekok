@@ -13,6 +13,8 @@ A negyedik pálya (**Hegyi expressz**) egy száguldó magánvonaton játszódik 
 
 Az ötödik pálya (**Acélárnyak**) egy konténerkikötőben játszódik kora reggel: Naruse konténerét és az iroda rakományjegyzékét kell megszerezni. A kerítésen a nagy daru terhén, a kapun, vagy lámpaoszlopról az iroda tetejére kampózva lehet átjutni.
 
+A hatodik pálya (**A rókák éjszakája**) egy kastélypark lampionos ünnepén játszódik alkonyattól sötétedésig: a három rókamaszkos díszvendég közül fel kell ismerni Morit (sántít és balkezes), és hátulról ki kell lopni a zsebéből a kulcsot. A tűzijáték alatt nem hallják a lépteidet.
+
 **Játék:** https://gzdirect.github.io/jatekok/arnyekerdo/
 
 Telefonon a böngésző menüjében a **Hozzáadás a kezdőképernyőhöz** paranccsal alkalmazásként is telepíthető, és az első megnyitás után net nélkül is elindul.
