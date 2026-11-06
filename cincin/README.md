@@ -2,7 +2,7 @@
 
 ![Cincin a padláson](cover.jpg)
 
-> ⚠️ **Design előtti verzió – v0.12 (2026. november 5.)**
+> ⚠️ **Design előtti verzió – v0.12.1 (2026. november 5.)**
 > A játékmenet és mind a tíz pálya végigjátszható, és már mind a tíz helyiség festett grafikát kapott. Minden helyiségnek saját zenéje van, és mindegyikben elrejtettünk egy titkos egérjáratot. Magyarul és angolul is játszható.
 
 Cincin, a kis sálas egér egy hatalmas, régi házban lakik. A padlástól a kertig tíz helyiségen kell átjutnia, és mindegyik végén egy furfangos ellenfél vár rá: az alvó macska, a felhúzható óriásrobot, a bagoly, a szakács, a kutya, a patkány… Gyűjtsd a magokat, keresd meg minden szobában a rejtett sajtot, kússz be a bútorok alá, és találd ki, hogyan jutsz túl a szoba urán.
@@ -49,6 +49,7 @@ A tesztelők ezt a címet kapják: `…/cincin/?teszt` – így a szünet menüb
 
 ## Változások
 
+- **v0.12.1** – Javítások: a padló alatti kúszóterek festett deszkafalat, gerendákat és padlót kaptak a sima felületek helyett; a lepedős asztalok alatt festett doboz és láda áll; a gyerekszobai kockavár polcán rés nyílt, így az udvarban lévő magok elérhetők; a kamera titkos járatban sem veszítheti szem elől Cincint. A betűtípus neve Lodger Mono.
 - **v0.12** – Három új titkos alagút (köves pince, kamrai, gyökeres földjárat), festett egérlyuk-bejáratok, ajándékcsomagok és útjelző tábla, Nagyapó otthona: gyűjteményszoba a megszerzett sálakkal, festményekkel, sajtokkal és a magokkal telő befőttesüveggel. Hatfázisú szakácsjárás, négyfázisú futás és új pózok a macskának, a kutyának és a patkánynak. Előtér-réteg mind a tíz helyiségben (kikapcsolható), festett effektek (por, csillogás, fröccs, ütés, borsfelhő), új konyhai elszívó, sortördelt üzenetek.
 - **v0.11.1** – Betűtípusok pótlása, ikonok, megosztási előnézet, telepíthető és offline is induló változat.
 - **v0.11** – Új név: **The Littlest Lodger** (a főszereplő továbbra is Cincin). Festett címképernyő logóval és élő Cincinnel, a pályaválasztó egy kettévágott ház, amelyben a szobákra kell kattintani, festett menük, gombok, csúszkák és ikonok, festett eredmény-jelvények, hat új mesekönyv-oldal. Cincin új, festett pózokat kapott: futás, ugrás, esés, landolás, megtorpanás, guggolás, kúszás, tolás, pislogás, nézelődés, ütés, szédülés, győzelmi ugrás.
