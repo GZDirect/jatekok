@@ -106,8 +106,8 @@ const SIL=(()=>{const t=canvasTex(64,128,(c,w,h)=>{c.clearRect(0,0,w,h);c.fillSt
 
 const EXIT={x0:-28,x1:-20,z0:-59.5,z1:-56};
 const routes={
-  garden:[{x:-10,z:46},{x:-10,z:22},{x:10,z:22},{x:10,z:46}],
-  front:[{x:-20,z:-6},{x:20,z:-6},{x:20,z:-2},{x:-20,z:-2}],
+  garden:[{x:-22,z:46},{x:-22,z:22},{x:-9,z:22},{x:-9,z:46}],
+  front:[{x:6,z:-6},{x:21,z:-6},{x:21,z:-2},{x:6,z:-2}],
   room2:[{x:-6,z:-20},{x:-4,z:-17}],
   room3:[{x:6,z:-20},{x:4,z:-17}],
   court:[{x:-20,z:-26},{x:20,z:-26}],

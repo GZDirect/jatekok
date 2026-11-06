@@ -72,7 +72,7 @@ G.hooks.update=dt=>{const t=S.time,n=naruse();
     if(L){F.SIL.position.x=P.x;F.SIL.scale.set(1,P.crouch?0.62:1,1);F.SIL.position.y=P.crouch?0.9:1.25;
       COPS.forEach(c=>{if(c.down||c.active===false||c.st==='alert')return;const v=L.viewer;if(!(c.x>v.x0&&c.x<v.x1&&c.z>v.z0&&c.z<v.z1))return;
         const dx=P.x-c.x,dz=-14-c.z,d=Math.hypot(dx,dz),fx=-Math.sin(c.ry),fz=-Math.cos(c.ry);if(d>10||(dx*fx+dz*fz)/d<0.2)return;
-        c.aw=Math.min(1.2,c.aw+dt*(P.moving?0.75:0.4)*(P.crouch?0.7:1));if(!T.silSeen&&c.aw>0.35){T.silSeen=true;}
+        c.aw=Math.min(1.2,c.aw+dt*(P.moving?0.55:0.3)*(P.crouch?0.65:1));if(!T.silSeen&&c.aw>0.35){T.silSeen=true;}
         if(c.aw>0.35&&c.st==='patrol'){c.st='suspect';c.tx=P.x;c.tz=-15;if(t-(c.saidT||-99)>6){c.saidT=t;G.sayLine(SAY.shadow,c.x,c.z,0.95,'g');}}
         if(c.aw>=1)G.spotted(c);});}}
   /* Naruse: a főcsarnokban vár, időnként a panel felé és az ajtó felé fordul */
