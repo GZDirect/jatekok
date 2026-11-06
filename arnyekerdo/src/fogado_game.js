@@ -38,9 +38,9 @@ const ACC={x:18.6,z:-32.6,m:null};
 const CHEST={x:21.2,z:-33.8};
 
 /* ---------- derült, hideg délelőtt ---------- */
-G.setDaylight(true);A.scene.background.setHex(0xcfe0f0);A.scene.fog.color.setHex(0xe6eef6);A.scene.fog.density=0.0045;
-{const sky=A.sky.material.uniforms;sky.uHor.value=new THREE.Color(0xe8f0f8);sky.uZen.value=new THREE.Color(0x3a76c4);}
-A.moonLight.color.setHex(0xfff6ea);A.moonLight.intensity=1.6;A.hemi.color.setHex(0xe0ecff);A.hemi.groundColor.setHex(0xc8d0dc);A.hemi.intensity=0.95;A.MOON_DIR.set(0.35,0.62,0.4).normalize();
+G.setDaylight(true);A.scene.background.setHex(0xb4c2d2);A.scene.fog.color.setHex(0xbecad8);A.scene.fog.density=0.0105;
+{const sky=A.sky.material.uniforms;sky.uHor.value=new THREE.Color(0xccd6e2);sky.uZen.value=new THREE.Color(0x6a82a4);}
+A.moonLight.color.setHex(0xffead0);A.moonLight.intensity=1.05;A.hemi.color.setHex(0xc4d2ea);A.hemi.groundColor.setHex(0x7c889c);A.hemi.intensity=0.78;A.MOON_DIR.set(0.35,0.62,0.4).normalize();
 G.hooks.hide=()=>P.crouch&&F.inSteam(P.x,P.z);
 
 /* ---------- körönként ---------- */

@@ -63,10 +63,10 @@ const moriInTea=()=>{const m=ALLCOPS[MORI];return T.ph%3===2&&m.x>F.TEA.x0&&m.x<
 const C0={bg:new THREE.Color(0xe8b890),fog:new THREE.Color(0xd8a88a),hor:new THREE.Color(0xf4b880),zen:new THREE.Color(0x6a80b8),sun:new THREE.Color(0xffb070)},
   C1={bg:new THREE.Color(0x2a3048),fog:new THREE.Color(0x2c3048),hor:new THREE.Color(0x6a5a78),zen:new THREE.Color(0x141c38),sun:new THREE.Color(0x8a7aa0)};
 const TC=new THREE.Color();
-function applyDusk(k){const sky=A.sky.material.uniforms;A.scene.background.copy(C0.bg).lerp(C1.bg,k);A.scene.fog.color.copy(C0.fog).lerp(C1.fog,k);A.scene.fog.density=0.006+0.004*k;
+function applyDusk(k){G.duskK=k;const sky=A.sky.material.uniforms;A.scene.background.copy(C0.bg).lerp(C1.bg,k);A.scene.fog.color.copy(C0.fog).lerp(C1.fog,k);A.scene.fog.density=0.006+0.004*k;
   sky.uHor.value.copy(C0.hor).lerp(C1.hor,k);sky.uZen.value.copy(C0.zen).lerp(C1.zen,k);A.moonLight.color.copy(C0.sun).lerp(C1.sun,k);A.moonLight.intensity=1.25-0.85*k;A.hemi.intensity=0.85-0.4*k;
   A.MOON_DIR.set(-0.7,0.22-0.12*k,0.3).normalize();G.visMul=0.9-0.3*k;F.paperGlow.emissiveIntensity=0.15+1.1*k;F.LANTERNS.forEach(s=>s.material.opacity=0.15+0.6*k);if(F.TEA.paper)F.TEA.paper.emissiveIntensity=0.15+0.6*k;}
-G.setDaylight(true);{const sky=A.sky.material.uniforms;sky.uHor.value=new THREE.Color();sky.uZen.value=new THREE.Color();}A.hemi.color.setHex(0xd0d8f0);A.hemi.groundColor.setHex(0x5a4a3a);applyDusk(0);
+G.setDaylight(true);{const sky=A.sky.material.uniforms;sky.uHor.value=new THREE.Color();sky.uZen.value=new THREE.Color();}A.hemi.color.setHex(0xd0d8f0);A.hemi.groundColor.setHex(0x5a4a3a);applyDusk(0.3);
 
 /* ---------- tűzijáték: a zaj elnyelődik, a látás marad ---------- */
 G.hooks.noiseMul=()=>T.fwOn?0.2:1;
@@ -87,7 +87,7 @@ function steal(c){T.stolen.push(c.id);G.tone(0.05,1600,2200,0.06);
 
 /* ---------- körönként ---------- */
 G.hooks.newRound=()=>{Object.assign(T,{key:false,wrong:false,stolen:[],boom:false,heard:0,ph:0,phT:0,fw:0,fwOn:false,warned:false,talkT:6,callT:3,ci:0,done:false,panelT:12,dusk:0});
-  F.FW.forEach(f=>{f.t=9;f.p.material.opacity=0;});applyDusk(0);setPhase(0);
+  F.FW.forEach(f=>{f.t=9;f.p.material.opacity=0;});applyDusk(0.3);setPhase(0);
   if(T.fromCp&&T.cp){T.fromCp=false;T.key=true;T.stolen=[MORI];P.x=T.cp.x;P.z=T.cp.z;P.yaw=0;G.showMsg('Folytatod: a kulcs nálad van. Irány a hátsó kapu.');}
   else{T.fromCp=false;T.cp=null;P.yaw=0;G.showMsg('Alkonyodik. A rókamaszkos vendégek az udvaron vannak.');}
   $('tut').hidden=false;$('tutStep').textContent='Küldetés · A rókák éjszakája';
@@ -95,7 +95,7 @@ G.hooks.newRound=()=>{Object.assign(T,{key:false,wrong:false,stolen:[],boom:fals
 
 G.hooks.update=dt=>{const t=S.time;
   if(T.panelT>0){T.panelT-=dt;if(T.panelT<=0||P.z<42)$('tut').hidden=true;}
-  T.dusk=clamp(t/300,0,1);applyDusk(T.dusk);stepFw(dt);F.stepVisitors(dt,t);
+  T.dusk=0.3+0.7*clamp(t/300,0,1);applyDusk(T.dusk);stepFw(dt);F.stepVisitors(dt,t);
   /* napirend */
   T.phT-=dt;if(T.phT<=0)setPhase(T.ph+1);
   VIPS.forEach(i=>{const c=ALLCOPS[i];if(c.active===false||c.down)return;if(c.st==='patrol')stepNav(c);else c.nav=null;});

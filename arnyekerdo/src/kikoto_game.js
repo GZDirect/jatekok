@@ -30,9 +30,9 @@ G.hooks.setup=()=>{const n=nact();ORDER.forEach((k,i)=>{const c=ALLCOPS[i],r=K.r
   if(i<n){if(k==='gate')place(c,r[0].x,r[0].z,Math.PI,null,true);else if(k==='office')place(c,r[0].x,r[0].z,0,null,true);else place(c,r[0].x,r[0].z,0,r.map(p=>({x:p.x,z:p.z})),true);}else place(c,PARK.x,PARK.z,0,null,false);});};
 
 /* ---------- reggeli fény: alacsony nap keletről, narancs fény, kékes köd ---------- */
-function morning(){G.setDaylight(true);const sky=A.sky.material.uniforms;A.scene.background.setHex(0xe8c8a8);A.scene.fog.color.setHex(0xd8c8bc);A.scene.fog.density=0.0042;
-  sky.uHor.value=new THREE.Color(0xf4c89a);sky.uZen.value=new THREE.Color(0x6e90c4);A.moonLight.color.setHex(0xffc890);A.moonLight.intensity=1.35;
-  A.hemi.color.setHex(0xc8d6f0);A.hemi.groundColor.setHex(0x5a5048);A.hemi.intensity=0.8;A.MOON_DIR.set(0.82,0.3,0.25).normalize();}
+function morning(){G.setDaylight(true);const sky=A.sky.material.uniforms;A.scene.background.setHex(0xd6c2b6);A.scene.fog.color.setHex(0xcbbcb8);A.scene.fog.density=0.0105;
+  sky.uHor.value=new THREE.Color(0xf6b688);sky.uZen.value=new THREE.Color(0x56709e);A.moonLight.color.setHex(0xffb878);A.moonLight.intensity=1.3;
+  A.hemi.color.setHex(0xa8bce0);A.hemi.groundColor.setHex(0x4a4240);A.hemi.intensity=0.72;A.MOON_DIR.set(0.85,0.24,0.3).normalize();}
 morning();
 
 /* ---------- körönként ---------- */

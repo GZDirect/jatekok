@@ -32,7 +32,9 @@ const paperGlow=new THREE.MeshLambertMaterial({color:0xfff0d0,emissive:0xffb060,
 /* ---------- talaj: kavics az udvarokon, moha a liget és a kert alatt ---------- */
 {const gr=new THREE.Mesh(new THREE.PlaneGeometry(60,120),lam(0xffffff,{map:gravel}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;scene.add(gr);
   [[0,46,60,28],[0,-50,60,20]].forEach(q=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(q[2],q[3]),lam(0xffffff,{map:moss}));m.rotation.x=-Math.PI/2;m.position.set(q[0],0.01,q[1]);m.receiveShadow=true;scene.add(m);});
-  const path=new THREE.Mesh(new THREE.PlaneGeometry(3,120),lam(0xcfc6b2));path.rotation.x=-Math.PI/2;path.position.set(0,0.015,0);scene.add(path);
+  const pathT=rep(canvasTex(96,96,(g,w,h)=>{g.fillStyle='#a89e8a';g.fillRect(0,0,w,h);for(let i=0;i<700;i++){const v=130+Math.floor(R()*60);g.fillStyle='rgba('+v+','+(v-6)+','+(v-18)+',0.7)';g.fillRect(R()*w,R()*h,2,2);}
+    [[4,4,42,40],[50,6,42,36],[6,50,38,42],[48,48,44,44]].forEach(q=>{g.fillStyle='rgba(40,34,26,0.35)';g.beginPath();g.roundRect?g.roundRect(q[0]+2,q[1]+3,q[2],q[3],8):g.rect(q[0]+2,q[1]+3,q[2],q[3]);g.fill();const v=196+Math.floor(R()*24);g.fillStyle='rgb('+v+','+(v-6)+','+(v-16)+')';g.beginPath();g.roundRect?g.roundRect(q[0],q[1],q[2],q[3],8):g.rect(q[0],q[1],q[2],q[3]);g.fill();});}),1,40);
+  const path=new THREE.Mesh(new THREE.PlaneGeometry(3,120),lam(0xffffff,{map:pathT}));path.rotation.x=-Math.PI/2;path.position.set(0,0.015,0);scene.add(path);
   const far=new THREE.Mesh(new THREE.PlaneGeometry(600,600),lam(0x3e4a30));far.rotation.x=-Math.PI/2;far.position.y=-0.03;scene.add(far);}
 
 /* ---------- a park fala (kőalap, fehér vakolat, cseréptető) körben, a hátsó kapuval ---------- */

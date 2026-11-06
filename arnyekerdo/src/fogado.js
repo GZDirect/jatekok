@@ -31,8 +31,8 @@ const shoji=canvasTex(128,128,(c,w,h)=>{c.fillStyle='#f4ecd8';c.fillRect(0,0,w,h
 const shojiM=new THREE.MeshLambertMaterial({map:shoji,side:THREE.DoubleSide});flashPatch(shojiM);
 
 /* ---------- talaj: hó; körben havas lejtők és hegyek ---------- */
-{const gr=new THREE.Mesh(new THREE.PlaneGeometry(62,122),lam(0xffffff,{map:snowT}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;scene.add(gr);
-  const far=new THREE.Mesh(new THREE.PlaneGeometry(700,700),lam(0xe6eaf0));far.rotation.x=-Math.PI/2;far.position.y=-0.03;scene.add(far);
+{const gr=new THREE.Mesh(new THREE.PlaneGeometry(62,122),lam(0xd6dee8,{map:snowT}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;scene.add(gr);
+  const far=new THREE.Mesh(new THREE.PlaneGeometry(700,700),lam(0xd2dae4));far.rotation.x=-Math.PI/2;far.position.y=-0.03;scene.add(far);
   const mt=lam(0xdfe6ee,{flatShading:true}),rk=lam(0x6a7078,{flatShading:true});
   [[-90,-120,70],[20,-150,90],[110,-90,60],[-140,20,60],[140,40,55],[-60,150,50],[70,140,55]].forEach(q=>{const m=new THREE.Mesh(new THREE.ConeGeometry(q[2]*1.3,q[2]*1.2,7),mt);m.position.set(q[0],q[2]*0.6-2,q[1]);scene.add(m);
     const r=new THREE.Mesh(new THREE.ConeGeometry(q[2]*1.32,q[2]*0.5,7),rk);r.position.set(q[0],q[2]*0.24-2,q[1]);scene.add(r);});
@@ -68,7 +68,7 @@ const STEAM=[];
     for(let i=0;i<9;i++){const s=new THREE.Sprite(stm.clone());s.userData={x:p.x+(R()*2-1)*p.rx*0.8,z:p.z+(R()*2-1)*p.rz*0.8,ph:R()*5,sp:0.4+R()*0.4};s.scale.setScalar(4);scene.add(s);STEAM.push(s);}});}
 /* a gőz takar: ha benne guggolsz, nehezen látnak */
 const inSteam=(x,z)=>POOLS.some(p=>{const dx=(x-p.x)/(p.rx*1.5),dz=(z-p.z)/(p.rz*1.5);return dx*dx+dz*dz<1;});
-function stepSteam(dt,t){STEAM.forEach(s=>{const u=s.userData,k=((t*u.sp+u.ph)%4)/4;s.position.set(u.x+Math.sin(t*0.5+u.ph)*0.6,0.4+k*4.5,u.z+Math.cos(t*0.4+u.ph)*0.5);s.material.opacity=0.42*Math.sin(k*Math.PI);s.scale.setScalar(3+k*3.5);});}
+function stepSteam(dt,t){STEAM.forEach(s=>{const u=s.userData,k=((t*u.sp+u.ph)%4)/4;s.position.set(u.x+Math.sin(t*0.5+u.ph)*0.6,0.4+k*4.5,u.z+Math.cos(t*0.4+u.ph)*0.5);s.material.opacity=0.58*Math.sin(k*Math.PI);s.scale.setScalar(3+k*3.5);});}
 
 /* ---------- a fogadó: főépület verandával, keleti szárny (a könyvelő irodája) ---------- */
 const MAIN={x0:-8,x1:12,z0:-34,z1:-18},WING={x0:12,x1:22,z0:-36,z1:-24},OFFICE={x:17,z:-30,door:{x:17,z:-23.6}};

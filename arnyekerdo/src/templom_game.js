@@ -35,9 +35,9 @@ const naruse=()=>ALLCOPS[0];
 {const R=naruse().mesh.userData.R;const sc=new THREE.Mesh(new THREE.TorusGeometry(0.1,0.035,6,12),new THREE.MeshLambertMaterial({color:0x8a1a14}));sc.rotation.x=Math.PI/2;sc.position.y=-0.01;R.neck.add(sc);}
 
 /* ---------- világos, csendes reggel ---------- */
-G.setDaylight(true);A.scene.background.setHex(0xd8e4ee);A.scene.fog.color.setHex(0xdce6ee);A.scene.fog.density=0.006;
-{const sky=A.sky.material.uniforms;sky.uHor.value=new THREE.Color(0xf0e8d8);sky.uZen.value=new THREE.Color(0x5a8ac8);}
-A.moonLight.color.setHex(0xfff2dc);A.moonLight.intensity=1.5;A.hemi.color.setHex(0xdce8ff);A.hemi.groundColor.setHex(0x5a5040);A.hemi.intensity=0.9;A.MOON_DIR.set(0.55,0.45,0.6).normalize();
+G.setDaylight(true);A.scene.background.setHex(0xe6d2b4);A.scene.fog.color.setHex(0xdecaae);A.scene.fog.density=0.0095;
+{const sky=A.sky.material.uniforms;sky.uHor.value=new THREE.Color(0xf6d0a0);sky.uZen.value=new THREE.Color(0x5a84bc);}
+A.moonLight.color.setHex(0xffd096);A.moonLight.intensity=1.55;A.hemi.color.setHex(0xc8d4ec);A.hemi.groundColor.setHex(0x4a4030);A.hemi.intensity=0.72;A.MOON_DIR.set(0.72,0.3,0.45).normalize();
 
 /* ---------- a titkos panel ---------- */
 function setPanel(open){T.open=open;F.PANEL.cols.forEach(c=>c.off=open);}

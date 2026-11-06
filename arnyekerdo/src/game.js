@@ -72,7 +72,7 @@ const copEyeY=c=>H(c.x,c.z)+1.6;
 setupCops();
 
 /* ---------- Üzenetek, feliratok, hang ---------- */
-function showMsg(t){const m=$('msg');m.textContent=t;m.style.opacity=1;S.msgT=3.6;}
+function showMsg(t){const m=$('msg');m.textContent=t;S.msgT=3.6;m.style.opacity=$('tut').hidden?1:0;}
 const LINES={
   spot:[['いたぞ！止まれ！','Ita zo! Tomare!','Ott van! Állj!'],['動くな！警察だ！','Ugoku na! Keisatsu da!','Ne mozdulj! Rendőrség!'],['そこだ！','Soko da!','Ott van!']],
   sus:[['何だ？','Nanda?','Mi volt ez?'],['誰かいるのか？','Dareka iru no ka?','Van ott valaki?'],['ん？','N?','Hm?']],
@@ -533,6 +533,8 @@ const fxDanger=$('fxDanger'),fxLeaf=$('fxLeaf'),fxGrain=$('fxGrain'),fxHurt=$('f
 const Q={frames:0,acc:0,level:2};
 function lowerQuality(){Q.level--;if(Q.level===1){A.setPR(1);A.grass.geometry.setDrawRange(0,A.grass.geometry.attributes.position.count*0.6|0);}
   else if(Q.level===0){moonLight.castShadow=false;renderer.shadowMap.enabled=false;scene.traverse(o=>{if(o.material){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.needsUpdate=true);}});A.grass.geometry.setDrawRange(0,A.grass.geometry.attributes.position.count*0.4|0);A.setPR(0.85);}}
+/* gyengébb telefonon (kevés mag vagy memória) eleve a középső minőségen indul; ha ott is akad, lejjebb lép */
+try{if((navigator.deviceMemory&&navigator.deviceMemory<=3)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))lowerQuality();}catch(e){}
 
 /* ---------- Rendőrök: érzékelés és viselkedés ---------- */
 function alertAll(src,x,z,why){S.lastKnown.x=x;S.lastKnown.z=z;
@@ -661,6 +663,7 @@ function frame(now){
   fxGrain.style.backgroundPosition=(Math.random()*128|0)+'px '+(Math.random()*128|0)+'px';
   P.hurt=Math.max(0,P.hurt-dt*1.6);fxHurt.style.opacity=(P.hurt*0.85).toFixed(3);
   fxDanger.style.opacity=S.threat.toFixed(3);fxLeaf.style.opacity=(S.running&&P.hidden&&(P.crouch||P.mode==='perch')?1:0);
+  if(A.FX)for(const f of A.FX)f(dt,T);
   renderer.render(scene,camera);requestAnimationFrame(frame);
 }
 
@@ -716,7 +719,7 @@ function update(dt){
   if(LV==='erdo'&&P.mode==='ground'&&P.z<-ZN-4&&Math.abs(P.x)<6){finishLevel('Kijutottál','A völgy mögötted maradt. A rendőrök még hajnalig keresnek majd, de te már a mester felé tartasz.','Küldetés teljesítve');return;}
 
   if(G.hooks.update){G.hooks.update(dt);if(!S.running)return;}
-  if(S.msgT>0){S.msgT-=dt;if(S.msgT<=0)$('msg').style.opacity=0;}
+  if(S.msgT>0){if(!$('tut').hidden)$('msg').style.opacity=0;else{$('msg').style.opacity=1;S.msgT-=dt;if(S.msgT<=0)$('msg').style.opacity=0;}}
   if(S.subT>0){S.subT-=dt;if(S.subT<=0)$('sub').style.opacity=0;}
   hudT-=dt;if(hudT<=0){hudT=0.1;hud();}
 }

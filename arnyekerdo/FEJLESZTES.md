@@ -314,6 +314,13 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - Befejezések a zárószövegben: halott (a bosszú útja), leütve (a mester útja), észre sem vett (az árnyék útja). Ha az előző hét pálya mind Árnyék és ez is tiszta, a mester zárójelenete más (ezüst pecsét).
 - Ellenőrizve: őrök és Naruse nélkül a teljes menet Árnyék; mindhárom befejezés szövege és a rang; az Árnyékok Mestere üzenet. Élő őrökkel a szkriptelt próba lebukott, valódi játékban kell kipróbálni.
 
+## 7b. Grafikai réteg (grafika.js, 2026. november)
+- Közös fájl a sík pályákhoz, a build sorrendjében utolsó. Nagy léptékű foltosság a talajon (egy átlátszó sík), sötét talajárnyék-sáv az A.ROOF.rects téglalapok tövében (egyetlen összevont geometria; a templomnál az épület körvonala), pályánként színezett képszél (#fxVig, body.lv-<pálya>).
+- Élő díszletek az A.FX listán (a game.js minden képkockában meghívja): kikötő – sirályok, párafátyol, hullámzó víz, villogó jelzőfény a darun; fesztivál – felszálló égi lámpások, füst a bódék fölött; templom – hulló juharlevelek, füstölő a belső udvaron.
+- Ruhák (setup-horog): kikötő – láthatósági mellény, sisak; fogadó – sál, kötött sapka; templom – sötét hakama, fejpánt; fesztivál – vörös karszalag, fülhallgató.
+- Fények: kikötő ködös rózsás hajnal; fesztivál 0,3-as alkonyról indul; fogadó borult, kékesszürke; templom aranyló kora reggel, alacsony nap.
+- A középre írt üzenet megvárja, amíg a küldetéskártya bezárul (nem csúsznak egymásra). Gyenge telefonon (≤3 GB memória vagy ≤4 mag) eleve a középső minőségen indul.
+
 ## 8. Mi maradt hátra (2026. november)
 
 - A 6–8. pályán élő őrökkel nincs végigjátszott, igazolt Árnyék-útvonal (a szkriptelt próbabot nem tud nézni). Valódi játékban kell kipróbálni, és szükség szerint lazítani (őrök útvonala, látótávolság `seeMul`, búvóhelyek).
