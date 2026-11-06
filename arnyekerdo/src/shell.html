@@ -30,6 +30,7 @@ body{background:var(--night);color:var(--moon);font-family:var(--ui);overflow:hi
 #fxDanger{background:radial-gradient(ellipse at 50% 50%,rgba(120,0,0,0) 42%,rgba(150,12,10,0.6) 100%);opacity:0;}
 #fxLeaf{background:radial-gradient(ellipse at 50% 50%,rgba(6,20,8,0) 38%,rgba(6,24,10,0.82) 92%);opacity:0;transition:opacity .5s;}
 #fxGrain{opacity:0.06;mix-blend-mode:overlay;}
+@media (pointer:coarse){#fxGrain{display:none;}}  /* telefonon a teljes képernyős keverés sokba kerül */
 body.day #fxVig{opacity:0.35;}
 /* pályánkénti színezett képszél (olcsó, egyetlen átmenet) */
 body.lv-kikoto #fxVig{background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,0) 52%,rgba(20,34,52,0.75) 100%);opacity:0.75;}

@@ -333,6 +333,12 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - Kiosztás: erdo → rendor; falu → tanitvany, a mester → mester; varos → kuroda + testor; vonat → mori, kalauz (kalauz, mozdonyvezető), testor; kikoto → testor_kikoto (mellény, sisak); fesztival → vip_roka (rókamaszk), testor_fesztival (karszalag); fogado → testor_fogado (sapka, sál), a könyvelő → konyvelo; templom → naruse, testor_templom (fejpánt); civilek (utasok, vendégek) → civil_a / civil_b.
 - A modellek nincsenek az előtöltésben: pályánként csak a szükséges töltődik le, a service worker futás közben eltárolja. Ha nem töltődik be, a régi figura marad.
 
+## 7e. Akkumulátorkímélés (2026. november)
+- Telefonon 30 kép/s felső határ (`?fps=60` kikapcsolja), menüben és szünetben 10 kép/s; az árnyéktérkép minden második képkockán frissül (`shadowMap.autoUpdate=false`). Az automatikus minőségcsökkentés küszöbe 30 kép/s mellett 45 ms.
+- Telefonon nincs filmszemcse-réteg (teljes képernyős `mix-blend-mode`).
+- A valósághű modellt kapott szereplők régi, gyerek nélküli testrészei kikerülnek a jelenetből.
+- `src/optim.js`: indulás után 4,5 másodpercig figyeli a pályaelemeket; a mozdulatlanokat szülő és anyag-kinézet szerint összevonja (≥3 darab). Az eredetik a 30-as rétegre kerülnek (nem rajzolódnak), és fél másodpercenként ellenőrzi őket: ha bármelyik mozdul, eltűnik vagy anyagszínt vált, a csoport visszaáll. Mérés (rajzolási hívás): vonat 1333 → 654, falu 942 → 673, varos 444 → 306, kikötő 314 → 208, templom 271 → 197.
+
 ## 8. Mi maradt hátra (2026. november)
 
 - A 6–8. pályán élő őrökkel nincs végigjátszott, igazolt Árnyék-útvonal (a szkriptelt próbabot nem tud nézni). Valódi játékban kell kipróbálni, és szükség szerint lazítani (őrök útvonala, látótávolság `seeMul`, búvóhelyek).

@@ -40,7 +40,9 @@ function upgrade(g,src){
   const keep=new Set();[torch,gun].forEach(t=>t.traverse(o=>keep.add(o)));
   const els=new Set(R.arms.map(a=>a.el));
   const inHand=o=>{for(let p=o;p&&p!==g;p=p.parent){if(p.userData.handProp)return true;if(els.has(p.parent)&&!p.userData.orig)return true;}return false;};
-  g.traverse(o=>{if(o.isMesh&&!keep.has(o)&&!inHand(o))o.visible=false;});
+  const gone=[];g.traverse(o=>{if(o.isMesh&&!keep.has(o)&&!inHand(o)){o.visible=false;if(o.userData.orig&&!o.children.length)gone.push(o);}});
+  /* a régi, gyerek nélküli testrészeket ki is vesszük: így képkockánként nem kell a helyzetüket számolni (találatvizsgálat nem fut rajtuk) */
+  gone.forEach(o=>o.parent&&o.parent.remove(o));
   /* a később a fejre/törzsre tett régi kiegészítők (maszk, sál stb.) is rejtve maradjanak */
   [R.neck,R.chest,R.hips].forEach(p=>{const add=p.add.bind(p);p.add=function(...o){o.forEach(x=>x.traverse(m=>{if(m.isMesh&&!m.userData.handProp)m.visible=false;}));return add(...o);};});
   const model=THREE.SkeletonUtils.clone(src);

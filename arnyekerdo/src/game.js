@@ -633,9 +633,14 @@ function syncCop(c,dt){const m=c.mesh,y=H(c.x,c.z);m.position.set(c.x,y,c.z);m.r
 /* ---------- Ciklus ---------- */
 let last=performance.now(),hudT=0,T=0;const VIEW={yaw:0,pitch:0};const BR={b:null,k:0,in:false};
 const shadowSnap=60/1024;
+/* akkumulátorkímélés: telefonon 30 kép/s (a ?fps=60 kikapcsolja), menüben és szünetben 10 kép/s; az árnyék minden második képkockán frissül */
+const FPS_CAP=isTouch&&!/[?&]fps=60/.test(location.search)?30:0;let shTick=0;
+renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
 function frame(now){
+  {const run=S.running&&!PORT.matches,tgt=run?(FPS_CAP?1/FPS_CAP:0):1/10;if(tgt&&(now-last)/1000<tgt-0.004){requestAnimationFrame(frame);return;}}
   const raw=Math.max(0,(now-last)/1000),dt=Math.min(0.05,raw);last=now;T+=dt;
-  if(S.running&&!PORT.matches){update(dt);Q.frames++;Q.acc+=raw;if(Q.frames===150){if(Q.acc/150>0.03&&Q.level>0){lowerQuality();}Q.frames=0;Q.acc=0;}}
+  if((shTick++&1)===0||!S.running)renderer.shadowMap.needsUpdate=true;
+  if(S.running&&!PORT.matches){update(dt);Q.frames++;Q.acc+=raw;if(Q.frames===150){if(Q.acc/150>(FPS_CAP?0.045:0.03)&&Q.level>0){lowerQuality();}Q.frames=0;Q.acc=0;}}
   else{P.yaw+=dt*0.04;}
   const gy=H(P.x,P.z);
   if(P.mode==='ground')camera.position.set(P.x,gy+P.camY+(P.jy||0)+Math.sin(P.bob)*0.04,P.z);else camera.position.set(P.x,P.py,P.z);
