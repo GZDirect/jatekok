@@ -339,6 +339,10 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - A valósághű modellt kapott szereplők régi, gyerek nélküli testrészei kikerülnek a jelenetből.
 - `src/optim.js`: indulás után 4,5 másodpercig figyeli a pályaelemeket; a mozdulatlanokat szülő és anyag-kinézet szerint összevonja (≥3 darab). Az eredetik a 30-as rétegre kerülnek (nem rajzolódnak), és fél másodpercenként ellenőrzi őket: ha bármelyik mozdul, eltűnik vagy anyagszínt vált, a csoport visszaáll. Mérés (rajzolási hívás): vonat 1333 → 654, falu 942 → 673, varos 444 → 306, kikötő 314 → 208, templom 271 → 197.
 
+## 7f. Saját kéz, eszközök, élőbb mozgás (2026. november)
+- `modellek/kez.glb` (blender/kez.py): a részletes MPFB-alaptestből kivágott ököl + alkar, ruhaujj, csuklópólya; a régi gömb-ököl és henger-alkar rejtve. `modellek/fegyverek.glb` (blender/fegyverek.py): tantó (fonott markolat, tsuba, ívelt penge hamonnal), tekko, kampó (+ bal kézben kötéltekercs), shuriken, köpőcső, füstbomba; a fémek Phong-anyagot kapnak. Kavics, tüske, karom maradt kódból.
+- modellek.js `life()`: járás közben csípő- és ellentétes vállfordulás, a lábfej a talajjal párhuzamos, álló helyzetben légzés és lassú fejmozgás.
+
 ## 8. Mi maradt hátra (2026. november)
 
 - A 6–8. pályán élő őrökkel nincs végigjátszott, igazolt Árnyék-útvonal (a szkriptelt próbabot nem tud nézni). Valódi játékban kell kipróbálni, és szükség szerint lazítani (őrök útvonala, látótávolság `seeMul`, búvóhelyek).

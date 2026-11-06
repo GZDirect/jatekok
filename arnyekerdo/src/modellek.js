@@ -86,6 +86,18 @@ function upgrade(g,src){
   /* markolási pont: a csukló és az ujjtő között, az ököl közepén */
   const hands=[[B.hand_l,B.middle_01_l],[B.hand_r,B.middle_01_r]];
   const D=new THREE.Quaternion();
+  /* kiegészítő, „élő” mozgás a régi vezérlés fölé: csípőfordulás és ellentétes vállfordulás járás közben,
+     a lábfej a talajjal párhuzamosan marad, álló helyzetben finom légzés */
+  const E=new THREE.Euler(),extra=[['spine_01'],['spine_03'],['foot_l'],['foot_r'],['head']].filter(m=>B[m[0]]).map(m=>({n:m[0],b:B[m[0]],rp:rw(B[m[0]].parent).clone().invert(),rb:rw(B[m[0]]).clone()}));
+  let tt=0;
+  function life(dt,spd){tt+=dt||0;const L0=R.legs[0],L1=R.legs[1],sw=(L0.hp.rotation.x-L1.hp.rotation.x)*0.5,mv=Math.min(1,(spd||0)/1.5),still=1-mv;
+    for(const m of extra){
+      if(m.n==='spine_01')E.set(0,-0.18*sw*mv,0.03*sw*mv);
+      else if(m.n==='spine_03')E.set(0.018*Math.sin(tt*1.7)*still,0.22*sw*mv,0);
+      else if(m.n==='foot_l')E.set(-(L0.hp.rotation.x+L0.kn.rotation.x)*0.75,0,0);
+      else if(m.n==='foot_r')E.set(-(L1.hp.rotation.x+L1.kn.rotation.x)*0.75,0,0);
+      else if(m.n==='head')E.set(0.012*Math.sin(tt*1.7+0.6)*still,0.05*Math.sin(tt*0.37)*still,0);
+      D.setFromEuler(E);m.b.quaternion.copy(m.rp).multiply(D).multiply(m.rb);}}
   function sync(){
     for(const m of map){D.setFromEuler(m.p.rotation);
       if(m.k==='up')D.multiply(base[m.s]);else if(m.k==='lo')D.premultiply(base[m.s+'i']).multiply(base[m.s]);
@@ -101,7 +113,7 @@ function upgrade(g,src){
       for(const ch of el.children){if(ch.userData.orig&&ch!==torch&&ch!==gun)continue;
         if(!ch.userData.basePos)ch.userData.basePos=ch.position.clone();ch.position.copy(ch.userData.basePos).add(_v);}}
   }
-  const old=g.userData.anim;g.userData.anim=function(t,spd,dt,o){old(t,spd,dt,o);sync();};
+  const old=g.userData.anim;g.userData.anim=function(t,spd,dt,o){old(t,spd,dt,o);if(!(o&&o.fall))life(dt,spd);sync();};
   g.userData.model=model;sync();
 }
 const loader=new THREE.GLTFLoader();
