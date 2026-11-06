@@ -271,3 +271,15 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - Árnyékok Mestere: ha minden `LEVELS` pálya Árnyék, ezüstpecsét a címképernyőn (`#masterSeal`).
 - Üvegtorony új célja: Kuroda asztaláról elvinni az iratokat, aztán a kábel. Kurodát nem kell bántani; ha életben marad, a zárószöveg szerint Naruse emberei végeznek vele (nem a játékos statisztikája). A tárgyalás alatt (26 mp) a testőrök keletre néznek, Kuroda a vendégek felé: ez az ablak.
 - Ellenőrzött Árnyék-útvonal (Üvegtorony, normál, a céltorony tetejéről): bokor (-3,-12) → a tárgyalás kezdetekor déli ajtó → nyugati fal mentén az asztalhoz → északi ajtó → terasz → kábel.
+
+## 4. Az 5. pálya: Acélárnyak (kikötő, kora reggel)
+
+- Fájlok: `src/kikoto.js` (díszlet, konténerek, daru, kerítés, iroda, útvonalak), `src/kikoto_game.js` (küldetés). Cím: `?palya=kikoto`.
+- Sík terep; járható = a kikötő területe a tömör konténerek nélkül (`solids`, ezt rajzolja a radar is). A konténerek oldalán ütközőkörök takarják a kilátást.
+- Cél: a belépési papírok Naruse konténerében (NRSU 409217, nyitott északi ajtó, -14,8; 8) és a rakományjegyzék az irodakonténerben (-18; -46,4), utána ki északkeleten (x>21, z<-56). Mindkét tárgy mentési pont.
+- Kerítés a z=-34 vonalon (`tall`: átugorni nem lehet, átlátni igen), kapuval. A kapuőr 8–11 mp-enként 4,5 mp-re hátrafordul.
+- Daru: a terhe kampópont (`CRANE.perch`), 11 mp-et vár a déli (z=-12) és az északi (z=-46) végén, közben 2 m-t emel. Ha a terhén ülsz, visz (Acélárnyék pecsét: legalább 8 m utazás). Leugrás: a nézés irányában keres szabad helyet (`dropDown`).
+- Lámpaoszlopok: karmokkal mászhatók, kampóval elérhetők; az iroda teteje is kampópont, róla a falakon kívülre ugrasz (`dropR`).
+- Őrök nehézség szerint: 6 / 8 / 10 (`ORDER`, `NACT`). Normálon nincs bent őr az irodában.
+- Új általános szabály: fáról, tetőről csak akkor támadsz, ha tantó vagy tekko van a kezedben; különben csak leugrasz. Lapos pályán a földet érés zaja kisebb.
+- Ellenőrzött Árnyék-útvonal (normál, élő őrökkel, 3-ból 2 próbán): nyugati sáv (x=-25,5) → keresztsor (z=16) → konténer → nyugati sáv a kerítésig → karmokkal az oszlopra (-24,8; -31) → kampó az iroda tetejére → le, bokor az iroda mögött (-10; -51) → iroda → bokrok (-1,5; -47), (10; -50), (16,5; -44), (25,2; -38) → keleti sáv → kijárat. Daruval is végigjátszva (őrök nélkül).

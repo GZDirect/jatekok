@@ -11,6 +11,8 @@ A harmadik pálya (**Üvegtorony**) nappal, egy nagyváros felhőkarcolóinak te
 
 A negyedik pálya (**Hegyi expressz**) egy száguldó magánvonaton játszódik nappal: kocsiról kocsira jutsz előre, a tehervagon tetején az alagutak elől le kell guggolni, el kell venni Mori aktatáskáját, és a mozdonyban meghúzni a vészféket.
 
+Az ötödik pálya (**Acélárnyak**) egy konténerkikötőben játszódik kora reggel: Naruse konténerét és az iroda rakományjegyzékét kell megszerezni. A kerítésen a nagy daru terhén, a kapun, vagy lámpaoszlopról az iroda tetejére kampózva lehet átjutni.
+
 **Játék:** https://gzdirect.github.io/jatekok/arnyekerdo/
 
 Telefonon a böngésző menüjében a **Hozzáadás a kezdőképernyőhöz** paranccsal alkalmazásként is telepíthető, és az első megnyitás után net nélkül is elindul.

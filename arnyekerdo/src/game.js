@@ -5,15 +5,15 @@
 const A=window.AE,{$,clamp,H,scene,camera,renderer,grid,bgrid,near,moonLight,MOON_DIR,giants,XW,ZS,ZN,EXIT,FLU,NFL}=A;
 const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a)),rnd=(a,b)=>a+Math.random()*(b-a);
 const LV=A.LV||'erdo';
-const START=LV==='falu'?{x:0,z:45}:LV==='varos'?{x:0,z:58}:LV==='vonat'?{x:0,z:80.8}:{x:0,z:93},GOAL=LV==='falu'?{x:0,z:39}:LV==='varos'?{x:0,z:-44}:LV==='vonat'?{x:0.8,z:-37}:{x:0,z:-112};
+const START=LV==='falu'?{x:0,z:45}:LV==='varos'?{x:0,z:58}:LV==='vonat'?{x:0,z:80.8}:LV==='kikoto'?{x:0,z:56}:{x:0,z:93},GOAL=LV==='falu'?{x:0,z:39}:LV==='varos'?{x:0,z:-44}:LV==='vonat'?{x:0.8,z:-37}:LV==='kikoto'?{x:-14.8,z:8}:{x:0,z:-112};
 const isTouch=matchMedia('(pointer:coarse)').matches;
-const G={LV,day:false,hooks:{},goalName:LV==='falu'?'Mester':LV==='varos'?'Kuroda':LV==='vonat'?'Aktatáska':'Kijárat'};A.G=G;
+const G={LV,day:false,hooks:{},goalName:LV==='falu'?'Mester':LV==='varos'?'Kuroda':LV==='vonat'?'Aktatáska':LV==='kikoto'?'Konténer':'Kijárat'};A.G=G;
 
 /* ---------- Térbeli segédek ---------- */
 function clampField(p){if(A.ROOF){A.ROOF.clampRoof(p);return;}p.x=clamp(p.x,-XW-1,XW+1);p.z=clamp(p.z,-ZN-16,ZS+2);if(p.z<-ZN+1&&Math.abs(p.x)>5)p.z=-ZN+1;if(p.z<-ZN-0.5)p.x=clamp(p.x,-3.4,3.4);}
 /* air: a levegőben (ugrás közben) az alacsony akadályok (rönk, kő, láda, ülés) fölött átjutsz */
 function pushOut(p,rad,air){
-  near(grid,p.x,p.z,t=>{if(t.off||(air&&t.low))return;const dx=p.x-t.x,dz=p.z-t.z,d=Math.hypot(dx,dz),m=(t.col||t.r)+rad;if(d<m&&d>1e-4){p.x=t.x+dx/d*m;p.z=t.z+dz/d*m;}});
+  near(grid,p.x,p.z,t=>{if(t.off||(air&&t.low&&!t.tall))return;const dx=p.x-t.x,dz=p.z-t.z,d=Math.hypot(dx,dz),m=(t.col||t.r)+rad;if(d<m&&d>1e-4){p.x=t.x+dx/d*m;p.z=t.z+dz/d*m;}});
   clampField(p);
 }
 function blocked(ax,az,bx,bz,skip){
@@ -366,11 +366,15 @@ function startHook(g){const from=eyePos(new THREE.Vector3()),pr=perchFor(g,P.x,P
   P.py=from.y;noiseHit(0.25,1400,'bandpass',0.35,2);P.noiseBoost=5;updateButtons();}
 function startClimb(g){const from=eyePos(new THREE.Vector3()),pr=perchFor(g,P.x,P.z);
   P.mode='climb';P.run=false;P.crouch=false;P.anim={t:0,g,from,to:new THREE.Vector3(pr.x,pr.y,pr.z),dur:2.4,tx:g.x+pr.dx*(g.r+0.45),tz:g.z+pr.dz*(g.r+0.45)};P.py=from.y;P.noiseBoost=4;updateButtons();}
-function arrivePerch(g){P.mode='perch';P.tree=g;if(S.trees)S.trees.add(g);A.setRope(0,0,0,0,0,0,false);showMsg(LV==='vonat'?'A konténer tetején vagy. Innen felülről támadhatsz.':LV==='varos'?'Fent vagy. Kampózz tovább, vagy ugorj le, ha alattad tető van.':'A lombban vagy. Innen nem látnak, csak ha rád világítanak.');thump(0.2);updateButtons();}
-function dropDown(){if(P.mode!=='perch')return;const g=P.tree,pr=perchFor(g,P.x,P.z);let lx=g.x+pr.dx*(1.75*g.s+1.6),lz=g.z+pr.dz*(1.75*g.s+1.6);
+function arrivePerch(g){P.mode='perch';P.tree=g;if(S.trees)S.trees.add(g);A.setRope(0,0,0,0,0,0,false);showMsg(LV==='vonat'||LV==='kikoto'?'A konténer tetején vagy. Innen felülről támadhatsz.':LV==='varos'?'Fent vagy. Kampózz tovább, vagy ugorj le, ha alattad tető van.':'A lombban vagy. Innen nem látnak, csak ha rád világítanak.');thump(0.2);updateButtons();}
+function dropDown(){if(P.mode!=='perch')return;const g=P.tree,pr=perchFor(g,P.x,P.z),dr=g.dropR||(1.75*g.s+1.6);let lx=g.x+pr.dx*dr,lz=g.z+pr.dz*dr;
+  /* ha ott nem lehet földet érni (pl. a konténer hosszában), a nézés irányában, aztán körben keres helyet */
+  if(A.ROOF&&!A.ROOF.walkable(lx,lz)){const f=fwd(),dirs=[[f.x,f.z]];for(let k=0;k<8;k++)dirs.push([Math.cos(k*Math.PI/4),Math.sin(k*Math.PI/4)]);
+    outer:for(const d of dirs)for(let r=2.2;r<=4.6;r+=0.6){const x=g.x+d[0]*r,z=g.z+d[1]*r;if(A.ROOF.walkable(x,z)&&A.ROOF.walkable(g.x+d[0]*(r+0.5),g.z+d[1]*(r+0.5))){lx=x;lz=z;break outer;}}}
   /* felülről támadás: van-e rendőr a földet érés közelében? */
   let tgt=null,bd=4.8;COPS.forEach(c=>{if(c.dead||c.active===false)return;const d=Math.hypot(c.x-lx,c.z-lz);if(d<bd){bd=d;tgt=c;}});
-  if(tgt&&ITEMS[P.item].id!=='tekko'&&ITEMS[P.item].id!=='tanto'){/* ha nincs fegyver a kézben, a tantót (vagy a tekkót) veszi elő */selectItem(hasGear(0)?0:1);}
+  /* felülről csak akkor támadsz, ha tantó vagy tekko van a kezedben; különben csak leugrasz (lopakodva is le lehet jönni egy őr mellé) */
+  if(tgt&&ITEMS[P.item].id!=='tekko'&&ITEMS[P.item].id!=='tanto')tgt=null;
   if(tgt){const dx=P.x-tgt.x,dz=P.z-tgt.z,d=Math.hypot(dx,dz)||1;lx=tgt.x+dx/d*0.9;lz=tgt.z+dz/d*0.9;}
   if(A.ROOF&&!A.ROOF.walkable(lx,lz)){showMsg('Alattad a mélység. Kampózz tovább egy másik pontra.');return;}
   const o={x:lx,z:lz};pushOut(o,0.45);
@@ -384,7 +388,7 @@ function stepPlayerAnim(dt){const a=P.anim;a.t+=dt;
     const bx=a.from.x+(a.tx-a.from.x)*k1,bz=a.from.z+(a.tz-a.from.z)*k1;P.x=bx+(a.to.x-bx)*k3;P.z=bz+(a.to.z-bz)*k3;P.py=a.from.y+(a.to.y-a.from.y)*k2;
     if(Math.floor(a.t*3)!==Math.floor((a.t-dt)*3))noiseHit(0.08,2500,'bandpass',0.12,3);if(k>=1)arrivePerch(a.g);}
   else if(P.mode==='drop'){const k=clamp(a.t/a.dur,0,1);P.x=a.from.x+(a.to.x-a.from.x)*k;P.z=a.from.z+(a.to.z-a.from.z)*k;P.py=a.from.y+(a.to.y-a.from.y)*k*k;
-    if(k>=1){P.mode='ground';P.camY=0.95;P.crouch=true;thump(0.45);if(a.tgt&&!a.tgt.dead){strike(a.tgt,ITEMS[P.item].id==='tanto'?'tanto':'tekko',true);}else P.noiseBoost=16;updateButtons();}}
+    if(k>=1){P.mode='ground';P.camY=0.95;P.crouch=true;thump(0.45);if(a.tgt&&!a.tgt.dead){strike(a.tgt,ITEMS[P.item].id==='tanto'?'tanto':'tekko',true);}else P.noiseBoost=A.ROOF?10:16;updateButtons();}}
 }
 
 /* ---------- Játék indítása, vége ---------- */
@@ -410,6 +414,7 @@ const GEAR_REQ={varos:[2]},GEAR_DEF=[0,2,4,8];
 const GEAR_HINT={
   erdo:{2:'az óriásfák ágairól látatlanul figyelhetsz',4:'a sűrű erdőben messzire elcsalja az őröket',5:'az ösvényen megállítja az üldözőt'},
   varos:{7:'itt a kamerát is leveri: egy dobás, és vak',3:'a víztorony lábán és az antenna oszlopán felmászol',6:'csendben altat a nyitott tetőn'},
+  kikoto:{2:'a daru terhén és a konténerek tetején a kerítés fölött jutsz át',4:'a konténerek között messzire elcsalja az őröket',3:'a lámpaoszlopokra felmászol, onnan az iroda tetejére kampózol',8:'a nyílt udvaron eltakar'},
   vonat:{8:'a szűk kocsiban az egészet betölti: mindenki vak benne',6:'a folyosón egyenként, hang nélkül altatsz',1:'leütéssel tiszta marad a kezed'}};
 const gearAmmo=i=>i===4?D.stones:i===5?D.spikes:i===6?D.darts:i===7?D.stars:i===8?D.smoke:null;
 let GPICK=[],GIMG=false;{const im=new Image();im.onload=()=>{GIMG=true;};im.src='eszkozok/tanto.webp';}
@@ -450,7 +455,7 @@ function showDiff(){document.querySelectorAll('#diff [data-d]').forEach(b=>b.set
 document.querySelectorAll('#diff [data-d]').forEach(b=>b.addEventListener('click',()=>{D=DIFF[b.dataset.d];try{localStorage.setItem('ae-diff',b.dataset.d);}catch(e){}showDiff();}));
 /* ---------- Nyitókép és mentések (3 hely, a böngészőben tárolva) ---------- */
 /* ---------- Pályák, mentések, rang és pecsétek (közös rendszer) ---------- */
-const LEVELS=[{id:'erdo',name:'Rendőrkordon'},{id:'falu',name:'A mester faluja'},{id:'varos',name:'Üvegtorony'},{id:'vonat',name:'Hegyi expressz'}];
+const LEVELS=[{id:'erdo',name:'Rendőrkordon'},{id:'falu',name:'A mester faluja'},{id:'varos',name:'Üvegtorony'},{id:'vonat',name:'Hegyi expressz'},{id:'kikoto',name:'Acélárnyak'}];
 const RANKS=['Bérgyilkos','Nindzsa','Mester','Árnyék'];
 const lsGet=k=>{try{return localStorage.getItem(k);}catch(e){return null;}},lsSet=(k,v)=>{try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v);}catch(e){}};
 const slotNo=()=>clamp(+lsGet('ae-slot')||1,1,3);
@@ -783,7 +788,7 @@ const NIGHT={};
 function setDaylight(on){const sky=A.sky.material.uniforms;
   if(!NIGHT.saved)Object.assign(NIGHT,{saved:true,bg:scene.background.getHex(),fog:scene.fog.color.getHex(),fd:scene.fog.density,hor:sky.uHor.value.getHex(),zen:sky.uZen.value.getHex(),
     ml:moonLight.color.getHex(),mi:moonLight.intensity,hc:A.hemi.color.getHex(),hg:A.hemi.groundColor.getHex(),hi:A.hemi.intensity,r:[A.ring1,A.ring2,A.ring3].map(m=>m.material.color.getHex())});
-  G.day=on;const N=NIGHT,city=LV==='varos'||LV==='vonat';
+  G.day=on;const N=NIGHT,city=LV==='varos'||LV==='vonat'||LV==='kikoto';
   scene.background.setHex(on?0xbcd0dc:N.bg);scene.fog.color.setHex(on?(city?0xc4d2dc:0xbcd0dc):N.fog);scene.fog.density=on?(city?0.0024:0.007):N.fd;
   sky.uHor.value=new THREE.Color(on?0xcfe0ea:N.hor);sky.uZen.value=new THREE.Color(on?0x4f86c6:N.zen);
   moonLight.color.setHex(on?(city?0xfff8f0:0xfff0d8):N.ml);moonLight.intensity=on?1.55:N.mi;A.hemi.color.setHex(on?0xcfe2ff:N.hc);A.hemi.groundColor.setHex(on?(city?0x606468:0x6a5c42):N.hg);A.hemi.intensity=on?0.9:N.hi;
