@@ -23,6 +23,7 @@ D = {
 "Szúr/Üt gomb": "Stab/Strike button", "kattintás vagy E": "click or E", "Fúj gomb": "Shoot button",
 "Tüskék!": "Caltrops!", "Cél: két kapcsoló, az archívum, aztán a hátsó ösvény.": "Goal: two switches, the archive, then the back path.",
 "Le gomb": "Drop button", "Dob gomb": "Throw button", "Rang: ": "Rank: ", "Elfogyott a kavics": "Out of pebbles", " ember a vonaton": " people on the train",
+"modell betöltése nem sikerült": "model failed to load",
 "É": "N", "ÉK": "NE", "ÉNy": "NW",
 # --- parkolt.js (erdei lények) ---
 "Szörny": "Monster", "Mély morgás valahol a fák között.": "A deep growl somewhere among the trees.",
