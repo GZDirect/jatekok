@@ -12,14 +12,18 @@ shell = rd('shell.html')
 js = '\n'.join(rd(n) for n in ('hang_lista.js', 'world.js', 'actors.js', 'falu.js', 'varos.js', 'vonat.js', 'kikoto.js', 'fesztival.js', 'fogado.js', 'templom.js', 'parkolt.js', 'game.js', 'falu_game.js', 'varos_game.js', 'vonat_game.js', 'kikoto_game.js', 'fesztival_game.js', 'fogado_game.js', 'templom_game.js', 'grafika.js')) + '\n'
 # Tömörítés (a GitHub Pages-en kisebb, gyorsabban töltődik): terser, a © megjegyzés megmarad. --plain: tömörítés nélkül.
 import subprocess, sys as _s, tempfile as _t
-if '--plain' not in _s.argv:
+def minify(js):
+    if '--plain' in _s.argv: return js
     try:
         with _t.NamedTemporaryFile('w', suffix='.js', delete=False, encoding='utf-8') as f: f.write(js); src = f.name
         r = subprocess.run(['npx', '-y', 'terser@5.31.0', src, '-c', 'passes=1', '-m', '--comments', '/©/'], capture_output=True, timeout=300)
         if r.returncode == 0 and len(r.stdout) > 1000:
-            js = '/* Shinobi · © 2026 Fejes Géza. Minden jog fenntartva. */\n' + r.stdout.decode('utf-8') + '\n'
-        else: print('terser hiba, tömörítés nélkül:', r.stderr.decode('utf-8')[:300])
+            return '/* Shinobi · © 2026 Fejes Géza. Minden jog fenntartva. */\n' + r.stdout.decode('utf-8') + '\n'
+        print('terser hiba, tömörítés nélkül:', r.stderr.decode('utf-8')[:300])
     except Exception as e: print('tömörítés kihagyva:', e)
+    return js
+js_src = js
+js = minify(js_src)
 assert '/*@@JATEK@@*/' in shell, 'hiányzik a /*@@JATEK@@*/ jelölő a shell.html-ből'
 page = shell.replace('/*@@JATEK@@*/', js)
 # GitHub Pages-hez kell egy teljes HTML-váz (a claude.ai artifact ezt magától adja hozzá).
@@ -53,6 +57,11 @@ wrap_head = ('<!doctype html>\n<html lang="hu">\n<head>\n<meta charset="utf-8">\
 SWREG = ("<script>/* offline mód */if('serviceWorker' in navigator&&location.protocol!=='file:'){addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}})}</script>\n")
 out = wrap_head + page + '\n' + SWREG + '</body>\n</html>\n'
 open(os.path.join(D, '..', 'index.html'), 'w', encoding='utf-8').write(out)
+# Angol változat: en.html ugyanebben a mappában (a képek, hangok, betűk közösek). Szótár: en_szotar.py, fordító: angol.py
+import angol
+page_en = angol.shell(shell).replace('/*@@JATEK@@*/', minify(angol.js(js_src)))
+out_en = angol.head(wrap_head) + page_en + '\n' + SWREG + '</body>\n</html>\n'
+open(os.path.join(D, '..', 'en.html'), 'w', encoding='utf-8').write(out_en)
 # claude.ai artifactként közzétehető változat (váz nélkül): python3 build.py --artifact /utvonal/arnyekerdo.html
 import sys
 if '--artifact' in sys.argv:
@@ -60,7 +69,7 @@ if '--artifact' in sys.argv:
 # Offline mód: sw.js a minta alapján, a tár neve a tartalomból számolt ujjlenyomat.
 import hashlib, glob, json
 A = os.path.join(D, '..')
-pre = ['./', 'index.html', 'three.min.js', 'manifest.webmanifest', 'favicon-32.png', 'icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'nyitokep.jpg', 'nyitokep-kicsi.jpg']
+pre = ['./', 'index.html', 'en.html', 'three.min.js', 'manifest.webmanifest', 'favicon-32.png', 'icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'nyitokep.jpg', 'nyitokep-kicsi.jpg']
 pre += sorted('fonts/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'fonts', '*.woff2')))
 pre += sorted('hang/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'hang', '*.mp3')))
 pre += ['felszereles.jpg'] + sorted('eszkozok/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'eszkozok', '*.webp')))

@@ -321,6 +321,11 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - Fények: kikötő ködös rózsás hajnal; fesztivál 0,3-as alkonyról indul; fogadó borult, kékesszürke; templom aranyló kora reggel, alacsony nap.
 - A középre írt üzenet megvárja, amíg a küldetéskártya bezárul (nem csúsznak egymásra). Gyenge telefonon (≤3 GB memória vagy ≤4 mag) eleve a középső minőségen indul.
 
+## 7c. Angol változat (2026. november)
+- `en.html` ugyanabban a mappában, a build készíti: `angol.py` a JS szövegliteráljait és a shell.html szövegeit cseréli az `en_szotar.py` alapján (pontos egyezés; a szórendet igénylő helyekre kódcsere a CODE listában). Új magyar szöveg után: `python3 src/angol.py --hianyzik`.
+- Külön mentés (`shinobi2en-save-`), nincs magyar hangfájl-betöltés (AE_HANG_HU), a felolvasás a készülék angol hangján megy. Angol Piper-hanghoz az en_US modellek kellenének (pl. ryan, amy), a hangok.py-t akkor angol fájllistára kell bővíteni.
+- A service worker a navigációt oldalanként tárolja (index.html / en.html), hogy offline is a megfelelő nyelv jöjjön.
+
 ## 8. Mi maradt hátra (2026. november)
 
 - A 6–8. pályán élő őrökkel nincs végigjátszott, igazolt Árnyék-útvonal (a szkriptelt próbabot nem tud nézni). Valódi játékban kell kipróbálni, és szükség szerint lazítani (őrök útvonala, látótávolság `seeMul`, búvóhelyek).

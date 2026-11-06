@@ -2,6 +2,8 @@
 
 (A mappa neve a régi munkacím, `arnyekerdo`, hogy a link ne változzon.)
 
+**Angol változat:** `en.html` (a nyitóképen az English gomb). A build (`python3 src/build.py`) a magyar forrásból készíti az `src/en_szotar.py` szótár alapján; új magyar szöveg után `python3 src/angol.py --hianyzik` kiírja, mi hiányzik a szótárból. Angolul egyelőre nincs saját hangfájl: a szereplőket a készülék angol felolvasója szólaltatja meg, a feliratok angolok. A mentések a két nyelvben külön vannak.
+
 
 Belső nézetes, Tenchu-stílusú lopakodó küldetés telefonra és számítógépre. Éjszaka van a japán hegyekben, a rendőrség körbezárta a völgyet: rendőrök fésülik át az erdőt zseblámpával és pisztollyal (nehézségtől függően 4, 6 vagy 8). A völgy déli végéből kell eljutnod az északi útig, az iránytű mutatja az irányt. Árnyékként surransz át, vagy egyenként tünteted el őket: tantó, tekko, kampó az óriásfákra, mászókarmok, elcsaló kavics, füstbomba, a testek bokorba rejtése, és támadás felülről a lombok közül. Prototípus.
 

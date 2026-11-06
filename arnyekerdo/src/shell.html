@@ -200,6 +200,7 @@ body.menu .hud,body.menu #btns,body.menu #tools,body.menu #bDrag{visibility:hidd
 #title .tB:focus-visible{outline:2px solid var(--lantern);outline-offset:3px;}
 #title .legal{position:absolute;left:max(7vw,24px);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);margin:0;font-size:12px;color:rgba(241,234,219,0.7);}
 #saves{position:absolute;inset:0;display:flex;align-items:center;padding-left:max(7vw,24px,env(safe-area-inset-left,0px));background:linear-gradient(90deg,rgba(8,9,10,0.92) 0%,rgba(8,9,10,0.75) 45%,rgba(8,9,10,0.2) 75%);}
+#title .lang{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:calc(env(safe-area-inset-right,0px) + 16px);z-index:2;padding:7px 13px;border:1px solid rgba(241,234,219,0.4);border-radius:16px;background:rgba(8,10,12,0.5);color:#f1eadb;font:600 13px var(--ui);text-decoration:none;letter-spacing:0.5px;}#title.sv .lang{visibility:hidden;}
 #saves[hidden]{display:none;}#title.sv .tIn,#title.sv .legal{visibility:hidden;}#slots{display:flex;flex-direction:column;gap:8px;}
 #saves .sIn{width:min(92vw,440px);display:flex;flex-direction:column;gap:10px;max-height:100%;overflow:auto;padding-block:16px;}
 #saves h2{font-family:var(--display);font-size:32px;margin:0 0 4px;}
@@ -297,6 +298,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
 <button class="b" id="bDrag" type="button" hidden>Húz</button>
 
 <div id="title">
+  <a class="lang" href="en.html" hreflang="en" lang="en">English</a>
   <div class="tIn">
     <h1>Shinobi</h1>
     <div id="masterSeal" hidden><span>◈</span>Árnyékok Mestere</div>
