@@ -2,7 +2,7 @@
 
 ![Cincin a padláson](cover.jpg)
 
-> ⚠️ **Design előtti verzió – v0.13.4 (2026. november 6.)**
+> ⚠️ **Design előtti verzió – v0.13.5 (2026. november 6.)**
 > A játékmenet és mind a tíz pálya végigjátszható, és már mind a tíz helyiség festett grafikát kapott. Minden helyiségnek saját zenéje van, és mindegyikben elrejtettünk egy titkos egérjáratot. Magyarul és angolul is játszható.
 
 Cincin, a kis sálas egér egy hatalmas, régi házban lakik. A padlástól a kertig tíz helyiségen kell átjutnia, és mindegyik végén egy furfangos ellenfél vár rá: az alvó macska, a felhúzható óriásrobot, a bagoly, a szakács, a kutya, a patkány… Gyűjtsd a magokat, keresd meg minden szobában a rejtett sajtot, kússz be a bútorok alá, és találd ki, hogyan jutsz túl a szoba urán.
@@ -49,6 +49,7 @@ A tesztelők ezt a címet kapják: `…/cincin/?teszt` – így a szünet menüb
 
 ## Változások
 
+- **v0.13.5** – Keskeny ablakban a bal felső eredménysáv a szélességhez igazodva összemegy, így nem csúszik a szünet- és teljes képernyő gomb alá.
 - **v0.13.4** – Új festett effektek: tinta- és mézfröccs a lehulló cseppeknél és a ragacsos padlón, gőzpamacsok a teáskannánál és a felforrósodó főzőlapoknál, konfetti a célba érkezéskor, csillagok a csatornába bukó patkány feje körül.
 - **v0.13.3** – Mind a tíz helyiség saját festett padlómetszetet kapott a padló alatt (gerendák, csövek, téglák, föld és elveszett apróságok), a játékvonat alagútja festett belsőt; a mesekönyv 5. és 6. oldalán Cincin már kesztyűt és rózsaszín cipőt visel.
 - **v0.13.2** – A gyerekszobai kockavár udvarából lépcső vezet ki; a címlap nem görgethető, így nem látszik rajta sötét sáv; az előtér-réteg (elmosódott tárgyak a kép szélén) kikerült a játékból.
