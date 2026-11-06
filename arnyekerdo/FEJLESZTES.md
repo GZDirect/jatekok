@@ -259,3 +259,15 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
   - Hegyi expressz: a kocsiban dobott füstbomba az egész kocsit betölti, mindenki megvakul benne, aki nem a tetőn van (`G.hooks.smoke`).
 - Ugrás közben (`P.jy>0.28`) a `low` jelölésű akadályok (rönk, kis kő, láda, ülés) nem állítanak meg: `pushOut(p,rad,air)`.
 - Érintőn a legyező gombjai és az eszközgomb az eszközképet mutatják háttérként.
+
+## 3. Közös rang- és pecsétrendszer (a 8 pályás terv 1. fázisa)
+
+- `LEVELS` (game.js) a pályák listája; a választó, a „Tovább” gomb és a feloldás ebből épül. Új pálya = új sor.
+- Mentés 2. formátum: `shinobi2-save-<n>` = `{t, lv:{<pálya>:{r:<legjobb rang>, s:[pecsétek]}}}`. A régi `ae-save-*` mentések szándékosan nem töltődnek be.
+- Számlálók: `S.kills`, `S.kos` (leütés és altatás), `S.dets` (megerősített észlelés), `S.alarms` (riadó), `S.civ` (sérült civil: kalauz, mozdonyvezető).
+- Rang (`rankOf`): Árnyék = 0 ölés, 0 leütés/altatás, 0 észlelés, 0 riadó, 0 civil. Mester = nem láttak meg, nem volt riadó. Nindzsa = legfeljebb 2 riadó. Különben Bérgyilkos. Időtől nem függ.
+- A pálya a pecsétjeit `G.hooks.seals(stats)` adja: `[név, megvan?, feltétel]`. A falu a vizsga elejétől számol (`G.hooks.statBase`), a próbák leütései nem számítanak.
+- Pálya vége: `G.finishLevel(cím, szöveg)` – összegző táblázat, pecsétek („új” jelöléssel), és hogy miért nem lett Árnyék.
+- Árnyékok Mestere: ha minden `LEVELS` pálya Árnyék, ezüstpecsét a címképernyőn (`#masterSeal`).
+- Üvegtorony új célja: Kuroda asztaláról elvinni az iratokat, aztán a kábel. Kurodát nem kell bántani; ha életben marad, a zárószöveg szerint Naruse emberei végeznek vele (nem a játékos statisztikája). A tárgyalás alatt (26 mp) a testőrök keletre néznek, Kuroda a vendégek felé: ez az ablak.
+- Ellenőrzött Árnyék-útvonal (Üvegtorony, normál, a céltorony tetejéről): bokor (-3,-12) → a tárgyalás kezdetekor déli ajtó → nyugati fal mentén az asztalhoz → északi ajtó → terasz → kábel.
