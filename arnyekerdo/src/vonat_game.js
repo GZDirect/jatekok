@@ -33,7 +33,7 @@ G.hooks.setup=()=>{const sp=V.spots,o=off();
   place(ALLCOPS[0],sp.desk.x,sp.desk.z,sp.desk.ry);Object.assign(ALLCOPS[0],{unarmed:true,safe:sp.safe,hp:2});
   place(ALLCOPS[1],-0.95,-23.7,0);
   place(ALLCOPS[2],0.3,-25,0,[{x:0.3,z:-25},{x:0.3,z:-34.5}]);
-  place(ALLCOPS[3],0.2,70.5,Math.PI,[{x:0.2,z:70.5},{x:0.2,z:79}]);Object.assign(ALLCOPS[3],{unarmed:true,safe:{x:0.2,z:69}});
+  place(ALLCOPS[3],0.2,74,0,[{x:0.2,z:69.5},{x:0.2,z:76.5}]);/* a kalauz induláskor háttal áll, előre indul: a peronról van időd elbújni */Object.assign(ALLCOPS[3],{unarmed:true,safe:{x:0.2,z:69}});
   place(ALLCOPS[4],1.15,25,Math.PI,[{x:1.15,z:25},{x:1.15,z:43}]);
   place(ALLCOPS[5],1.0,3.6,Math.PI,[{x:1.0,z:3.6},{x:1.0,z:12},{x:-1.0,z:12},{x:-1.0,z:20.6},{x:-1.0,z:12},{x:1.0,z:12}]);
   place(ALLCOPS[6],0,-2.5,0,[{x:0,z:-2.5},{x:0,z:-12.6}]);

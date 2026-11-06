@@ -179,8 +179,11 @@ const fwd=()=>({x:-Math.sin(P.yaw),z:-Math.cos(P.yaw)});
 function eyePos(out){return out.set(P.x,P.mode==='ground'?H(P.x,P.z)+P.camY+(P.jy||0):P.py,P.z);}
 
 /* ---------- Fegyverek ---------- */
+/* közelharc csak akkor, ha a játékos és a célpont között nincs fal (sűrű mintavétel, a vékony válaszfalak miatt) */
+function meleeClear(c){const dx=c.x-P.x,dz=c.z-P.z,d=Math.hypot(dx,dz);if(d<0.6)return true;const n=Math.ceil(d/0.12);
+  for(let i=2;i<n-2;i++){const x=P.x+dx*i/n,z=P.z+dz*i/n;let hit=false;near(grid,x,z,t=>{if(!hit&&!t.low&&!t.off&&t.kind!=='bush'&&Math.hypot(x-t.x,z-t.z)<t.r)hit=true;});if(hit)return false;}return true;}
 function meleeTarget(){const f=fwd();let best=null,bd=9;
-  COPS.forEach(c=>{if(c.dead||c.active===false)return;const dx=c.x-P.x,dz=c.z-P.z,d=Math.hypot(dx,dz);if(d>2.2)return;const ang=Math.acos(clamp((dx*f.x+dz*f.z)/(d||1),-1,1));if(ang<0.85&&d<bd){bd=d;best=c;}});return best;}
+  COPS.forEach(c=>{if(c.dead||c.active===false)return;const dx=c.x-P.x,dz=c.z-P.z,d=Math.hypot(dx,dz);if(d>2.2)return;const ang=Math.acos(clamp((dx*f.x+dz*f.z)/(d||1),-1,1));if(ang<0.85&&d<bd&&meleeClear(c)){bd=d;best=c;}});return best;}
 function takeDown(c,lethal,how){c.down=true;c.dead=lethal;c.koT=lethal?0:75;c.st='down';c.aw=0;c.shoot=0;c.found=false;c.seenBody.clear();
   if(lethal)S.kills++;else S.kos++;if(c.isCiv)S.civ++;showMsg(how);noiseHit(0.35,700,'bandpass',0.25,1.2);thump(0.5);}
 function strike(c,weapon,fromAbove){
@@ -395,7 +398,7 @@ function stepPlayerAnim(dt){const a=P.anim;a.t+=dt;
 }
 
 /* ---------- Játék indítása, vége ---------- */
-function newRound(){
+function newRound(){S.briefDone=false;
   S.time=0;S.smoke=D.smoke;S.stones=D.stones;S.spikes=D.spikes;S.darts=D.darts;S.stars=D.stars;S.smokeT=0;S.beat=0;S.threat=0;S.alarm=0;S.alarms=0;S.kills=0;S.kos=0;S.dets=0;S.civ=0;S.trees=new Set();S.shots=0;S.aim=null;
   Object.assign(P,{x:START.x,z:START.z,yaw:0,pitch:0.05,crouch:false,run:false,stam:100,hp:100,mode:'ground',tree:null,anim:null,atk:0,atkCd:0,pend:null,hurt:0,noiseBoost:0,camY:1.65,drag:null});
   P.jy=0;P.jv=0;if(GEAR){if(!hasGear(4))S.stones=0;if(!hasGear(5))S.spikes=0;if(!hasGear(6))S.darts=0;if(!hasGear(7))S.stars=0;if(!hasGear(8))S.smoke=0;}
@@ -702,7 +705,8 @@ function update(dt){
 
   /* Rendőrök */
   const eye=eyePos(new THREE.Vector3());P.lit=false;let nd=1e9,maxSt=0;
-  COPS.forEach(c=>{if(!S.freeze)stepCop(c,dt,eye);if(!S.running)return;if(c.down)return;const d=Math.hypot(P.x-c.x,P.z-c.z);if(d<nd)nd=d;
+  const brief=!$('tut').hidden&&!TS.on&&!P.moving&&!S.briefDone;if(!brief&&!$('tut').hidden&&!TS.on)S.briefDone=true;
+  COPS.forEach(c=>{if(!S.freeze&&!brief)stepCop(c,dt,eye);if(!S.running)return;if(c.down)return;const d=Math.hypot(P.x-c.x,P.z-c.z);if(d<nd)nd=d;
     const lv=c.st==='alert'?3:c.st==='search'?2:c.st==='suspect'?1:0;if(lv>maxSt)maxSt=lv;});
   if(!S.running)return;
   for(let i=0;i<COPS.length;i++){const a=COPS[i];if(a.down)continue;const dx=P.x-a.x,dz=P.z-a.z,d=Math.hypot(dx,dz);

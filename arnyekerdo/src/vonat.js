@@ -45,13 +45,16 @@ const outerM=new THREE.MeshLambertMaterial({map:outerTex,alphaTest:0.5,side:THRE
 function chassis(c,col){const L=c.z1-c.z0,cz=(c.z0+c.z1)/2;box(0,-0.55,cz,3.3,0.5,L,col||black);
   [c.z0+2.6,c.z1-2.6].forEach(z=>{box(0,-1.0,z,2.4,0.4,2.6,metalD);[-1,1].forEach(s=>[-0.7,0.7].forEach(o=>{const w=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.42,0.14,14),metalD);w.rotation.z=Math.PI/2;w.position.set(s*0.75,-1.02,z+o);add(w,false);}));});}
 /* utaskocsi teste: padló, mennyezet, két oldalfal ablakokkal (kívül-belül), tető, végfalak ajtóval */
+const CREAM2=cream.clone();CREAM2.side=THREE.DoubleSide;/* a mennyezet felülről se legyen átlátszó */
 function coach(c,floorMat){const L=c.z1-c.z0,cz=(c.z0+c.z1)/2,Hh=2.6;chassis(c);
   const fl=new THREE.Mesh(new THREE.PlaneGeometry(2*CW+0.1,L),floorMat);fl.rotation.x=-Math.PI/2;fl.position.set(0,0.01,cz);add(fl,false).receiveShadow=true;
-  const ce=new THREE.Mesh(new THREE.PlaneGeometry(2*CW+0.2,L),cream);ce.rotation.x=Math.PI/2;ce.position.set(0,Hh,cz);add(ce,false);
+  const ce=new THREE.Mesh(new THREE.PlaneGeometry(2*CW+0.2,L),CREAM2);ce.rotation.x=Math.PI/2;ce.position.set(0,Hh,cz);add(ce,false);
   [-1,1].forEach(s=>{const ot=outerTex.clone();ot.needsUpdate=true;rep(ot,L/4,1);const om=outerM.clone();om.map=ot;const o=new THREE.Mesh(new THREE.PlaneGeometry(L,Hh+0.3),om);o.rotation.y=s*Math.PI/2;o.position.set(s*(CW+0.14),Hh/2-0.15,cz);add(o);
     const it=innerTex.clone();it.needsUpdate=true;rep(it,L/4,1);const im=innerM.clone();im.map=it;const i=new THREE.Mesh(new THREE.PlaneGeometry(L,Hh),im);i.rotation.y=-s*Math.PI/2;i.position.set(s*(CW+0.06),Hh/2,cz);add(i,false);
     const gl=new THREE.Mesh(new THREE.PlaneGeometry(L,Hh*0.4),glassM);gl.rotation.y=s*Math.PI/2;gl.position.set(s*(CW+0.1),Hh*0.6,cz);add(gl,false);});
   {const rg=new THREE.CylinderGeometry(2.4,2.4,L,16,1,true,Math.PI-0.78,1.56);rg.rotateX(Math.PI/2);rg.scale(1,0.4,1);const roof=new THREE.Mesh(rg,lam(0x3a3c40,{side:THREE.DoubleSide}));roof.position.set(0,Hh-0.68,cz);add(roof);for(let z=c.z0+3;z<c.z1-2;z+=5){const v=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.22,1.0),lam(0x55585c));v.position.set(0,Hh+0.3,z);add(v);}}
+  /* a tetőív két vége zárt, hogy a végfal fölötti résen ne lehessen belátni */
+  [c.z0,c.z1].forEach(z=>{const sh=new THREE.Shape();for(let i=0;i<=12;i++){const t=-0.78+1.56*i/12;const x=2.4*Math.sin(t),y=0.96*Math.cos(t);i?sh.lineTo(x,y):sh.moveTo(x,y);}sh.lineTo(-2.4*Math.sin(0.78),0.96*Math.cos(0.78)-0.02);const cap=new THREE.Mesh(new THREE.ShapeGeometry(sh),lam(0x3a3c40,{side:THREE.DoubleSide}));cap.position.set(0,Hh-0.68,z);add(cap,false);});
   [c.z0,c.z1].forEach(z=>{box(-1.25,0,z,0.8,Hh,0.12,wood);box(1.25,0,z,0.8,Hh,0.12,wood);box(0,2.15,z,1.7,Hh-2.15,0.12,wood);wallCol(-CW,z,-0.88,z,0.2);wallCol(0.88,z,CW,z,0.2);});
   /* ablakonként: függöny két oldalt, fali lámpa, a napfény foltja a padlón; fent csomagtartó */
   [-1,1].forEach(s=>{for(let z=c.z0+2;z<c.z1-1;z+=4){[-1.55,1.55].forEach(o=>{const cu=new THREE.Mesh(new THREE.BoxGeometry(0.06,1.15,0.32),CURT);cu.position.set(s*(CW+0.02),1.6,z+o);trainG.add(cu);});
@@ -258,9 +261,9 @@ function startTunnel(){TUN.on=true;TUN.z0=-300;TUN.g.position.z=TUN.z0;TUN.g.vis
 function inTunnel(z){return TUN.on&&z<TUN.z0&&z>TUN.z0-TUN.len;}
 
 /* ---------- utasok: ülő civilek (díszlet, nem figyelnek) ---------- */
-{const seats=[[-0.55,30.45,0],[-0.3,38.45,0],[-1.1,-11.0,Math.PI],[1.1,-5.0,0],[-1.15,74.2,Math.PI/2]];
+{const seats=[[-0.55,30.45,Math.PI],[-0.3,38.45,Math.PI],[-1.1,-11.0,0],[1.1,-5.0,Math.PI],[-1.15,74.2,-Math.PI/2]];/* arccal a támla felől el, lábbal előre */
   seats.forEach((q,i)=>{const m=A.buildPolice(40+i,{suit:true,civ:true});m.position.set(q[0],H(q[0],q[1]),q[1]);m.rotation.y=q[2];m.userData.anim(0,0,0,{st:'patrol',bp:0,sweep:0,shoot:0,fall:0,stagger:0});
-    const R=m.userData.R;m.userData.seated=true;R.hips.position.y=0.55;R.legs.forEach(l=>{l.hp.rotation.x=-1.45;l.kn.rotation.x=1.45;});R.arms.forEach(a=>{a.sh.rotation.x=0.5;a.el.rotation.x=0.9;});R.lensGlow.visible=false;scene.add(m);});}
+    const R=m.userData.R;m.userData.seated=true;R.hips.position.y=0.55;R.legs.forEach(l=>{l.hp.rotation.x=1.45;l.kn.rotation.x=-1.45;});R.arms.forEach(a=>{a.sh.rotation.x=0.5;a.el.rotation.x=0.9;});R.lensGlow.visible=false;scene.add(m);});}
 
 A.ROOF=A.VONAT={SUNM,SCONG,rects,walkable,clampRoof,CARS,CASE,BRAKE,HOOKS,CTN,LIFE,TUN,stepLand,startTunnel,inTunnel,trainG,glassM,
   actors:['boss','guard','guard','conductor','guard','guard','guard','guard','driver','guard','guard','guard'],

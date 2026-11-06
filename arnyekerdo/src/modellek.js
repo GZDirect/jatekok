@@ -76,7 +76,7 @@ function upgrade(g,src){
       if(m.k==='up')D.multiply(base[m.s]);else if(m.k==='lo')D.premultiply(base[m.s+'i']).multiply(base[m.s]);
       m.b.quaternion.copy(m.rp).multiply(D).multiply(m.rb);}
     /* ülő utasoknál (alacsony csípő) az új test kicsit magasabban és előrébb ül, hogy ne süllyedjen az ülésbe */
-    const sit=!!g.userData.seated;cont.position.set(0,R.hips.position.y-0.98+(sit?0.1:0),sit?-0.13:0);
+    const sit=!!g.userData.seated;cont.position.set(0,R.hips.position.y-0.98+(sit?0.04:0),sit?0.04:0);
     model.updateMatrixWorld(true);
     /* zseblámpa és fegyver a modell kezébe */
     /* a régi alkar végén lévő tárgyak (zseblámpa, revolver, legyező…) az új kézbe kerülnek */
