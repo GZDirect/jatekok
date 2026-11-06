@@ -687,7 +687,7 @@ function update(dt){
     P.noise=P.moving?(P.drag?6:P.crouch?4:running?27:12)*mag:0;if(G.hooks.noiseMul&&P.noise>0)P.noise*=G.hooks.noiseMul(P.x,P.z);if(P.moving)P.bob+=dt*speed*2.2;
     {const ph=Math.floor(P.bob/Math.PI);if(ph!==P.stepPh){P.stepPh=ph;if(P.moving&&!(P.jy>0))footstep();}}
     {const b=P.moving?bushAt(P.x,P.z):null;BR.in=!!b;if(b){if(BR.b&&BR.b!==b)A.shakeBush(BR.b,0,0);BR.b=b;BR.k=1;}}
-    if(P.drag){const c=P.drag;if(!c.down){P.drag=null;updateButtons();}else{const f=fwd(),tx=P.x+f.x*1.0,tz=P.z+f.z*1.0,k=Math.min(1,dt*8);c.x+=(tx-c.x)*k;c.z+=(tz-c.z)*k;pushOut(c,0.35);c.ry=P.yaw+Math.PI;/* a rendőr hanyatt fekszik, a lábánál fogva húzod: a teste előtted látszik */}}
+    if(P.drag){const c=P.drag;if(!c.down){P.drag=null;updateButtons();}else{const f=fwd(),tx=P.x+f.x*1.0,tz=P.z+f.z*1.0,k=Math.min(1,dt*8);c.x+=(tx-c.x)*k;c.z+=(tz-c.z)*k;pushOut(c,0.35);clampField(c);/* a test végig (fej, törzs) ne lógjon falba, tárgyba: ha valamelyik pontja ütközik, a testet visszahúzzuk */for(const d of [0.6,1.2,1.7]){const q={x:c.x+f.x*d,z:c.z+f.z*d};pushOut(q,0.25);clampField(q);const ex=c.x+f.x*d-q.x,ez=c.z+f.z*d-q.z;if(ex*ex+ez*ez>1e-6){c.x-=ex;c.z-=ez;}}c.ry=P.yaw+Math.PI;/* a rendőr hanyatt fekszik, a lábánál fogva húzod: a teste előtted látszik */}}
     P.camY+=((P.crouch?0.95:P.drag?1.15:1.65)-P.camY)*Math.min(1,dt*8);
     if(P.jy>0||P.jv>0){P.jv-=13*dt;P.jy+=P.jv*dt;if(P.jy<=0){P.jy=0;P.jv=0;P.noiseBoost=Math.max(P.noiseBoost,P.running?16:9);footstep();P.camY-=0.18;}}
   }else{P.moving=false;P.running=false;P.noise=0;P.stam=clamp(P.stam+11*dt,0,100);if(P.mode!=='perch')stepPlayerAnim(dt);}

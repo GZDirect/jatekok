@@ -260,7 +260,7 @@ function inTunnel(z){return TUN.on&&z<TUN.z0&&z>TUN.z0-TUN.len;}
 /* ---------- utasok: ülő civilek (díszlet, nem figyelnek) ---------- */
 {const seats=[[-0.55,30.45,0],[-0.3,38.45,0],[-1.1,-11.0,Math.PI],[1.1,-5.0,0],[-1.15,74.2,Math.PI/2]];
   seats.forEach((q,i)=>{const m=A.buildPolice(40+i,{suit:true,civ:true});m.position.set(q[0],H(q[0],q[1]),q[1]);m.rotation.y=q[2];m.userData.anim(0,0,0,{st:'patrol',bp:0,sweep:0,shoot:0,fall:0,stagger:0});
-    const R=m.userData.R;R.hips.position.y=0.55;R.legs.forEach(l=>{l.hp.rotation.x=-1.45;l.kn.rotation.x=1.45;});R.arms.forEach(a=>{a.sh.rotation.x=0.5;a.el.rotation.x=0.9;});R.lensGlow.visible=false;scene.add(m);});}
+    const R=m.userData.R;m.userData.seated=true;R.hips.position.y=0.55;R.legs.forEach(l=>{l.hp.rotation.x=-1.45;l.kn.rotation.x=1.45;});R.arms.forEach(a=>{a.sh.rotation.x=0.5;a.el.rotation.x=0.9;});R.lensGlow.visible=false;scene.add(m);});}
 
 A.ROOF=A.VONAT={SUNM,SCONG,rects,walkable,clampRoof,CARS,CASE,BRAKE,HOOKS,CTN,LIFE,TUN,stepLand,startTunnel,inTunnel,trainG,glassM,
   actors:['boss','guard','guard','conductor','guard','guard','guard','guard','driver','guard','guard','guard'],

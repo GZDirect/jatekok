@@ -143,13 +143,14 @@ const HOOKS=[];
   const hook=new THREE.Mesh(new THREE.TorusGeometry(0.35,0.08,6,12),metalD);hook.position.set(x+18,7,z);scene.add(hook);const cb=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,5.4,4),metalD);cb.position.set(x+18,9.9,z);scene.add(cb);
   HOOKS.push({g,y:11.2*g.s});}
 {const g=giants[1],x=g.x,z=g.z;/* víztorony a céltorony tetején */
-  [[-1.5,-1.5],[1.5,-1.5],[-1.5,1.5],[1.5,1.5]].forEach(q=>{const l=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.14,7.6,6),metalD);l.position.set(x+q[0],3.8,z+q[1]);l.castShadow=true;scene.add(l);});
-  const tank=new THREE.Mesh(new THREE.CylinderGeometry(2.4,2.4,4,20),lam(0x7a6a58));tank.position.set(x,9.6,z);tank.castShadow=true;scene.add(tank);
-  const roof=new THREE.Mesh(new THREE.ConeGeometry(2.6,1.3,20),lam(0x5a4c40));roof.position.set(x,12.25,z);scene.add(roof);
+  [[-1.5,-1.5],[1.5,-1.5],[-1.5,1.5],[1.5,1.5]].forEach(q=>{const l=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.14,g.py-4.05,6),metalD);l.position.set(x+q[0],(g.py-4.05)/2,z+q[1]);l.castShadow=true;scene.add(l);});
+  /* a tartály a járófelület alatt van: a tetején állsz, nem benne */
+  const tank=new THREE.Mesh(new THREE.CylinderGeometry(2.4,2.4,4,20),lam(0x7a6a58));tank.position.set(x,g.py-2.07,z);tank.castShadow=true;scene.add(tank);
+  const lid=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,0.6,10),lam(0x5a4c40));lid.position.set(x+1.2,g.py+0.3,z-1.2);scene.add(lid);
   const walk=new THREE.Mesh(new THREE.CylinderGeometry(3.0,3.0,0.1,20,1,false),metal);walk.position.set(x,g.py-0.05,z);scene.add(walk);
   const rail=new THREE.Mesh(new THREE.TorusGeometry(3.0,0.04,4,30),metal);rail.rotation.x=Math.PI/2;rail.position.set(x,g.py+0.95,z);scene.add(rail);
-  const lad=new THREE.Mesh(new THREE.BoxGeometry(0.5,7.6,0.06),metalD);lad.position.set(x,3.8,z+1.55);scene.add(lad);
-  HOOKS.push({g,y:11.2*g.s});}
+  const lad=new THREE.Mesh(new THREE.BoxGeometry(0.5,g.py,0.06),metalD);lad.position.set(x,g.py/2,z+2.45);scene.add(lad);
+  HOOKS.push({g,y:g.py+1.0});}
 {const g=giants[2],x=g.x,z=g.z;/* antenna a penthouse tetején, alatta tartóoszlop az irodában */
   const pil=new THREE.Mesh(new THREE.BoxGeometry(0.7,3.6,0.7),lam(0xd8d4ca));pil.position.set(x,1.8,z);pil.castShadow=true;scene.add(pil);
   const ms=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.22,9,6),metal);ms.position.set(x,3.6+4.5,z);scene.add(ms);
