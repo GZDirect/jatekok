@@ -303,3 +303,18 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - Gőz: a medencék körüli ellipszisben guggolva rejtve vagy (új általános horog: `G.hooks.hide`).
 - A könyvelő civil (nem őr), az irodában ül. „Beszélj” (`G.hooks.ctx`): ha nincs riadó és 16 m-en belül nem keres őr, három mondatban elmondja, és átadja az iratokat (Csendes vallomás). Különben megijed, és a ládából kell elvenni.
 - Ellenőrizve: őrök nélkül a teljes menet Árnyék; élő őrökkel a szkriptelt próba a medencéknél lebukott, valódi játékban kell kipróbálni.
+
+## 7. A 8. pálya: Az utolsó pecsét (hegyi templom, világos reggel)
+
+- Fájlok: `src/templom.js`, `src/templom_game.js`. Cím: `?palya=templom`.
+- Szerkezet: papírfolyosó (z -14..-10) → négy szoba (z -24..-14) → belső udvar → főcsarnok (z -40..-28, déli és keleti ajtó) → archívum (z -48..-40) az elhúzható panel mögött.
+- Sziluett: a folyosó két megvilágított szakaszán (`LIT`) a játékos alakja megjelenik a z=-14 papírfalon (`SIL`); a szobában álló, a fal felé néző őr 10 m-en belül gyanút fog, és ha a figyelme eléri az 1-et, észlel.
+- Kapcsolók: holdas tekercs (1. szoba), napos lámpás (4. szoba). Jó sorrend: hold, nap → a panel kinyílik (az ütközőkörök `off`). Rossz sorrend: zaj, újrakezdés.
+- Naruse (ALLCOPS[0]) a főcsarnokban vár, háromféle irányba néz; az okmányok elvétele után beszél (3 mondat) és járőrözni kezd a csarnokban.
+- Befejezések a zárószövegben: halott (a bosszú útja), leütve (a mester útja), észre sem vett (az árnyék útja). Ha az előző hét pálya mind Árnyék és ez is tiszta, a mester zárójelenete más (ezüst pecsét).
+- Ellenőrizve: őrök és Naruse nélkül a teljes menet Árnyék; mindhárom befejezés szövege és a rang; az Árnyékok Mestere üzenet. Élő őrökkel a szkriptelt próba lebukott, valódi játékban kell kipróbálni.
+
+## 8. Mi maradt hátra (2026. november)
+
+- A 6–8. pályán élő őrökkel nincs végigjátszott, igazolt Árnyék-útvonal (a szkriptelt próbabot nem tud nézni). Valódi játékban kell kipróbálni, és szükség szerint lazítani (őrök útvonala, látótávolság `seeMul`, búvóhelyek).
+- A régi `ae-save-*` mentések nem töltődnek be (szándékosan).

@@ -9,7 +9,7 @@ import os
 D = os.path.dirname(os.path.abspath(__file__))
 rd = lambda n: open(os.path.join(D, n), encoding='utf-8').read()
 shell = rd('shell.html')
-js = '\n'.join(rd(n) for n in ('hang_lista.js', 'world.js', 'actors.js', 'falu.js', 'varos.js', 'vonat.js', 'kikoto.js', 'fesztival.js', 'fogado.js', 'parkolt.js', 'game.js', 'falu_game.js', 'varos_game.js', 'vonat_game.js', 'kikoto_game.js', 'fesztival_game.js', 'fogado_game.js')) + '\n'
+js = '\n'.join(rd(n) for n in ('hang_lista.js', 'world.js', 'actors.js', 'falu.js', 'varos.js', 'vonat.js', 'kikoto.js', 'fesztival.js', 'fogado.js', 'templom.js', 'parkolt.js', 'game.js', 'falu_game.js', 'varos_game.js', 'vonat_game.js', 'kikoto_game.js', 'fesztival_game.js', 'fogado_game.js', 'templom_game.js')) + '\n'
 # Tömörítés (a GitHub Pages-en kisebb, gyorsabban töltődik): terser, a © megjegyzés megmarad. --plain: tömörítés nélkül.
 import subprocess, sys as _s, tempfile as _t
 if '--plain' not in _s.argv:
@@ -36,10 +36,10 @@ wrap_head = ('<!doctype html>\n<html lang="hu">\n<head>\n<meta charset="utf-8">\
   '<link rel="apple-touch-icon" href="icon-180.png">\n'
   '<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">\n'
   '<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">\n'
-  '<meta name="description" content="Lopakodó nindzsakaland a böngészőben, négy pályán: éjszakai erdő, nappali vizsga a faluban, felhőkarcolók teteje és egy száguldó vonat. Magyar hangokkal, telefonon is.">\n'
+  '<meta name="description" content="Lopakodó nindzsakaland a böngészőben, nyolc pályán, egy történettel: éjszakai erdő, a mester faluja, felhőkarcolók, száguldó vonat, kikötő, lampionos ünnep, havas fogadó és a hegyi templom. Magyar hangokkal, telefonon is.">\n'
   '<meta property="og:type" content="website">\n'
   '<meta property="og:title" content="Shinobi">\n'
-  '<meta property="og:description" content="Lopakodó nindzsakaland a böngészőben, négy pályán: éjszakai erdő, nappali vizsga a faluban, felhőkarcolók teteje és egy száguldó vonat. Magyar hangokkal, telefonon is.">\n'
+  '<meta property="og:description" content="Lopakodó nindzsakaland a böngészőben, nyolc pályán, egy történettel: éjszakai erdő, a mester faluja, felhőkarcolók, száguldó vonat, kikötő, lampionos ünnep, havas fogadó és a hegyi templom. Magyar hangokkal, telefonon is.">\n'
   '<meta property="og:url" content="https://gzdirect.github.io/jatekok/arnyekerdo/">\n'
   '<meta property="og:image" content="https://gzdirect.github.io/jatekok/arnyekerdo/social-preview.jpg">\n'
   '<meta property="og:image:width" content="1200">\n'

@@ -17,6 +17,8 @@ A hatodik pálya (**A rókák éjszakája**) egy kastélypark lampionos ünnepé
 
 A hetedik pálya (**Fehér csend**) egy havas hegyi termálfogadóban játszódik: a friss hóban lábnyomot hagysz, amit az őrök követnek, a medencék gőze viszont eltakar. A bujkáló könyvelőt kell szóra bírni.
 
+A nyolcadik pálya (**Az utolsó pecsét**) egy ősi hegyi templomban zárja a történetet: a papírfalakon átüt a sziluetted, a titkos archívumot két kapcsoló nyitja, és Naruséval kapcsolatban te döntesz (kiosonsz, leütöd vagy megölöd). Ha mind a nyolc küldetést Árnyék ranggal teljesíted, megkapod az Árnyékok Mestere ezüstpecsétet és egy külön zárójelenetet.
+
 **Játék:** https://gzdirect.github.io/jatekok/arnyekerdo/
 
 Telefonon a böngésző menüjében a **Hozzáadás a kezdőképernyőhöz** paranccsal alkalmazásként is telepíthető, és az első megnyitás után net nélkül is elindul.

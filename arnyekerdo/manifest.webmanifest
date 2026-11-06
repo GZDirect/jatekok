@@ -1,7 +1,7 @@
 {
  "name": "Shinobi",
  "short_name": "Shinobi",
- "description": "Lopakodó nindzsakaland négy pályán: éjszakai erdő, nappali vizsga a faluban, felhőkarcolók és egy száguldó vonat. Magyar hangokkal. © 2026 Fejes Géza.",
+ "description": "Lopakodó nindzsakaland nyolc pályán, egy történettel, magyar hangokkal. © 2026 Fejes Géza.",
  "start_url": "./",
  "scope": "./",
  "display": "fullscreen",

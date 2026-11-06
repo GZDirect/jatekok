@@ -9,11 +9,11 @@ const lerp=(a,b,t)=>a+(b-a)*t;
    Fix méretű völgy: |x|<XW és -ZN<z<ZS a járható rész, körülötte meredek gerincek (rdg).
    Északon (x≈0) egy szoros vezet ki az útra: ott van a kijárat. */
 /* két pálya: 1. erdő (rendőrkordon), 2. falu (kiképzés). A falu a ?palya=falu címmel töltődik. */
-const LV=/[?&]palya=falu/.test(location.search)?'falu':/[?&]palya=varos/.test(location.search)?'varos':/[?&]palya=vonat/.test(location.search)?'vonat':/[?&]palya=kikoto/.test(location.search)?'kikoto':/[?&]palya=fesztival/.test(location.search)?'fesztival':/[?&]palya=fogado/.test(location.search)?'fogado':'erdo';
-const VR=LV==='varos',VT=LV==='vonat',KK=LV==='kikoto',FZ=LV==='fesztival',FG=LV==='fogado',FL=VR||VT||KK||FZ||FG;/* 4. pálya: a vonat kocsijai; a padló magassága kocsinként más (a tehervagon tetején 3 m) */
+const LV=/[?&]palya=falu/.test(location.search)?'falu':/[?&]palya=varos/.test(location.search)?'varos':/[?&]palya=vonat/.test(location.search)?'vonat':/[?&]palya=kikoto/.test(location.search)?'kikoto':/[?&]palya=fesztival/.test(location.search)?'fesztival':/[?&]palya=fogado/.test(location.search)?'fogado':/[?&]palya=templom/.test(location.search)?'templom':'erdo';
+const VR=LV==='varos',VT=LV==='vonat',KK=LV==='kikoto',FZ=LV==='fesztival',FG=LV==='fogado',TP=LV==='templom',FL=VR||VT||KK||FZ||FG||TP;/* 4. pálya: a vonat kocsijai; a padló magassága kocsinként más (a tehervagon tetején 3 m) */
 const VONAT_CARS=[{id:'loco',z0:-62,z1:-44,h:0},{id:'salon',z0:-42,z1:-22,h:0},{id:'dining',z0:-20,z1:0,h:0},{id:'flat',z0:2,z1:22,h:1.1},{id:'pass',z0:24,z1:44,h:0},{id:'box',z0:46,z1:66,h:3.0},{id:'obs',z0:68,z1:82,h:0}];
 function trainH(z){for(let i=0;i<VONAT_CARS.length;i++){const c=VONAT_CARS[i];if(z>=c.z0&&z<=c.z1)return c.h;const n=VONAT_CARS[i+1];if(n&&z>c.z1&&z<n.z0){const t=(z-c.z1)/(n.z0-c.z1);return c.h+(n.h-c.h)*t;}}return 0;}/* 3. pálya: két felhőkarcoló teteje, sík (H=0), a város a mélyben */
-const XW=LV==='falu'?26:VR?24:VT?4:KK?27:FZ?30:FG?30:52,ZS=LV==='falu'?50:VR?66:VT?84:KK?60:FZ?60:FG?60:100,ZN=LV==='falu'?128:VR?64:VT?64:KK?60:FZ?60:FG?60:104,HB=LV==='falu'?0.15:FL?0:1;
+const XW=LV==='falu'?26:VR?24:VT?4:KK?27:FZ?30:FG?30:TP?30:52,ZS=LV==='falu'?50:VR?66:VT?84:KK?60:FZ?60:FG?60:TP?60:100,ZN=LV==='falu'?128:VR?64:VT?64:KK?60:FZ?60:FG?60:TP?60:104,HB=LV==='falu'?0.15:FL?0:1;
 const sstep=(a,b,v)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t);};
 function rdg(x,z){if(FL)return 0;const ex=Math.max(Math.abs(x)-XW,0),ez=z>0?Math.max(z-ZS,0):Math.max(-z-ZN,0)*(LV==='falu'?1:sstep(5,12,Math.abs(x))),e=ex+ez;return e*(0.35+0.055*e)+0.6*Math.min(e,8)*Math.sin(x*0.21+z*0.17);}
 function H(x,z){if(VT)return trainH(z);return HB*(1.5*Math.sin(x*0.043+1.1)*Math.cos(z*0.037-0.4)+0.9*Math.sin(x*0.097+z*0.071+2.0)+0.4*Math.sin(x*0.23-z*0.19+0.7)+0.25*Math.cos(x*0.31+z*0.27))+rdg(x,z);}
@@ -189,6 +189,7 @@ const inField=(x,z,m)=>Math.abs(x)<XW-m&&z<ZS-m&&z>-ZN+m;
     const lg={x,z,a,L,rad:0.32+r()*0.15};logs.push(lg);for(let k=-L/2+0.6;k<=L/2-0.6;k+=1.1){const o={x:x+Math.cos(a)*k,z:z+Math.sin(a)*k,r:lg.rad+0.15,low:true};trees.push(o);addTo(grid,o);}}
   if(KK)KIKOTO_BUSHES.forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()};bushes.push(b);addTo(bgrid,b);});
   else if(VT)VONAT_BUSHES.forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()};bushes.push(b);addTo(bgrid,b);});
+  else if(TP)[[-10,50,0.8],[11,46,0.8],[-24,34,0.85],[22,30,0.85],[-6,24,0.75],[8,20,0.75],[-27,0,0.8],[27,-4,0.8],[-26,-30,0.8],[26,-36,0.8],[-14,-54,0.8],[16,-54,0.8]].forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()*0.4,hedge:true};bushes.push(b);addTo(bgrid,b);});
   else if(FG)[[-8,48,0.8],[9,44,0.8],[-20,40,0.85],[20,36,0.85],[-4,26,0.75],[24,20,0.8],[-26,6,0.8],[26,-2,0.8],[-12,-14,0.75],[6,-46,0.8],[-22,-50,0.8],[22,-52,0.8],[-26,-30,0.8]].forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()*0.4,hedge:true,snow:true};bushes.push(b);addTo(bgrid,b);});
   else if(FZ)[[-6,46,0.8],[7,41,0.8],[-18,38,0.8],[19,44,0.8],[-3,30,0.75],[-20,20,0.8],[22,16,0.8],[-9,4,0.75],[11,-12,0.8],[-22,-14,0.8],[25,-18,0.8],[9,-30,0.8],[-12,-30,0.8],[14,-38,0.75],[-20,-44,0.8],[19,-50,0.8],[-26,-52,0.8],[27,-30,0.8]].forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()*0.4,hedge:true};bushes.push(b);addTo(bgrid,b);});
   else if(VR)VAROS_BUSHES.forEach(q=>{const s=q[2];const b={x:q[0],z:q[1],r:1.45*s,s,c:r()*0.4,hedge:true};bushes.push(b);addTo(bgrid,b);});
@@ -238,9 +239,9 @@ function glowGiant(i,k){if(i<0||!GLEAF_BASE[i])return;TC.copy(GLEAF_BASE[i]).mul
   else if(VT){/* bőröndhalom */const cs=[[0x6a3a24,0.55,0.38,0.32,0,0.19,0],[0x2a3a5a,0.48,0.32,0.28,0.05,0.54,0.02],[0x8a7a5a,0.36,0.26,0.24,-0.04,0.83,-0.02]];
     cs.forEach(q=>{const g=new THREE.BoxGeometry(q[1],q[2],q[3]);g.translate(q[4],q[5],q[6]);parts.push({g,flat:true,c:rgb(q[0])});});}
   else if(FG){const g=jitter(new THREE.IcosahedronGeometry(0.9,1),0.18,5);g.scale(1,0.7,1);g.translate(0,0.55,0);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>ny>0.35?rgb(0xf2f4f6):mixc(rgb(0x2a3a2c),rgb(0x4a5a48),clamp(ny+0.5,0,1))});}
-  else if(VR||FZ){const g=jitter(new THREE.BoxGeometry(1.5,0.8,1.5,4,2,4),0.16,3);g.translate(0,0.82,0);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>mixc(rgb(0x2a4a22),rgb(0x5c8a3a),clamp(ny*0.5+(y-0.4)*0.6,0,1))});}
+  else if(VR||FZ||TP){const g=jitter(new THREE.BoxGeometry(1.5,0.8,1.5,4,2,4),0.16,3);g.translate(0,0.82,0);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>mixc(rgb(0x2a4a22),rgb(0x5c8a3a),clamp(ny*0.5+(y-0.4)*0.6,0,1))});}
   else for(let i=0;i<8;i++){const g=new THREE.IcosahedronGeometry(0.45+r()*0.35,0);jitter(g,0.3,i);const a=r()*6.28,rr=r()*0.75;g.translate(Math.cos(a)*rr,0.3+r()*0.55,Math.sin(a)*rr);parts.push({g,flat:true,c:(x,y,z,nx,ny)=>mixc(dk,lt,clamp(ny*0.6+y*0.35,0,1))});}
-  const g=merge(parts);bushes.forEach(b=>b._col=VT||KK||FG?TC.setRGB(1,1,1).clone():VR||FZ?TC.setHSL(0.27+b.c*0.04,0.35,0.75+b.c*0.2).clone():TC.setHSL(0.3+b.c*0.06,0.3,0.5+b.c*0.35).clone());
+  const g=merge(parts);bushes.forEach(b=>b._col=VT||KK||FG?TC.setRGB(1,1,1).clone():VR||FZ||TP?TC.setHSL(0.27+b.c*0.04,0.35,0.75+b.c*0.2).clone():TC.setHSL(0.3+b.c*0.06,0.3,0.5+b.c*0.35).clone());
   bushes.forEach((b,i)=>b.i=i);bushMesh=inst(g,vcMat(),bushes,b=>{D.position.set(b.x,H(b.x,b.z)-0.1,b.z);D.rotation.set(0,b.c*9,0);D.scale.set(1.5*b.s,1.05*b.s,1.5*b.s);},true);}
 function shakeBush(b,k,t){if(!bushMesh||!b)return;D.position.set(b.x,H(b.x,b.z)-0.1,b.z);D.rotation.set(Math.sin(t*23+b.c*9)*0.07*k,b.c*9+Math.sin(t*17)*0.05*k,Math.cos(t*19+b.c)*0.07*k);D.scale.set(1.5*b.s,1.05*b.s*(1-0.03*k),1.5*b.s);D.updateMatrix();bushMesh.setMatrixAt(b.i,D.matrix);bushMesh.instanceMatrix.needsUpdate=true;}
 /* páfrányok */
