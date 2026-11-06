@@ -2,7 +2,7 @@
 
 ![Cincin a padláson](cover.jpg)
 
-> ⚠️ **Design előtti verzió – v0.13 (2026. november 6.)**
+> ⚠️ **Design előtti verzió – v0.13.4 (2026. november 6.)**
 > A játékmenet és mind a tíz pálya végigjátszható, és már mind a tíz helyiség festett grafikát kapott. Minden helyiségnek saját zenéje van, és mindegyikben elrejtettünk egy titkos egérjáratot. Magyarul és angolul is játszható.
 
 Cincin, a kis sálas egér egy hatalmas, régi házban lakik. A padlástól a kertig tíz helyiségen kell átjutnia, és mindegyik végén egy furfangos ellenfél vár rá: az alvó macska, a felhúzható óriásrobot, a bagoly, a szakács, a kutya, a patkány… Gyűjtsd a magokat, keresd meg minden szobában a rejtett sajtot, kússz be a bútorok alá, és találd ki, hogyan jutsz túl a szoba urán.
@@ -49,9 +49,13 @@ A tesztelők ezt a címet kapják: `…/cincin/?teszt` – így a szünet menüb
 
 ## Változások
 
+- **v0.13.4** – Új festett effektek: tinta- és mézfröccs a lehulló cseppeknél és a ragacsos padlón, gőzpamacsok a teáskannánál és a felforrósodó főzőlapoknál, konfetti a célba érkezéskor, csillagok a csatornába bukó patkány feje körül.
+- **v0.13.3** – Mind a tíz helyiség saját festett padlómetszetet kapott a padló alatt (gerendák, csövek, téglák, föld és elveszett apróságok), a játékvonat alagútja festett belsőt; a mesekönyv 5. és 6. oldalán Cincin már kesztyűt és rózsaszín cipőt visel.
+- **v0.13.2** – A gyerekszobai kockavár udvarából lépcső vezet ki; a címlap nem görgethető, így nem látszik rajta sötét sáv; az előtér-réteg (elmosódott tárgyak a kép szélén) kikerült a játékból.
+- **v0.13.1** – Grafikai javítások az átnézés után: a padló alatti sima sávok és a helyiségek szélső falai festett deszkát kaptak (a fürdőszobában csempét), a gyerekszobai polcfal hátlapja is; a padlás alacsony komódja és a kamra ládaoszlopa festett képet kapott; eltűnt a konyhai előtér elmosódott barna foltja; a szobatérképen a hosszú nevek nem lógnak ki.
 - **v0.13** – Tíz festett képregénypanel: minden helyiség főellenségénél (macska, óriásrobot, bagoly, árvíz, szakács, egérfogók, állóóra, kutya, patkány, kerti macska) az első találkozáskor megáll a játék, és beúszik a jelenet; a látott panelek a Galériába kerülnek. Új borítókép és megosztási előnézet.
 - **v0.12.1** – Javítások: a padló alatti kúszóterek festett deszkafalat, gerendákat és padlót kaptak a sima felületek helyett; a lepedős asztalok alatt festett doboz és láda áll; a gyerekszobai kockavár polcán rés nyílt, így az udvarban lévő magok elérhetők; a kamera titkos járatban sem veszítheti szem elől Cincint. A betűtípus neve Lodger Mono.
-- **v0.12** – Három új titkos alagút (köves pince, kamrai, gyökeres földjárat), festett egérlyuk-bejáratok, ajándékcsomagok és útjelző tábla, Nagyapó otthona: gyűjteményszoba a megszerzett sálakkal, festményekkel, sajtokkal és a magokkal telő befőttesüveggel. Hatfázisú szakácsjárás, négyfázisú futás és új pózok a macskának, a kutyának és a patkánynak. Előtér-réteg mind a tíz helyiségben (kikapcsolható), festett effektek (por, csillogás, fröccs, ütés, borsfelhő), új konyhai elszívó, sortördelt üzenetek.
+- **v0.12** – Három új titkos alagút (köves pince, kamrai, gyökeres földjárat), festett egérlyuk-bejáratok, ajándékcsomagok és útjelző tábla, Nagyapó otthona: gyűjteményszoba a megszerzett sálakkal, festményekkel, sajtokkal és a magokkal telő befőttesüveggel. Hatfázisú szakácsjárás, négyfázisú futás és új pózok a macskának, a kutyának és a patkánynak. festett effektek (por, csillogás, fröccs, ütés, borsfelhő), új konyhai elszívó, sortördelt üzenetek.
 - **v0.11.1** – Betűtípusok pótlása, ikonok, megosztási előnézet, telepíthető és offline is induló változat.
 - **v0.11** – Új név: **The Littlest Lodger** (a főszereplő továbbra is Cincin). Festett címképernyő logóval és élő Cincinnel, a pályaválasztó egy kettévágott ház, amelyben a szobákra kell kattintani, festett menük, gombok, csúszkák és ikonok, festett eredmény-jelvények, hat új mesekönyv-oldal. Cincin új, festett pózokat kapott: futás, ugrás, esés, landolás, megtorpanás, guggolás, kúszás, tolás, pislogás, nézelődés, ütés, szédülés, győzelmi ugrás.
 - **v0.10** – Új, teljes alakos szakács a konyhában (járás, seprűemelés, söprés, tüsszentés, menekülés repülő sapkával), a seprű porfelhőt sodor a padlón. Tíz titkos egérjárat a falak mögött: gyufásdoboz-ágyak, cérnaorsók, gyűszűk, kupakpolcok, dominólépcső, zokniágy, gyufásdoboz-lift, szardíniásdoboz-csónak, csipeszlétra; Nagyapó és a két egérgyerek tanácsot ad. Ajándékba öt új sál (pöttyös piros, csíkos zöld, csillagos kék, kockás lila, koronás sárga) és öt új festmény a galériában, két új eredmény.
