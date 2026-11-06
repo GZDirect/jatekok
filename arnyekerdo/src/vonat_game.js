@@ -75,7 +75,7 @@ function doReset(){const cp=T.resetTo||T.cp||G.START;Object.assign(P,{x:cp.x,z:c
   S.alarm=0;S.smokeT=0;G.clearSpikes();ALLCOPS.forEach(c=>{if(!c.down&&c.active!==false&&(c.st==='alert'||c.st==='search'||c.st==='suspect')){c.st='patrol';c.aw=0;}});G.updateButtons();}
 
 /* ---------- körönként ---------- */
-G.hooks.newRound=()=>{Object.assign(T,{caseT:-1,warned:false,boxSeen:false,tunT:40,dark:0,brake:-1,resetT:0,reinfT:-1,reinf:false,ph:0,phT:28,flipT:8});
+G.hooks.newRound=()=>{Object.assign(T,{tunUse:false,caseT:-1,warned:false,boxSeen:false,tunT:40,dark:0,brake:-1,resetT:0,reinfT:-1,reinf:false,ph:0,phT:28,flipT:8});
   V.LIFE.V=22;V.TUN.on=false;V.TUN.g.visible=false;applyDark();setPhase(0,true);G.goalName='Aktatáska';GOAL.x=V.CASE.x;GOAL.z=V.CASE.z;
   if(T.fromCp&&T.cp){T.fromCp=false;P.x=T.cp.x;P.z=T.cp.z;P.yaw=0;G.showMsg('Folytatás a mentési pontról.');}
   else{T.cp=null;P.yaw=0;G.showMsg('A kilátókocsi peronján vagy. Mori a szalonkocsiban ül, elöl.');}
@@ -101,6 +101,7 @@ G.hooks.update=dt=>{const t=S.time,b=boss();
   if(!V.TUN.on){T.tunT-=dt;if(T.tunT<=0&&T.brake<0){V.startTunnel();if(T.forced){T.forced=false;V.TUN.z0=-190;}T.tunT=48+Math.random()*20;T.warned=false;G.tone(0.18,180,160,1.6,'sawtooth');setTimeout(()=>G.tone(0.14,240,210,1.0,'sawtooth'),1700);
     G.showMsg(onRoof||H(P.x,P.z)>0.9?'Alagút jön! A tetőn guggolj le!':'Alagút jön: sötét lesz, kevésbé látnak.');}}
   const inT=V.inTunnel(P.z);T.dark+=((inT?1:0)-T.dark)*Math.min(1,dt*3);applyDark();
+  if(T.dark>0.6&&!T.tunUse&&COPS.some(c=>!c.down&&c.active!==false&&!c.unarmed&&c.st!=='alert'&&Math.hypot(c.x-P.x,c.z-P.z)<8))T.tunUse=true;
   if(inT&&((P.mode==='ground'&&onRoof&&!P.crouch)||P.mode==='perch'||P.mode==='hook')){failReset('Az alagút lesodort a tetőről. Guggolni kellett volna.');return;}
   /* Mori napirendje; az ajtónál álló testőr néha a bejárat felé fordul */
   if(!b.down&&b.st==='patrol'&&b.nav&&b.nav.arrived){T.phT-=dt;if(T.phT<=0)setPhase(T.ph+1);}
@@ -123,12 +124,8 @@ G.hooks.update=dt=>{const t=S.time,b=boss();
 };
 
 /* ---------- vége ---------- */
-function seals(){const out=[];if(S.alarms===0)out.push('Árnyék');if(S.kills===0)out.push('Tiszta kéz');if(S.time<420)out.push('Gyors');return out;}
-function finish(){if(T.done)return;T.done=true;const sl=seals();T.sl=sl;const rk=G.hooks.rank();G.saveProgress({l4:true,r4:rk[0],s4:sl});
-  G.endGame(true,'Megállt a vonat','Mori iratai nálad vannak. Mire a testőrök kiértek, már eltűntél az erdőben.');$('endEyebrow').textContent='Küldetés teljesítve';}
-G.hooks.rank=()=>{const sl=T.sl||seals(),names=['Bérgyilkos','Nindzsa','Mester','Árnyék'];
-  const miss=['Árnyék (egyszer sem riasztottak)','Tiszta kéz (senkit sem öltél meg)','Gyors (7 percen belül)'].filter((s,k)=>!sl.includes(['Árnyék','Tiszta kéz','Gyors'][k]));
-  return[names[sl.length],'',(sl.length?'Pecsétek: '+sl.join(' · ')+'.':'Nincs pecsét.')+(miss.length?' Még megszerezhető: '+miss.join(', ')+'.':' Minden pecsét a tiéd.')+' Idő: '+G.fmt(S.time)+' · Riasztások: '+S.alarms+'.'];};
+G.hooks.seals=s=>[['Alagút árnyéka',!!T.tunUse,'az alagút sötétjében osonsz el egy őr mellett'],['Érintetlen utasok',!s.civ,'a kalauz és a mozdonyvezető nem sérül'],['Névtelen utazó',!s.dets,'senki sem lát meg']];
+function finish(){if(T.done)return;T.done=true;G.finishLevel('Megállt a vonat','Mori aktatáskája nálad van: benne a hamisított földszerződés másolata, egy kikötői konténerszám, egy meghívó egy rókamaszkos ünnepségre, és egy félig kihúzott név: Naruse. Mire a testőrök kiértek, már eltűntél az erdőben.');}
 {const _ng=G.hooks.newRound;G.hooks.newRound=()=>{T.done=false;_ng();};}
 
 /* mentési pont: halál után onnan folytatható */

@@ -2,7 +2,8 @@
 /* Shinobi – 3. pálya: Üvegtorony (a küldetés menete).
    © 2026 Fejes Géza. Minden jog fenntartva.
    Kuroda a szomszéd torony penthouse-ában dolgozik, két személyi testőrrel; a tetőn járőrök és kamerák.
-   Át kell jutni a darun és a víztornyon, végezni vele, aztán a terasz sarkában lévő kábelen lecsúszni. */
+   Át kell jutni a darun és a víztornyon, elvinni az íróasztaláról a Mori vonatáról szóló iratokat, aztán a terasz sarkában lévő kábelen lecsúszni.
+   Kurodát nem kell bántani: ha életben hagyod, a történet szerint Naruse emberei végeznek vele (ez nem számít bele a statisztikádba). */
 const A=window.AE;if(A.LV!=='varos')return;
 const G=A.G,V=A.VAROS,{$,H,clamp}=A,{P,S,COPS,ALLCOPS,GOAL}=G;
 document.body.classList.add('varos');
@@ -17,7 +18,7 @@ Object.assign(G.LINES,{
   wake:[['','','A fenébe… hol van?']],
   smoke:[['','','Füst! Nem látok!'],['','','A szemem…!']]});
 
-const T={killed:false,bodyFound:false,cp:false,fromCp:false,ph:0,phT:0,reinfT:-1,reinf:false,zip:null,ridePrev:null,rideT:0,briefT:0,callT:0,panelT:0};
+const T={doc:false,camSaw:false,killed:false,bodyFound:false,cp:false,fromCp:false,ph:0,phT:0,reinfT:-1,reinf:false,zip:null,ridePrev:null,rideT:0,briefT:0,callT:0,panelT:0};
 const NP={konnyu:2,normal:3,nehez:4};
 const boss=()=>ALLCOPS[0];
 function npatrol(){const d=G.D();return d===G.DIFF.konnyu?NP.konnyu:d===G.DIFF.nehez?NP.nehez:NP.normal;}
@@ -40,9 +41,15 @@ function stepNav(c){const n=c.nav;if(!n||c.st!=='patrol'||c.down)return;const p=
 function place(c,x,z,ry,route,active){Object.assign(c,{x,z,ry,route:route||[{x,z}],ri:0,tx:route?route[0].x:x,tz:route?route[0].z:z,st:'patrol',aw:0,hp:3,down:false,dead:false,koT:0,fall:0,stagger:0,shootCd:0,aimT:0,shoot:0,
   lostT:0,searchT:0,found:false,wait:2+Math.random()*3,blind:0,saidT:-99,hiddenBody:false,lookUpT:-8,active:active!==false,spd:0,sleepT:0,spikeT:0,spiked:false,slept:false,nav:null,unarmed:false});
   c.seenBody.clear();c.mesh.visible=active!==false;c.mark.visible=false;c.lens.set(x,1.3,z);c.dir.set(-Math.sin(ry),-0.35,-Math.cos(ry)).normalize();}
-const PHASES=[{s:'desk',t:22},{s:'meet',t:16},{s:'desk',t:14},{s:'terrace',t:24}];
-const POSTS={desk:[{x:-6,z:-40.5,ry:Math.PI},{x:3,z:-46.3,ry:Math.PI/2}],meet:[{x:9.5,z:-33.5,ry:Math.PI*0.8},{x:19.6,z:-45.5,ry:Math.PI*0.3}],terrace:[{x:0.25,z:-46.7,ry:Math.PI},{x:-3.5,z:-38.5,ry:Math.PI}]};
+/* a tárgyaláson a testőrök a keleti ablakokat figyelik, Kuroda a vendégek felé fordul: ez az ablak az iratokhoz */
+const PHASES=[{s:'desk',t:22},{s:'meet',t:26},{s:'desk',t:14},{s:'terrace',t:24}];
+const POSTS={desk:[{x:-6,z:-40.5,ry:Math.PI},{x:3,z:-46.3,ry:Math.PI/2}],meet:[{x:9.5,z:-33.5,ry:-Math.PI/2},{x:19.6,z:-45.5,ry:-Math.PI/2}],terrace:[{x:0.25,z:-46.7,ry:Math.PI},{x:-3.5,z:-38.5,ry:Math.PI}]};
 const STAIR_IN={x:-18.5,z:-20.5};
+/* az iratok Kuroda íróasztalán: dosszié és egy kis fénylő jelölő */
+const DOC={x:-0.8,z:-44.3,m:new THREE.Group()};
+{const y=H(DOC.x,DOC.z)+0.79,f=new THREE.Mesh(new THREE.BoxGeometry(0.34,0.035,0.25),new THREE.MeshLambertMaterial({color:0x7a1e1a}));f.position.set(0,y,0);f.rotation.y=0.25;DOC.m.add(f);
+  const p=new THREE.Mesh(new THREE.BoxGeometry(0.3,0.02,0.22),new THREE.MeshLambertMaterial({color:0xf2ede0}));p.position.set(0.015,y+0.026,0.01);p.rotation.y=0.32;DOC.m.add(p);
+  DOC.m.position.set(DOC.x,0,DOC.z);A.scene.add(DOC.m);}
 G.hooks.setup=()=>{const sp=V.spots;
   place(ALLCOPS[0],sp.desk.x,sp.desk.z,sp.desk.ry);Object.assign(ALLCOPS[0],{unarmed:true,safe:sp.safe,hp:2});
   place(ALLCOPS[1],POSTS.desk[0].x,POSTS.desk[0].z,POSTS.desk[0].ry);place(ALLCOPS[2],POSTS.desk[1].x,POSTS.desk[1].z,POSTS.desk[1].ry);
@@ -65,18 +72,18 @@ function stepCams(dt,t){const ey=P.mode==='ground'?H(P.x,P.z)+P.camY:P.py;
       if(see)c.aw=Math.min(1.2,c.aw+dt*(1.3*(1-d/c.range)+0.45)*(P.moving?1.2:0.7)*(P.crouch?0.65:1));}
     if(!see)c.aw=Math.max(0,c.aw-dt*0.3);
     if(c.alarmT>0)c.alarmT-=dt;
-    if(c.aw>=1&&!(c.alarmT>0)){c.alarmT=8;c.aw=0.6;G.raiseAlarm(P.x,P.z);G.tone(0.12,1500,1500,0.3,'square');setTimeout(()=>G.tone(0.12,1500,1500,0.3,'square'),380);G.showMsg('A kamera észrevett! Riasztás.');}
+    if(c.aw>=1&&!(c.alarmT>0)){c.alarmT=8;T.camSaw=true;c.aw=0.6;G.raiseAlarm(P.x,P.z);G.tone(0.12,1500,1500,0.3,'square');setTimeout(()=>G.tone(0.12,1500,1500,0.3,'square'),380);G.showMsg('A kamera észrevett! Riasztás.');}
     const k=c.alarmT>0?1:c.aw;c.cone.material.color.setHex(c.alarmT>0?0xff2010:k>0.05?0xffa030:0xff4030);c.cone.material.opacity=blindBySmoke?0.0:0.05+k*0.12;
     c.led.material.color.setHex(blindBySmoke?0x331010:(Math.sin(t*6)>0||k>0.05)?0xff2020:0x501010);});}
 
 /* ---------- körönként ---------- */
-G.hooks.newRound=()=>{Object.assign(T,{killed:false,bodyFound:false,ph:0,phT:0,reinfT:-1,reinf:false,zip:null,rideT:0,callT:0,panelT:12});
-  V.GOND.z=V.GOND.z0;V.GOND.dir=0;V.stepGondola(0);V.CAMS.forEach(c=>{c.aw=0;c.alarmT=0;c.dead=false;c.cone.visible=true;c.head.rotation.x=0;});G.goalName='Kuroda';V.ANCHOR.spr.material.opacity=0;
+G.hooks.newRound=()=>{DOC.m.visible=true;Object.assign(T,{doc:false,camSaw:false,killed:false,bodyFound:false,ph:0,phT:0,reinfT:-1,reinf:false,zip:null,rideT:0,callT:0,panelT:12});
+  V.GOND.z=V.GOND.z0;V.GOND.dir=0;V.stepGondola(0);V.CAMS.forEach(c=>{c.aw=0;c.alarmT=0;c.dead=false;c.cone.visible=true;c.head.rotation.x=0;});G.goalName='Iratok';V.ANCHOR.spr.material.opacity=0;
   setPhase(0);
-  if(T.fromCp){T.fromCp=false;P.x=6.5;P.z=5;P.yaw=Math.PI*0.9;G.showMsg('A céltorony tetején vagy. Kuroda a penthouse-ban ül.');}
-  else{T.cp=false;P.yaw=Math.PI;G.showMsg('Kuroda a szomszéd torony tetején ül. Kampózz át a darun.');P.yaw=0;}
+  if(T.fromCp){T.fromCp=false;P.x=6.5;P.z=5;P.yaw=Math.PI*0.9;G.showMsg('A céltorony tetején vagy. Az iratok Kuroda íróasztalán vannak.');}
+  else{T.cp=false;P.yaw=Math.PI;G.showMsg('Kuroda irodája a szomszéd torony tetején van. Kampózz át a darun.');P.yaw=0;}
   $('tut').hidden=false;$('tutStep').textContent='Küldetés · Üvegtorony';
-  $('tutText').textContent='Kuroda, aki a rendőröket rád küldte, a szomszéd torony tetején lévő üvegfalú irodában dolgozik. Kampóval jutsz át: a darura, onnan a víztoronyra. Az üvegen át mindenki lát. A kamerák pásztáznak, füsttel vakíthatók. Végezz vele, aztán csússz le a kábelen a terasz sarkában.';};
+  $('tutText').textContent='Kuroda, aki a rendőröket rád küldte, a szomszéd torony tetején lévő üvegfalú irodában dolgozik. Az íróasztalán vannak az iratok arról, merre viszi Mori a cég papírjait. Vidd el őket, amikor Kuroda nincs az asztalánál, aztán csússz le a kábelen a terasz sarkában. Kampóval jutsz át: a darura, onnan a víztoronyra. Az üvegen át mindenki lát. A kamerák pásztáznak, shurikennel kiiktathatók, füsttel vakíthatók. Kurodával nem kell végezned.';};
 
 G.hooks.update=dt=>{const t=S.time,b=boss();
   V.stepGondola(dt);stepCams(dt,t);V.stepLife(dt,t);
@@ -95,10 +102,11 @@ G.hooks.update=dt=>{const t=S.time,b=boss();
   /* a holttestet megtalálták? */
   if(b.down&&!T.bodyFound&&ALLCOPS.some(c=>c!==b&&c.seenBody.has(b.id)))T.bodyFound=true;
   /* Kuroda halála */
-  if(b.dead&&!T.killed){T.killed=true;G.goalName='Kábel';G.showMsg('Kuroda halott. Irány a kábel a terasz északkeleti sarkában!');G.station='Menekülj: kábel';}
-  else if(b.down&&!b.dead&&!T.koMsg){T.koMsg=true;G.showMsg('Kuroda eszméletlen. A tantóval végezhetsz vele.');}
+  if(b.dead&&!T.killed){T.killed=true;G.showMsg(T.doc?'Kuroda halott. Irány a kábel a terasz északkeleti sarkában!':'Kuroda halott. Az iratok még az íróasztalán vannak.');}
+  else if(b.down&&!b.dead&&!T.koMsg){T.koMsg=true;G.showMsg('Kuroda eszméletlen.');}
   if(!b.down)T.koMsg=false;
-  if(T.killed){GOAL.x=V.ANCHOR.x;GOAL.z=V.ANCHOR.z;V.ANCHOR.spr.material.opacity=0.45+0.3*Math.sin(t*4);}else{GOAL.x=b.x;GOAL.z=b.z;G.station='Cél: Kuroda';}
+  if(!T.doc&&P.mode==='ground'&&Math.hypot(P.x-DOC.x,P.z-DOC.z)<1.5){T.doc=true;DOC.m.visible=false;G.tone(0.08,700,1100,0.15);G.showMsg('Megvannak az iratok: Mori vonatának menetrendje. Irány a kábel a terasz sarkában!');G.goalName='Kábel';}
+  if(T.doc){GOAL.x=V.ANCHOR.x;GOAL.z=V.ANCHOR.z;V.ANCHOR.spr.material.opacity=0.45+0.3*Math.sin(t*4);G.station='Menekülj: kábel';}else{GOAL.x=DOC.x;GOAL.z=DOC.z;G.station='Cél: az iratok';}
   /* ablakmosó kosár */
   {const r=V.rects[2],on=P.mode==='ground'&&P.x>r.x0&&P.x<r.x1&&P.z>r.z0&&P.z<r.z1;
     if(!on)T.mustLeave=false;
@@ -107,17 +115,14 @@ G.hooks.update=dt=>{const t=S.time,b=boss();
   /* menekülés a kábelen */
   if(T.zip){const z=T.zip;z.t+=dt;const k=Math.min(1,z.t/3.4),e=k*k;P.x=z.a.x+(z.b.x-z.a.x)*e;P.z=z.a.z+(z.b.z-z.a.z)*e;P.py=z.a.y+(z.b.y-z.a.y)*e;
     if(k>=1){T.zip=null;finish();}return;}
-  if(T.killed&&P.mode==='ground'&&Math.hypot(P.x-V.ANCHOR.x,P.z-V.ANCHOR.z)<1.9){P.mode='zip';P.anim={t:0};P.drag=null;
+  if(T.doc&&P.mode==='ground'&&Math.hypot(P.x-V.ANCHOR.x,P.z-V.ANCHOR.z)<1.9){P.mode='zip';P.anim={t:0};P.drag=null;
     T.zip={t:0,a:{x:V.ANCHOR.x,y:2.0,z:V.ANCHOR.z},b:{x:66,y:V.DEEP+111.5,z:-126}};G.showMsg('Lecsúszol a kábelen…');G.noiseHit(0.2,900,'bandpass',0.6,1);}
 };
 
 /* ---------- vége ---------- */
-function seals(){const out=[];if(S.alarms===0)out.push('Árnyék');if(S.kills===1)out.push('Tiszta kéz');if(!T.bodyFound)out.push('Rejtett');return out;}
-function finish(){const sl=seals();T.sl=sl;const rk=G.hooks.rank();G.saveProgress({l3:true,r3:rk[0],s3:sl});
-  G.endGame(true,'Elvégezted','Kuroda halott, te pedig '+G.fmt(S.time)+' után eltűntél a város fölött.');$('endEyebrow').textContent='Küldetés teljesítve';}
-G.hooks.rank=()=>{const sl=T.sl||seals(),names=['Bérgyilkos','Nindzsa','Mester','Árnyék'];
-  const miss=['Árnyék (egyszer sem riasztottak)','Tiszta kéz (csak Kuroda halt meg)','Rejtett (a testét nem találták meg)'].filter((s,k)=>!sl.includes(['Árnyék','Tiszta kéz','Rejtett'][k]));
-  return[names[sl.length],'',(sl.length?'Pecsétek: '+sl.join(' · ')+'.':'Nincs pecsét.')+(miss.length?' Még megszerezhető: '+miss.join(', ')+'.':' Minden pecsét a tiéd.')+' Idő: '+G.fmt(S.time)+' · Riasztások: '+S.alarms+'.'];};
+G.hooks.seals=s=>[['Üvegszellem',!s.dets,'senki sem lát meg'],['Kamera nélkül',!T.camSaw,'egyik kamera sem vesz észre'],['Tiszta kéz',!s.kills,'senkit sem ölsz meg, Kurodát sem']];
+function finish(){G.finishLevel('Elvégezted',T.killed?'Kuroda halott, az iratok nálad vannak. '+G.fmt(S.time)+' után eltűntél a város fölött.':
+  'Az iratok nálad vannak, Kuroda élve maradt az irodájában. Egy órával később a hírek bemondták: holtan találták. Nem te voltál. Valaki elhallgattatta, mielőtt beszélhetett volna.');}
 
 /* mentési pont: halál után a céltorony tetejéről */
 {const card=$('end').querySelector('.card'),btn=document.createElement('button');btn.id='cpBtn';btn.type='button';btn.textContent='Folytatás a céltorony tetejéről';btn.hidden=true;
@@ -128,10 +133,10 @@ new MutationObserver(()=>{if(!$('end').hidden)$('cpBtn').hidden=!($('endEyebrow'
 
 /* ---------- kezdőképernyő ---------- */
 $('startEyebrow').textContent='3. fejezet · Üvegtorony';
-$('lead').textContent='Délben, egy nagyváros közepén. Egy felhőkarcoló tetején állsz; a szomszéd torony üvegfalú irodájában Kuroda ül, a cégvezető, aki a rendőröket rád küldte. Két testőr vigyázza, a tetőn járőrök és kamerák. Nappal nincs sötétség: a sövények, a klímaberendezések és a füst rejtenek.';
+$('lead').textContent='Délben, egy nagyváros közepén. Egy felhőkarcoló tetején állsz; a szomszéd torony üvegfalú irodájában Kuroda ül, a cégvezető, aki a rendőröket rád küldte, mert a völgyet és a mester faluját akarja. Az asztalán vannak az iratok arról, merre viszi a jobbkeze, Mori, a cég papírjait. Két testőr vigyázza, a tetőn járőrök és kamerák. Nappal nincs sötétség: a sövények, a klímaberendezések és a füst rejtenek.';
 document.querySelectorAll('#diff [data-d] small').forEach(s=>{const k=s.parentNode.dataset.d;s.textContent=NP[k]+' őr a tetőn';});
 {const dts=document.querySelectorAll('.how dt');dts.forEach(dt=>{if(dt.textContent==='Kampó')dt.nextElementSibling.textContent='célozz egy kampópontra (daru, víztorony, antenna): ha felderül, átlendülsz rá';if(dt.textContent==='Karmok')dt.nextElementSibling.textContent='a víztorony lábán és az antenna oszlopán felmászhatsz (1–8: eszközváltás)';});}
-$('go').querySelector('span').textContent='Cél: Kuroda. Utána a kábel a terasz sarkában.';
+$('go').querySelector('span').textContent='Cél: az iratok Kuroda asztalán. Utána a kábel a terasz sarkában.';
 /* az üveg egyszer lefotózza a környezetét (tükröződés) */
 try{const rt=new THREE.WebGLCubeRenderTarget(256,{generateMipmaps:true,minFilter:THREE.LinearMipmapLinearFilter});const cc=new THREE.CubeCamera(0.5,900,rt);cc.position.set(6,2.2,-37);A.scene.add(cc);
   const gm=V.glassM,vis=gm.visible;gm.visible=false;ALLCOPS.forEach(c=>c.mesh.visible=false);cc.update(A.renderer,A.scene);gm.visible=vis;G.hooks.setup();

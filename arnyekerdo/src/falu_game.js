@@ -88,7 +88,7 @@ function panel(){const st=ST[T.i];$('tut').hidden=false;$('tutStep').textContent
 /* ---------- próbák indítása ---------- */
 function startStation(i){T.i=i;T.done=false;T.resetT=0;T.grace=0.8;T.stFails=0;T.fust=false;masterTo(i);
   const st=ST[i];ALLCOPS.forEach(c=>c.active=false);roomCops(i).forEach(c=>placeStudent(c.id));activate(i,i!==8&&i!==10&&i!==EX);if(st.open)F.GATES[F.ROOMS[i].id]&&F.GATES[F.ROOMS[i].id].setOpen(true);
-  tools(i);if(i===EX){T.examAl=S.alarms;T.fadeT=3.4;dayFade(true);}
+  tools(i);if(i===EX){T.examAl=S.alarms;T.base={kills:S.kills,kos:S.kos,dets:S.dets,alarms:S.alarms,civ:S.civ};T.fadeT=3.4;dayFade(true);}
   if(st.say&&i!==EX)queue([st.say]);panel();G.tone(0.07,660,990,0.14);}
 function tools(i){if(i===1||i===6)G.setStones(3);if(i===8)G.setSmoke(2);if(i===9)G.setDarts(3);if(i===10)G.setSpikes(2);
   if(i===EX){G.setStones(3);G.setSmoke(2);G.setDarts(3);G.setSpikes(2);G.setStars(5);}}
@@ -119,7 +119,7 @@ G.hooks.melee=it=>{if(T.i!==3||T.done)return;const f=G.fwd();let best=null,bd=2.
 G.hooks.caught=c=>{if((T.i===8||T.i===10||T.i===EX)&&roomCops(T.i).includes(c))fail('caught');};
 
 /* ---------- körönként ---------- */
-G.hooks.newRound=()=>{Object.assign(T,{i:0,done:false,wait:0,q:[],qt:0,fails:0,stFails:0,grace:0,resetT:0,dropT:-9,examAl:0,used:{tanto:0,tekko:0},spoke:false,fust:false,onQ:null,onQT:0});
+G.hooks.newRound=()=>{Object.assign(T,{i:0,done:false,wait:0,q:[],qt:0,fails:0,stFails:0,grace:0,resetT:0,dropT:-9,examAl:0,base:null,used:{tanto:0,tekko:0},spoke:false,fust:false,onQ:null,onQT:0});
   Object.values(F.GATES).forEach(g=>g.setOpen(g.kind==='open',true));F.DUMMIES.forEach(d=>{d.hit=false;d.how=null;d.mark.visible=false;});
   GOAL.x=MS.x;GOAL.z=MS.z;G.setStones(0);G.setSmoke(0);G.setDarts(0);G.setSpikes(0);G.setStars(0);G.clearSpikes();setDay(false);$('dayFade').style.opacity=0;T.fadeT=0;startStation(0);
   G.showMsg('A mester a kapu előtt vár.');};
@@ -178,16 +178,15 @@ function dayFade(on){const fd=$('dayFade');fd.style.opacity=1;
 {const fd=document.createElement('div');fd.id='dayFade';fd.innerHTML='<div><small>Másnap délben</small><b>Vizsga</b></div>';document.body.appendChild(fd);}
 
 /* ---------- vége: rang és pecsétek ---------- */
-function seals(){const out=[];if(S.alarms-T.examAl===0)out.push('Árnyék');if(T.fails===0)out.push('Türelmes');if(S.time<600)out.push('Gyors');return out;}
-function finish(){speak(L.final);S.running=false;const sl=seals();T.sl=sl;G.saveProgress({l2:true,r2:G.hooks.rank()[0],s2:sl});setTimeout(()=>{G.endGame(true,'Átmentél a kiképzésen',
-  ST.length+' próba '+G.fmt(S.time)+' alatt. '+(T.fails?'Újrakezdések: '+T.fails+'.':'Egyszer sem kellett újrakezdened.'));$('endEyebrow').textContent='Kiképzés vége';},2600);}
-G.hooks.rank=()=>{const sl=T.sl||seals(),n=sl.length,names=['Tanítvány','Nindzsa','Mester','Árnyékmester'];
-  const miss=['Árnyék (vizsga riasztás nélkül)','Türelmes (egy újrakezdés sem)','Gyors (10 perc alatt)'].filter((s,k)=>!sl.includes(['Árnyék','Türelmes','Gyors'][k]));
-  return[names[n],'',(n?'Pecsétek: '+sl.join(' · ')+'.':'Nincs pecsét.')+(miss.length?' Még megszerezhető: '+miss.join(', ')+'.':' Minden pecsét a tiéd.')];};
+/* a rang a vizsgán múlik: a próbák leütései nem számítanak (G.hooks.statBase a vizsga elejétől számol) */
+G.hooks.statBase=()=>T.base||{kills:S.kills,kos:S.kos,dets:S.dets,alarms:S.alarms,civ:S.civ};
+G.hooks.seals=s=>[['Kiváló tanítvány',T.fails===0,'egyik próbát sem kell újrakezdened'],['Láthatatlan tanítvány',!s.dets&&!s.alarms,'a vizsgán senki sem lát meg'],['A mester büszkesége',S.time<600,'10 percen belül végzel']];
+function finish(){speak(L.final);S.running=false;setTimeout(()=>{S.running=true;G.finishLevel('Átmentél a kiképzésen',
+  ST.length+' próba '+G.fmt(S.time)+' alatt. A mester bólint: „Most már mehetsz. De vigyázz: Kuroda mögött áll valaki, aki ugyanazt tanulta, mint te.”','Kiképzés vége');},2600);}
 
 /* ---------- kezdőképernyő ---------- */
 $('startEyebrow')&&($('startEyebrow').textContent='2. fejezet · Kiképzés');
-const lead=$('lead');if(lead)lead.textContent='Miután kijutottál a völgyből, egy idős mester elvezetett rejtett hegyi falujába. Tizenkét udvar, tizenkét próba: csend, bokor, penge, kampó, karmok, kavics, test, füst, köpőcső és tüskék. A vizsga másnap délben vár, a dódzsó előtt. Ha elrontasz egy próbát, az udvar elejéről kezded.';
+const lead=$('lead');if(lead)lead.textContent='Kijutottál a völgyből, és hazatértél a rejtett hegyi faluba, ahol a mester felnevelt. Kuroda cége el akarja venni a völgyet és a falut. Mielőtt utánamész, a mester még egyszer próbára tesz. Egyszer volt már egy tanítványa, aki mindent tudott, és mégis elment; róla nem beszél. Tizenkét udvar, tizenkét próba: csend, bokor, penge, kampó, karmok, kavics, test, füst, köpőcső és tüskék. A vizsga másnap délben vár, a dódzsó előtt. Ha elrontasz egy próbát, az udvar elejéről kezded.';
 $('go').querySelector('span').textContent='Cél: a dódzsó. A mester minden próbánál elmondja, mit kell tenni.';
 if(/[?&]aetest/.test(location.search))window.AE_FALU={setDay,EX,T,ST,F,startStation,complete,fail,MS,masterTo,doReset};
 })();

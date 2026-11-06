@@ -293,6 +293,6 @@ A.ROOF=A.VAROS={glassM,stepLife,rects,walkable,clampRoof,GOND,stepGondola,CAMS,A
   /* szereplők: 0 Kuroda, 1-2 személyi testőr, 3-6 járőr (nehézség szerint), 7-8 erősítés */
   actors:['boss','guard','guard','patrol','patrol','patrol','patrol','reinf','reinf'],
   stair:{x:-18.5,z:-23.6},
-  spots:{desk:{x:-2,z:-45.6,ry:Math.PI},meet:{x:14.5,z:-40.2,ry:0},terrace:{x:4,z:-56,ry:0},safe:{x:-5.5,z:-29.5}},
+  spots:{desk:{x:-2,z:-45.6,ry:Math.PI},meet:{x:14.5,z:-40.2,ry:Math.PI},terrace:{x:4,z:-56,ry:0},safe:{x:-5.5,z:-29.5}},
   routes:[[{x:-16,z:-1},{x:-16,z:-25},{x:-10.5,z:-25},{x:-10.5,z:-8}],[{x:17.5,z:1},{x:17.5,z:-23},{x:6,z:-23},{x:6,z:-7}],[{x:-14.5,z:-29},{x:-14.5,z:-58.5},{x:-3,z:-58.5}],[{x:2,z:-51.5},{x:17,z:-51.5},{x:17,z:-58.5},{x:9,z:-58.5}]]};
 })();

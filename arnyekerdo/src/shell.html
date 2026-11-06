@@ -118,6 +118,23 @@ h2{font-size:40px;}
 #again{padding:14px 16px;background:var(--moon);color:#0a0f13;border:0;border-radius:6px;font-family:var(--ui);font-size:16px;font-weight:600;cursor:pointer;}
 .legal{font-size:12px;color:var(--mist);text-align:center;margin:0;}
 #endFoe{font-family:var(--display);font-size:22px;color:var(--lantern);}
+#endFoe.sh{font-size:28px;letter-spacing:1px;}
+.sumGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 10px;margin:8px 0;}
+.sumGrid div{display:flex;justify-content:space-between;gap:6px;padding:4px 8px;border-radius:5px;background:rgba(236,229,211,0.05);font-size:13px;}
+.sumGrid div span{color:var(--mist);}.sumGrid div b{font-variant-numeric:tabular-nums;}
+.sumGrid div.bad b{color:#e6866e;}
+.sumSeals{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;}
+.sumSeals span{padding:5px 9px;border-radius:14px;border:1px solid var(--line);font-size:12.5px;color:var(--mist);}
+.sumSeals span small{font-size:11px;opacity:0.8;}
+.sumSeals span.got{border-color:var(--lantern);color:var(--lantern);}
+.sumSeals span.new::after{content:' új';font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--goal);}
+.sumWhy{font-size:12.5px;color:var(--mist);margin:6px 0 0;}
+.sumMaster{margin:8px 0 0;padding:8px 10px;border:1px solid #c9ced6;border-radius:6px;color:#e4e8ee;background:rgba(200,206,214,0.08);font-size:13.5px;}
+#masterSeal{display:inline-flex;align-items:center;gap:8px;margin:-4px 0 6px;padding:5px 12px;border:1px solid #c9ced6;border-radius:16px;color:#e4e8ee;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;background:rgba(200,206,214,0.1);}
+#masterSeal span{font-size:16px;letter-spacing:0;}
+#masterSeal[hidden]{display:none;}
+.lvl a small.sh{color:var(--lantern);}
+@media (max-width:560px){.sumGrid{grid-template-columns:repeat(2,1fr);}}
 @media (prefers-reduced-motion:reduce){#msg,#kiRing,#kiChar,#fxLeaf,#sub{transition:none;}}
 .stats{font-size:13px;color:var(--mist);}
 /* felszerelés-választó: a szekrény belseje a háttér, előtte az eszközkártyák */
@@ -268,6 +285,7 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
 <div id="title">
   <div class="tIn">
     <h1>Shinobi</h1>
+    <div id="masterSeal" hidden><span>◈</span>Árnyékok Mestere</div>
     <button class="tB main" id="tStart" type="button">Kezdés<small id="tStartSub">Mentés 1 · új játék</small></button>
     <button class="tB" id="tSaves" type="button">Mentések</button>
     <button class="tB" id="tInstall" type="button" hidden>Telepítés<small id="tInstallSub">alkalmazásként, mindig teljes képernyőn</small></button>
@@ -281,8 +299,8 @@ body.varos label.opt,body.varos .tutB,body.vonat label.opt,body.vonat .tutB,body
       <a class="back" href="./">‹ Főmenü</a>
       <div class="eyebrow" id="startEyebrow">1. fejezet · Lopakodó küldetés</div>
       <h1>Shinobi</h1>
-      <nav class="lvl" aria-label="Pálya"><a href="?palya=erdo" id="lvl1">1 · Rendőrkordon</a><a href="?palya=falu" id="lvl2">2 · A mester faluja</a><a href="?palya=varos" id="lvl3">3 · Üvegtorony</a><a href="?palya=vonat" id="lvl4">4 · Hegyi expressz</a></nav>
-      <p id="lead">Éjszaka van a japán hegyekben. A rendőrség körbezárta a völgyet: <span id="copsN">6</span> rendőr fésüli át az erdőt zseblámpával és pisztollyal. Juss el a déli végéből az északi útig – árnyékként, vagy úgy, hogy egyenként eltünteted őket.</p>
+      <nav class="lvl" id="lvlNav" aria-label="Pálya"></nav>
+      <p id="lead">Éjszaka van a japán hegyekben. Egy hamis körözés miatt a rendőrség körbezárta a völgyet, ahol bujkálsz: <span id="copsN">6</span> rendőr fésüli át az erdőt zseblámpával és pisztollyal. Juss el a déli végéből az északi útig – árnyékként, vagy úgy, hogy egyenként eltünteted őket.</p>
       <div class="diff" id="diff" role="radiogroup" aria-label="Nehézség">
         <button type="button" role="radio" data-d="konnyu">Könnyű<small>4 rendőr</small></button>
         <button type="button" role="radio" data-d="normal">Normál<small>6 rendőr</small></button>
