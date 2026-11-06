@@ -279,8 +279,8 @@ function stepHands(t,dt,bob,moving,running,crouch,lookDX,atk,climb){const u=hand
   hands.position.set(Math.cos(bob*0.5)*0.012*a-lookDX*0.02,-Math.abs(Math.sin(bob*0.5))*0.018*a+Math.sin(t*1.6)*0.004-(crouch?0.02:0),0);
   const k=atk>0?Math.sin(Math.min(1,atk)*Math.PI):0,isT=u.item==='tanto';
   u.R.rotation.set(0.12-k*(isT?0.25:0.1),-0.18+k*0.22,-0.25+Math.sin(bob*0.5)*0.03*a);
-  u.R.position.set(0.24-k*0.12,-0.25+(running?-0.04:0)+(crouch?0.02:0)+k*0.06,-0.42-k*0.2);
-  u.Lh.position.set(-0.3,-0.31+(running?-0.03:0)+Math.sin(bob*0.5+Math.PI)*0.01*a,-0.45);
+  u.R.position.set(0.22-k*0.12,-0.205+(running?-0.04:0)+(crouch?0.02:0)+k*0.06,-0.42-k*0.2);
+  u.Lh.position.set(-0.27,-0.255+(running?-0.03:0)+Math.sin(bob*0.5+Math.PI)*0.01*a,-0.45);
   if(climb){const c=Math.sin(t*9);u.R.position.y+=0.08+c*0.06;u.Lh.position.y+=0.08-c*0.06;u.R.position.z-=0.06;u.Lh.position.z-=0.06;}}
 /* négyágú tüske (makibishi): bárhogy esik le, egy ága mindig felfelé áll */
 function spikeGeo(){const g=[];const v=[[0,1,0],[0.943,-0.333,0],[-0.471,-0.333,0.816],[-0.471,-0.333,-0.816]];

@@ -19,6 +19,19 @@ function kindOf(c){const k=A.ROOF&&A.ROOF.actors?A.ROOF.actors[c.id]:null;
     case 'fogado':return 'testor_fogado';
     case 'templom':return k==='naruse'?'naruse':'testor_templom';}
   return null;}
+/* a játékos saját keze: valósághű ököl és alkar ruhaujjal (modellek/kez.glb); a régi gömb-ököl és henger-alkar elrejtve */
+function prepHand(o){o.traverse(m=>{if(!m.isMesh)return;m.castShadow=false;m.frustumCulled=false;const mt=m.material;
+  const n=new THREE.MeshLambertMaterial({color:mt.color?mt.color.clone():0xffffff,map:mt.map||null,fog:false});if(!mt.map)n.color.convertLinearToSRGB();if(n.map)n.map.encoding=THREE.LinearEncoding;m.material=n;});}
+if(A.hands&&A.hands.userData.R)new THREE.GLTFLoader().load('modellek/kez.glb',gl=>{const u=A.hands.userData;
+  [['kez_jobb',u.R],['kez_bal',u.Lh]].forEach(([n,arm])=>{const src=gl.scene.getObjectByName(n);if(!src)return;const m=src.clone();prepHand(m);m.position.set(0,0,0);
+    arm.children.slice(0,4).forEach(c=>{if(c.isMesh)c.visible=false;});arm.add(m);});},undefined,()=>{});
+/* kézben tartott eszközök (modellek/fegyverek.glb): fém = fényes Phong, a többi Lambert */
+if(A.hands&&A.hands.userData.items)new THREE.GLTFLoader().load('modellek/fegyverek.glb',gl=>{const u=A.hands.userData;
+  const conv=o=>o.traverse(m=>{if(!m.isMesh)return;m.castShadow=false;m.frustumCulled=false;const mt=m.material,metal=mt.metalness>0.5;
+    const n=metal?new THREE.MeshPhongMaterial({color:mt.color.clone(),shininess:mt.roughness<0.3?110:50,specular:0xbfc8d0,fog:false}):new THREE.MeshLambertMaterial({color:mt.color.clone(),map:mt.map||null,fog:false});
+    if(!mt.map)n.color.convertLinearToSRGB();if(n.map)n.map.encoding=THREE.LinearEncoding;m.material=n;});
+  [['tanto',u.items.tanto],['tekko',u.items.tekko],['kampo',u.items.kampo],['kampo_bal',u.itemsL.kampo],['shuriken',u.items.shuriken],['fukiya',u.items.fukiya],['fust',u.items.fust]].forEach(([n,G])=>{
+    const src=gl.scene.getObjectByName(n);if(!src||!G)return;const m=src.clone();conv(m);G.children.forEach(c=>c.visible=false);G.add(m);});},undefined,()=>{});
 const jobs=[];G.ALLCOPS.forEach(c=>{const k=kindOf(c);if(k)jobs.push([c.mesh,k]);});
 if(LV==='falu'&&A.FALU&&A.FALU.master)jobs.push([A.FALU.master,'mester']);
 /* civilek: utasok a vonaton, vendégek az ünnepen, a könyvelő a fogadóban */
