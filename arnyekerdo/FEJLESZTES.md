@@ -295,3 +295,11 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - Pecsétek: Róka szeme (elsőre Morit lopod meg), A robaj árnyékában (tűzijáték alatt futás/dobás őr közelében), Láthatatlan vendég, Békés ünnep.
 - Ellenőrizve: a teljes menet (lopás tűzijáték alatt, kijutás a hátsó kapun) Árnyék ranggal a díszvendégek élő figyelése mellett, a többi testőr nélkül. Élő testőrökkel a szkriptelt próba nem jutott át az udvaron; ezt valódi játékban kell kipróbálni.
 - Új szinkronsorok (8): `hangok.py` most a hármas első elemét hangjelnek veszi (`['g','','…']` = testőr, `['b','','…']` = Mori).
+
+## 6. A 7. pálya: Fehér csend (havas termálfogadó, derült délelőtt)
+
+- Fájlok: `src/fogado.js`, `src/fogado_game.js`. Cím: `?palya=fogado`.
+- Lábnyom: a hóban 0,8 m-enként egy jelölő (legfeljebb 70, 45 mp-ig látszik); fapallón, kövön, verandán, a házban nincs (`hard` téglalapok, `onHard`). Az őr, aki 7,5 m-en belül, maga előtt meglát egy friss nyomot, keresni kezd, és nyomról nyomra követi (`c.trail`). Ez önmagában nem rontja a rangot.
+- Gőz: a medencék körüli ellipszisben guggolva rejtve vagy (új általános horog: `G.hooks.hide`).
+- A könyvelő civil (nem őr), az irodában ül. „Beszélj” (`G.hooks.ctx`): ha nincs riadó és 16 m-en belül nem keres őr, három mondatban elmondja, és átadja az iratokat (Csendes vallomás). Különben megijed, és a ládából kell elvenni.
+- Ellenőrizve: őrök nélkül a teljes menet Árnyék; élő őrökkel a szkriptelt próba a medencéknél lebukott, valódi játékban kell kipróbálni.

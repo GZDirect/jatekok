@@ -15,6 +15,8 @@ Az ötödik pálya (**Acélárnyak**) egy konténerkikötőben játszódik kora 
 
 A hatodik pálya (**A rókák éjszakája**) egy kastélypark lampionos ünnepén játszódik alkonyattól sötétedésig: a három rókamaszkos díszvendég közül fel kell ismerni Morit (sántít és balkezes), és hátulról ki kell lopni a zsebéből a kulcsot. A tűzijáték alatt nem hallják a lépteidet.
 
+A hetedik pálya (**Fehér csend**) egy havas hegyi termálfogadóban játszódik: a friss hóban lábnyomot hagysz, amit az őrök követnek, a medencék gőze viszont eltakar. A bujkáló könyvelőt kell szóra bírni.
+
 **Játék:** https://gzdirect.github.io/jatekok/arnyekerdo/
 
 Telefonon a böngésző menüjében a **Hozzáadás a kezdőképernyőhöz** paranccsal alkalmazásként is telepíthető, és az első megnyitás után net nélkül is elindul.

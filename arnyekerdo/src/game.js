@@ -5,9 +5,9 @@
 const A=window.AE,{$,clamp,H,scene,camera,renderer,grid,bgrid,near,moonLight,MOON_DIR,giants,XW,ZS,ZN,EXIT,FLU,NFL}=A;
 const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a)),rnd=(a,b)=>a+Math.random()*(b-a);
 const LV=A.LV||'erdo';
-const START=LV==='falu'?{x:0,z:45}:LV==='varos'?{x:0,z:58}:LV==='vonat'?{x:0,z:80.8}:LV==='kikoto'?{x:0,z:56}:LV==='fesztival'?{x:0,z:55}:{x:0,z:93},GOAL=LV==='falu'?{x:0,z:39}:LV==='varos'?{x:0,z:-44}:LV==='vonat'?{x:0.8,z:-37}:LV==='kikoto'?{x:-14.8,z:8}:LV==='fesztival'?{x:0,z:10}:{x:0,z:-112};
+const START=LV==='falu'?{x:0,z:45}:LV==='varos'?{x:0,z:58}:LV==='vonat'?{x:0,z:80.8}:LV==='kikoto'?{x:0,z:56}:LV==='fesztival'?{x:0,z:55}:LV==='fogado'?{x:0,z:56}:{x:0,z:93},GOAL=LV==='falu'?{x:0,z:39}:LV==='varos'?{x:0,z:-44}:LV==='vonat'?{x:0.8,z:-37}:LV==='kikoto'?{x:-14.8,z:8}:LV==='fesztival'?{x:0,z:10}:LV==='fogado'?{x:14,z:-30}:{x:0,z:-112};
 const isTouch=matchMedia('(pointer:coarse)').matches;
-const G={LV,day:false,hooks:{},goalName:LV==='falu'?'Mester':LV==='varos'?'Kuroda':LV==='vonat'?'Aktatáska':LV==='kikoto'?'Konténer':LV==='fesztival'?'Mori':'Kijárat'};A.G=G;
+const G={LV,day:false,hooks:{},goalName:LV==='falu'?'Mester':LV==='varos'?'Kuroda':LV==='vonat'?'Aktatáska':LV==='kikoto'?'Konténer':LV==='fesztival'?'Mori':LV==='fogado'?'Könyvelő':'Kijárat'};A.G=G;
 
 /* ---------- Térbeli segédek ---------- */
 function clampField(p){if(A.ROOF){A.ROOF.clampRoof(p);return;}p.x=clamp(p.x,-XW-1,XW+1);p.z=clamp(p.z,-ZN-16,ZS+2);if(p.z<-ZN+1&&Math.abs(p.x)>5)p.z=-ZN+1;if(p.z<-ZN-0.5)p.x=clamp(p.x,-3.4,3.4);}
@@ -417,6 +417,7 @@ const GEAR_REQ={varos:[2]},GEAR_DEF=[0,2,4,8];
 const GEAR_HINT={
   erdo:{2:'az óriásfák ágairól látatlanul figyelhetsz',4:'a sűrű erdőben messzire elcsalja az őröket',5:'az ösvényen megállítja az üldözőt'},
   varos:{7:'itt a kamerát is leveri: egy dobás, és vak',3:'a víztorony lábán és az antenna oszlopán felmászol',6:'csendben altat a nyitott tetőn'},
+  fogado:{3:'a fogadó oszlopain és a fenyőkön felmászol, a tetőn nem hagysz nyomot',4:'a hóban messzire elcsalja az őrt',6:'a gőzből csendben altatsz',8:'a gőzzel együtt teljesen eltakar'},
   fesztival:{4:'a lampionos udvaron elcsalja a testőrt a vendégek mellől',3:'a fenyőkre felmászol, onnan figyelheted a vendégeket',8:'a tömegben eltakar, ha baj van',2:'a fenyők között fent jársz, a teaház tetejére is feljutsz'},
   kikoto:{2:'a daru terhén és a konténerek tetején a kerítés fölött jutsz át',4:'a konténerek között messzire elcsalja az őröket',3:'a lámpaoszlopokra felmászol, onnan az iroda tetejére kampózol',8:'a nyílt udvaron eltakar'},
   vonat:{8:'a szűk kocsiban az egészet betölti: mindenki vak benne',6:'a folyosón egyenként, hang nélkül altatsz',1:'leütéssel tiszta marad a kezed'}};
@@ -459,7 +460,7 @@ function showDiff(){document.querySelectorAll('#diff [data-d]').forEach(b=>b.set
 document.querySelectorAll('#diff [data-d]').forEach(b=>b.addEventListener('click',()=>{D=DIFF[b.dataset.d];try{localStorage.setItem('ae-diff',b.dataset.d);}catch(e){}showDiff();}));
 /* ---------- Nyitókép és mentések (3 hely, a böngészőben tárolva) ---------- */
 /* ---------- Pályák, mentések, rang és pecsétek (közös rendszer) ---------- */
-const LEVELS=[{id:'erdo',name:'Rendőrkordon'},{id:'falu',name:'A mester faluja'},{id:'varos',name:'Üvegtorony'},{id:'vonat',name:'Hegyi expressz'},{id:'kikoto',name:'Acélárnyak'},{id:'fesztival',name:'A rókák éjszakája'}];
+const LEVELS=[{id:'erdo',name:'Rendőrkordon'},{id:'falu',name:'A mester faluja'},{id:'varos',name:'Üvegtorony'},{id:'vonat',name:'Hegyi expressz'},{id:'kikoto',name:'Acélárnyak'},{id:'fesztival',name:'A rókák éjszakája'},{id:'fogado',name:'Fehér csend'}];
 const RANKS=['Bérgyilkos','Nindzsa','Mester','Árnyék'];
 const lsGet=k=>{try{return localStorage.getItem(k);}catch(e){return null;}},lsSet=(k,v)=>{try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v);}catch(e){}};
 const slotNo=()=>clamp(+lsGet('ae-slot')||1,1,3);
@@ -688,7 +689,7 @@ function update(dt){
   if(P.pend){P.pend.t-=dt;if(P.pend.t<=0){const q=P.pend;P.pend=null;if(!q.c.dead)strike(q.c,q.it,false);}}
   if(S.smokeT>0)S.smokeT-=dt;
   const inSmoke=S.smokeT>0&&Math.hypot(P.x-S.sx,P.z-S.sz)<5;
-  P.hidden=(P.crouch&&P.mode==='ground'&&inBush(P.x,P.z))||inSmoke||P.mode==='perch';
+  P.hidden=(P.crouch&&P.mode==='ground'&&inBush(P.x,P.z))||inSmoke||P.mode==='perch'||!!(G.hooks.hide&&P.mode==='ground'&&G.hooks.hide());
   if(!S.running)return;
 
   /* Rendőrök */
@@ -793,7 +794,7 @@ const NIGHT={};
 function setDaylight(on){const sky=A.sky.material.uniforms;
   if(!NIGHT.saved)Object.assign(NIGHT,{saved:true,bg:scene.background.getHex(),fog:scene.fog.color.getHex(),fd:scene.fog.density,hor:sky.uHor.value.getHex(),zen:sky.uZen.value.getHex(),
     ml:moonLight.color.getHex(),mi:moonLight.intensity,hc:A.hemi.color.getHex(),hg:A.hemi.groundColor.getHex(),hi:A.hemi.intensity,r:[A.ring1,A.ring2,A.ring3].map(m=>m.material.color.getHex())});
-  G.day=on;const N=NIGHT,city=LV==='varos'||LV==='vonat'||LV==='kikoto'||LV==='fesztival';
+  G.day=on;const N=NIGHT,city=LV==='varos'||LV==='vonat'||LV==='kikoto'||LV==='fesztival'||LV==='fogado';
   scene.background.setHex(on?0xbcd0dc:N.bg);scene.fog.color.setHex(on?(city?0xc4d2dc:0xbcd0dc):N.fog);scene.fog.density=on?(city?0.0024:0.007):N.fd;
   sky.uHor.value=new THREE.Color(on?0xcfe0ea:N.hor);sky.uZen.value=new THREE.Color(on?0x4f86c6:N.zen);
   moonLight.color.setHex(on?(city?0xfff8f0:0xfff0d8):N.ml);moonLight.intensity=on?1.55:N.mi;A.hemi.color.setHex(on?0xcfe2ff:N.hc);A.hemi.groundColor.setHex(on?(city?0x606468:0x6a5c42):N.hg);A.hemi.intensity=on?0.9:N.hi;
