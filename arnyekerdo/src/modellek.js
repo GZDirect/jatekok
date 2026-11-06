@@ -8,11 +8,22 @@
    Ha a modell nem töltődik be (pl. offline első indításkor), a régi figura marad. */
 const A=window.AE;if(!A||!A.G||!THREE.GLTFLoader||!THREE.SkeletonUtils)return;
 const G=A.G,LV=A.LV;
-const KIND={rendor:'modellek/rendor.glb'};
-/* melyik szereplő melyik modellt kapja: egyelőre az erdei rendőrök */
-const pick=c=>c.mesh.userData.pol&&LV==='erdo'?'rendor':null;
-const need=new Set(G.ALLCOPS.map(pick).filter(Boolean));if(!need.size)return;
-
+/* pálya + szereplőfajta → modell (modellek/<név>.glb) */
+function kindOf(c){const k=A.ROOF&&A.ROOF.actors?A.ROOF.actors[c.id]:null;
+  switch(LV){case 'erdo':return c.mesh.userData.pol?'rendor':null;
+    case 'falu':return 'tanitvany';
+    case 'varos':return k==='boss'?'kuroda':'testor';
+    case 'vonat':return k==='boss'?'mori':(k==='conductor'||k==='driver')?'kalauz':'testor';
+    case 'kikoto':return 'testor_kikoto';
+    case 'fesztival':return k==='vip'?'vip_roka':'testor_fesztival';
+    case 'fogado':return 'testor_fogado';
+    case 'templom':return k==='naruse'?'naruse':'testor_templom';}
+  return null;}
+const jobs=[];G.ALLCOPS.forEach(c=>{const k=kindOf(c);if(k)jobs.push([c.mesh,k]);});
+if(LV==='falu'&&A.FALU&&A.FALU.master)jobs.push([A.FALU.master,'mester']);
+/* civilek: utasok a vonaton, vendégek az ünnepen, a könyvelő a fogadóban */
+(A.CIVS||[]).forEach((g,i)=>{if(G.ALLCOPS.some(c=>c.mesh===g))return;jobs.push([g,LV==='fogado'?'konyvelo':(i%2?'civil_b':'civil_a')]);});
+if(!jobs.length)return;
 const _q=new THREE.Quaternion(),_q2=new THREE.Quaternion(),_v=new THREE.Vector3(),_v2=new THREE.Vector3(),_m=new THREE.Matrix4();
 function prepMaterials(root){
   root.traverse(o=>{if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=false;
@@ -23,11 +34,15 @@ function prepMaterials(root){
       return n;};
     o.material=Array.isArray(o.material)?o.material.map(mk):mk(o.material);});
 }
-function upgrade(c,src){
-  const g=c.mesh,R=g.userData.R;if(!R||g.userData.model)return;
+function upgrade(g,src){
+  const R=g.userData.R;if(!R||g.userData.model)return;
   const torch=R.lensP.parent,gun=R.muzzle.parent;
   const keep=new Set();[torch,gun].forEach(t=>t.traverse(o=>keep.add(o)));
-  g.traverse(o=>{if(o.isMesh&&!keep.has(o))o.visible=false;});
+  const els=new Set(R.arms.map(a=>a.el));
+  const inHand=o=>{for(let p=o;p&&p!==g;p=p.parent){if(p.userData.handProp)return true;if(els.has(p.parent)&&!p.userData.orig)return true;}return false;};
+  g.traverse(o=>{if(o.isMesh&&!keep.has(o)&&!inHand(o))o.visible=false;});
+  /* a később a fejre/törzsre tett régi kiegészítők (maszk, sál stb.) is rejtve maradjanak */
+  [R.neck,R.chest,R.hips].forEach(p=>{const add=p.add.bind(p);p.add=function(...o){o.forEach(x=>x.traverse(m=>{if(m.isMesh&&!m.userData.handProp)m.visible=false;}));return add(...o);};});
   const model=THREE.SkeletonUtils.clone(src);
   const cont=new THREE.Group();cont.rotation.y=Math.PI;cont.add(model);
   /* nyugalmi helyzet: minden csont forgása a test (body pivot) keretében */
@@ -62,15 +77,20 @@ function upgrade(c,src){
     cont.position.y=R.hips.position.y-0.98;
     model.updateMatrixWorld(true);
     /* zseblámpa és fegyver a modell kezébe */
-    [[torch,R.arms[0].el,hands[0]],[gun,R.arms[1].el,hands[1]]].forEach(([t,el,h])=>{if(!h)return;h.getWorldPosition(_v);
-      el.updateMatrixWorld(true);el.worldToLocal(_v);t.position.set(_v.x,_v.y-0.05,_v.z);});
+    /* a régi alkar végén lévő tárgyak (zseblámpa, revolver, legyező…) az új kézbe kerülnek */
+    for(let i=0;i<2;i++){const el=R.arms[i].el,h=hands[i];if(!h)continue;h.getWorldPosition(_v);el.updateMatrixWorld(true);el.worldToLocal(_v);
+      _v.y+=0.31-0.05;
+      for(const ch of el.children){if(ch.userData.orig&&ch!==torch&&ch!==gun)continue;
+        if(!ch.userData.basePos)ch.userData.basePos=ch.position.clone();ch.position.copy(ch.userData.basePos).add(_v);}}
   }
   const old=g.userData.anim;g.userData.anim=function(t,spd,dt,o){old(t,spd,dt,o);sync();};
   g.userData.model=model;sync();
 }
 const loader=new THREE.GLTFLoader();
-need.forEach(k=>loader.load(KIND[k],gl=>{
+const byKind={};jobs.forEach(([g,k])=>{(byKind[k]=byKind[k]||[]).push(g);});
+Object.keys(byKind).forEach(k=>loader.load('modellek/'+k+'.glb',gl=>{
   const src=gl.scene;prepMaterials(src);
-  G.ALLCOPS.forEach(c=>{if(pick(c)===k)try{upgrade(c,src);}catch(e){console.warn('modell',e);}});
+  byKind[k].forEach(g=>{try{upgrade(g,src);}catch(e){console.warn('modell',e);}});
 },undefined,e=>console.warn('modell betöltése nem sikerült',e)));
+A.upgradeActor=(g,k)=>loader.load('modellek/'+k+'.glb',gl=>{prepMaterials(gl.scene);upgrade(g,gl.scene);});
 })();

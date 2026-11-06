@@ -156,7 +156,7 @@ function buildPolice(seed,opt){opt=opt||{};const ST=!!opt.student,MA=!!opt.maste
   const lensP=new THREE.Object3D();lensP.position.y=-0.22;torch.add(lensP);
   const lensGlow=glowSprite(ST?0xffb060:0xfff0cc,ST?1.1:0.7,0.9);lensGlow.position.y=ST?-0.2:-0.23;torch.add(lensGlow);
   g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
-  const R={hips,chest,neck,arms,legs,body,lensP,lensGlow,muzzle};g.userData.R=R;g.userData.pol=POL;g.userData.ph=r()*6;
+  const R={hips,chest,neck,arms,legs,body,lensP,lensGlow,muzzle};g.userData.R=R;g.userData.pol=POL;g.traverse(o=>{o.userData.orig=true;});if(CI)(window.AE.CIVS=window.AE.CIVS||[]).push(g);g.userData.ph=r()*6;
   g.userData.anim=(t,spd,dt,o)=>{const ph=g.userData.ph+=dt*spd*2.9;const k=clamp(spd/4,0,1)*(1-o.fall),sw=Math.sin(ph)*0.62*k;
     legs[0].hp.rotation.x=sw;legs[1].hp.rotation.x=-sw;legs[0].kn.rotation.x=Math.max(0,-Math.sin(ph))*0.9*k+0.04;legs[1].kn.rotation.x=Math.max(0,Math.sin(ph))*0.9*k+0.04;
     hips.position.y=0.98-Math.abs(Math.sin(ph))*0.04*k;hips.rotation.x=-0.05*k-o.stagger*0.35;chest.rotation.y=o.sweep*(1-o.fall);neck.rotation.x=-o.bp*0.5*(1-o.fall);

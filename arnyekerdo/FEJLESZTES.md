@@ -326,6 +326,13 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - Külön mentés (`shinobi2en-save-`), nincs magyar hangfájl-betöltés (AE_HANG_HU), a felolvasás a készülék angol hangján megy. Angol Piper-hanghoz az en_US modellek kellenének (pl. ryan, amy), a hangok.py-t akkor angol fájllistára kell bővíteni.
 - A service worker a navigációt oldalanként tárolja (index.html / en.html), hogy offline is a megfelelő nyelv jöjjön.
 
+## 7d. Valósághű szereplők (Blender + MPFB 2, 2026. november)
+- A modellek a `modellek/*.glb` fájlok (egyenként kb. 1 MB, 9–13 ezer háromszög, csontváz: MPFB „game_engine”, UE-stílusú csontnevek). Forrás: `blender/gyar.py` (közös eszközök: ember létrehozása, ruha átszínezése, sapka, sisak, kötött sapka, fejpánt, mellény, öv, rókamaszk, szemüveg, karszalag, sál, könnyítés, kimentés) és `blender/szereplok.py` (receptek). Blenderben: a gyar.py, majd a szereplok.py betöltése után `build("testor")`.
+- Felhasznált MakeHuman-csomagok: system assets, suits01, shoes01, hats01 – mind CC0, a vele készült figurák szabadon felhasználhatók (Steamen is).
+- A játékban: `src/modellek.js` (+ `vendor_GLTFLoader.js`, `vendor_SkeletonUtils.js`, three r128). A régi, kódból rakott figura pivotjai maradnak, a régi anim() mozgatja őket; minden képkockában a pivotok forgását átmásoljuk a csontokra (helyi = nyugalmi_szülő⁻¹ · pivot · nyugalmi_csont, a karoknál A-póz → lelógó kar korrekcióval). A régi testrészek láthatatlanok, de a találatvizsgálat rajtuk fut. A kézben tartott tárgyak (zseblámpa, revolver, legyező, lámpás, bot) a régi alkaron maradnak, de minden képkockában az új kézhez igazodnak.
+- Kiosztás: erdo → rendor; falu → tanitvany, a mester → mester; varos → kuroda + testor; vonat → mori, kalauz (kalauz, mozdonyvezető), testor; kikoto → testor_kikoto (mellény, sisak); fesztival → vip_roka (rókamaszk), testor_fesztival (karszalag); fogado → testor_fogado (sapka, sál), a könyvelő → konyvelo; templom → naruse, testor_templom (fejpánt); civilek (utasok, vendégek) → civil_a / civil_b.
+- A modellek nincsenek az előtöltésben: pályánként csak a szükséges töltődik le, a service worker futás közben eltárolja. Ha nem töltődik be, a régi figura marad.
+
 ## 8. Mi maradt hátra (2026. november)
 
 - A 6–8. pályán élő őrökkel nincs végigjátszott, igazolt Árnyék-útvonal (a szkriptelt próbabot nem tud nézni). Valódi játékban kell kipróbálni, és szükség szerint lazítani (őrök útvonala, látótávolság `seeMul`, búvóhelyek).

@@ -72,7 +72,7 @@ A = os.path.join(D, '..')
 pre = ['./', 'index.html', 'en.html', 'three.min.js', 'manifest.webmanifest', 'favicon-32.png', 'icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'nyitokep.jpg', 'nyitokep-kicsi.jpg']
 pre += sorted('fonts/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'fonts', '*.woff2')))
 pre += sorted('hang/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'hang', '*.mp3')))
-pre += sorted('modellek/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'modellek', '*.glb')))
+# a modellek (modellek/*.glb) nem kerülnek az előtöltésbe: pályánként csak a szükséges töltődik le, és a service worker futás közben eltárolja
 pre += ['felszereles.jpg'] + sorted('eszkozok/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'eszkozok', '*.webp')))
 hsh = hashlib.sha1()
 for p in pre[1:]:

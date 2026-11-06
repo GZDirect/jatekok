@@ -36,7 +36,7 @@ function place(c,x,z,ry,route,active){Object.assign(c,{x,z,ry,route:route||[{x,z
 /* ---------- díszvendégek: maszk egyszer, legyező és sántítás körönként ---------- */
 const FANS=VIPS.map(i=>{const c=ALLCOPS[i],m=c.mesh,R=m.userData.R;R.neck.add(F.foxMask());
   const base=m.userData.anim;m.userData.anim=(t,spd,dt,o)=>{base(t,spd,dt,o);if(m.userData.limp&&spd>0.1&&!o.fall){const ph=m.userData.ph;R.hips.position.y-=0.06*Math.max(0,Math.sin(ph));R.hips.rotation.z=0.06*Math.sin(ph);R.legs[1].kn.rotation.x+=0.25*Math.max(0,Math.sin(ph));}};
-  return F.fan();});
+  const f=F.fan();f.userData.handProp=true;return f;});
 function dressVips(){MORI=Math.floor(Math.random()*3);const others=VIPS.filter(i=>i!==MORI);const leftOnly=others[Math.random()<0.5?0:1];
   VIPS.forEach(i=>{const c=ALLCOPS[i],R=c.mesh.userData.R,left=i===MORI||i===leftOnly,limp=i===MORI||(i!==leftOnly);ROLE[i]={left,limp};
     const f=FANS[i];if(f.parent)f.parent.remove(f);R.arms[left?0:1].el.add(f);c.mesh.userData.limp=limp;c.spdMul=limp?0.7:1;});}
