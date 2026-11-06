@@ -116,6 +116,7 @@ const routes={
   hall:[{x:-9,z:-31},{x:9,z:-31}],
   north:[{x:-12,z:-54},{x:12,z:-54}]};
 
+A.realTex(plank,'padlo',Math.PI/2);A.skyImage('eg_derult',0.8);
 A.ROOF=A.TEMPLOM={rects:solids,walkable,clampRoof,B,PANEL,ARCH,SWITCH,LIT,SIL,EXIT,routes,
   actors:['naruse','guard','guard','guard','guard','guard','guard','guard','guard','guard'],
   spots:{naruse:{x:6,z:-34,ry:Math.PI/2}}};

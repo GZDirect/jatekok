@@ -89,11 +89,17 @@ function flashPatch(mat){const prev=mat.onBeforeCompile;const key=(prev?prev.toS
 const vcMat=(o)=>flashPatch(new THREE.MeshLambertMaterial(Object.assign({vertexColors:true},o||{})));
 
 /* ---------- Égbolt ---------- */
+/* valódi (CC0, ambientCG) anyagképek: a kódból rajzolt textúra helyére töltődnek be, a klónokra is */
+function realTex(t,name,rot){const L=[t];const hook=x=>{const cl=x.clone.bind(x);x.clone=function(){const c=cl();hook(c);L.push(c);if(rot){c.center.set(0.5,0.5);c.rotation=rot;}return c;};};hook(t);
+  if(rot){t.center.set(0.5,0.5);t.rotation=rot;}
+  const img=new Image();img.onload=()=>L.forEach(x=>{x.image=img;x.needsUpdate=true;});img.src='anyagok/'+name+'.jpg';return t;}
 const sky=new THREE.Mesh(new THREE.SphereGeometry(600,32,16),new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,
-  uniforms:{uMoon:{value:MOON_DIR},uHor:{value:FOG_COL},uZen:{value:new THREE.Color(0x03070f)}},
+  uniforms:{uMoon:{value:MOON_DIR},uHor:{value:FOG_COL},uZen:{value:new THREE.Color(0x03070f)},uSky:{value:null},uSkyK:{value:0}},
   vertexShader:'varying vec3 vD;void main(){vD=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);gl_Position.z=gl_Position.w*0.9999;}',
-  fragmentShader:'uniform vec3 uMoon,uHor,uZen;varying vec3 vD;void main(){float h=clamp(vD.y,0.0,1.0);vec3 c=mix(uHor,uZen,pow(h,0.45));float m=max(dot(normalize(vD),uMoon),0.0);c+=vec3(0.55,0.62,0.75)*(pow(m,600.0)*0.0+pow(m,90.0)*0.35+pow(m,10.0)*0.09);gl_FragColor=vec4(c,1.0);}'}));
+  fragmentShader:'uniform vec3 uMoon,uHor,uZen;uniform sampler2D uSky;uniform float uSkyK;varying vec3 vD;void main(){float h=clamp(vD.y,0.0,1.0);vec3 c=mix(uHor,uZen,pow(h,0.45));if(uSkyK>0.0){vec3 d=normalize(vD);vec2 uv=vec2(atan(d.z,d.x)/6.2832+0.5,asin(clamp(d.y,-1.0,1.0))/3.1416+0.5);vec3 s=texture2D(uSky,uv).rgb;float hz=pow(1.0-h,6.0);c=mix(c,mix(s,uHor,hz*0.85),uSkyK);}float m=max(dot(normalize(vD),uMoon),0.0);c+=vec3(0.55,0.62,0.75)*(pow(m,600.0)*0.0+pow(m,90.0)*0.35+pow(m,10.0)*0.09);gl_FragColor=vec4(c,1.0);}'}));
 sky.renderOrder=-10;scene.add(sky);
+/* nappali pályákon valódi égbolt-panoráma (Poly Haven, CC0), a horizonton a köd színébe olvad */
+function skyImage(name,k){new THREE.TextureLoader().load('anyagok/'+name+'.jpg',t=>{t.wrapS=THREE.RepeatWrapping;sky.material.uniforms.uSky.value=t;sky.material.uniforms.uSkyK.value=k;});}
 const moonTex=canvasTex(256,256,(g)=>{const r=mulberry32(3);const gr=g.createRadialGradient(118,112,10,128,128,120);gr.addColorStop(0,'#fbf6e6');gr.addColorStop(0.85,'#e7dfc8');gr.addColorStop(1,'#d6ccb2');g.fillStyle=gr;g.beginPath();g.arc(128,128,118,0,Math.PI*2);g.fill();
   for(let i=0;i<26;i++){const x=40+r()*176,y=40+r()*176,s=4+r()*20;if(Math.hypot(x-128,y-128)+s>116)continue;g.fillStyle='rgba(150,140,118,'+(0.18+r()*0.25)+')';g.beginPath();g.arc(x,y,s,0,Math.PI*2);g.fill();g.fillStyle='rgba(255,255,245,0.25)';g.beginPath();g.arc(x-s*0.2,y-s*0.2,s*0.7,0,Math.PI*2);g.fill();}});
 const moonSpr=new THREE.Sprite(new THREE.SpriteMaterial({map:moonTex,fog:false,depthWrite:false}));moonSpr.scale.setScalar(34);moonSpr.renderOrder=-9;scene.add(moonSpr);
@@ -345,6 +351,6 @@ if(LV==='erdo'){const wht=flashPatch(new THREE.MeshLambertMaterial({color:0xe6e8
 if(FL){[terrain,grass,falling,giantTrunk,giantWood,giantLeaf].concat(VR?[ring1,ring2,ring3]:[]).forEach(o=>o.visible=false);fogSheets.forEach(f=>f.visible=false);flies.forEach(f=>f.visible=false);}
 function stepScenery(t){const u=patrolCar.userData;if(!u.red)return;const k=Math.max(0,Math.sin(t*7.5));u.red.intensity=0.25+k*1.6;u.rs.material.opacity=0.25+k*0.7;}
 
-window.AE={LV,$,clamp,mulberry32,hash3,lerp,H,GLSL_H,normalAt,renderer,scene,camera,resize,MOON_DIR,moonLight,hemi,FOG_COL,canvasTex,radial,glowTex,softTex,merge,jitter,rgb,mixc,vcMat,
+window.AE={realTex,skyImage,LV,$,clamp,mulberry32,hash3,lerp,H,GLSL_H,normalAt,renderer,scene,camera,resize,MOON_DIR,moonLight,hemi,FOG_COL,canvasTex,radial,glowTex,softTex,merge,jitter,rgb,mixc,vcMat,
   sky,moonSpr,moonHalo,stars,ring1,ring2,ring3,terrain,grid,bgrid,trees,bushes,near,shafts,fogSheets,grass,flies,falling,glowSprites,CELL,addTo,XW,ZS,ZN,rdg,EXIT,exitGroup,patrolCar,stepScenery,giants,shakeBush,glowGiant,FLU,NFL,flashPatch,freeSpot,keepClear,inField,setPR:(v)=>{PR=v;renderer.setPixelRatio(v);resize();}};
 })();

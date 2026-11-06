@@ -73,6 +73,7 @@ pre = ['./', 'index.html', 'en.html', 'three.min.js', 'manifest.webmanifest', 'f
 pre += sorted('fonts/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'fonts', '*.woff2')))
 pre += sorted('hang/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'hang', '*.mp3')))
 # a modellek (modellek/*.glb) nem kerülnek az előtöltésbe: pályánként csak a szükséges töltődik le, és a service worker futás közben eltárolja
+pre += sorted('anyagok/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'anyagok', '*.jpg')))
 pre += ['felszereles.jpg'] + sorted('eszkozok/' + os.path.basename(p) for p in glob.glob(os.path.join(A, 'eszkozok', '*.webp')))
 hsh = hashlib.sha1()
 for p in pre[1:]:

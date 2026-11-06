@@ -135,6 +135,7 @@ const routes={
   west:[{x:-27,z:-20},{x:-27,z:-48},{x:-22,z:-48},{x:-22,z:-20}],
   south:[{x:14,z:40},{x:24,z:40},{x:24,z:12},{x:14,z:12}]};
 
+A.realTex(snowT,'ho');A.realTex(plank,'deszka',Math.PI/2);A.skyImage('eg_borult',0.8);
 A.ROOF=A.FOGADO={rects:solids,walkable,clampRoof,onHard,inSteam,stepSteam,stepFlakes,addPrint,stepPrints,clearPrints,PRINTS,PRINT_LIFE,POOLS,MAIN,WING,OFFICE,EXIT,routes,
   actors:['guard','guard','guard','guard','guard','guard','guard','guard','guard']};
 })();

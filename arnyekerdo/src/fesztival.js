@@ -180,6 +180,7 @@ const routes={
   bamboo:[{x:0,z:50},{x:0,z:32},{x:-1.5,z:32},{x:-1.5,z:50}],
   pond:[{x:-24,z:14},{x:-24,z:20},{x:-18,z:28},{x:-18,z:14}]};
 
+A.skyImage('eg_naplemente',0.7);
 A.ROOF=A.FESZT={rects:solids,walkable,clampRoof,LANTERNS,paperGlow,TEA,POND,EXIT,spots,routes,foxMask,fan,stepVisitors,stepFireworks,burst,FW,VISIT,
   actors:['vip','vip','vip','guard','guard','guard','guard','guard','guard','guard']};
 })();

@@ -343,6 +343,11 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 - `modellek/kez.glb` (blender/kez.py): a részletes MPFB-alaptestből kivágott ököl + alkar, ruhaujj, csuklópólya; a régi gömb-ököl és henger-alkar rejtve. `modellek/fegyverek.glb` (blender/fegyverek.py): tantó (fonott markolat, tsuba, ívelt penge hamonnal), tekko, kampó (+ bal kézben kötéltekercs), shuriken, köpőcső, füstbomba; a fémek Phong-anyagot kapnak. Kavics, tüske, karom maradt kódból.
 - modellek.js `life()`: járás közben csípő- és ellentétes vállfordulás, a lábfej a talajjal párhuzamos, álló helyzetben légzés és lassú fejmozgás.
 
+## 7g. Valódi anyagok és égbolt (2026. november)
+- `anyagok/*.jpg` (512 px, ambientCG CC0): padlo (WoodFloor051), deszka (Planks037A), beton (Concrete034), aszfalt (Asphalt033), ho (Snow010A), ko (Rock064), tatami (Tatami001), bordaslemez (CorrugatedSteel007A, szürkére normálva, hogy a konténerszín megmaradjon). `A.realTex(tex,név,forgatás)` a kódból rajzolt textúra képét cseréli (a klónokét is), a csempézés marad.
+- Égbolt (Poly Haven CC0 puresky, 1024×512 jpg, Blenderben tónusleképezve): eg_derult (város, vonat, templom), eg_hajnal (kikötő), eg_naplemente (fesztivál, az alkonyattal halványul), eg_borult (fogadó). `A.skyImage(név,erősség)`: az égbolt-shader a képet a horizonton a köd színébe keveri.
+- A nyers letöltések a gépen: Dokumentumok\Shinobi-karakterek\letoltes\anyagok.
+
 ## 8. Mi maradt hátra (2026. november)
 
 - A 6–8. pályán élő őrökkel nincs végigjátszott, igazolt Árnyék-útvonal (a szkriptelt próbabot nem tud nézni). Valódi játékban kell kipróbálni, és szükség szerint lazítani (őrök útvonala, látótávolság `seeMul`, búvóhelyek).

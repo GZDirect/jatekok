@@ -188,6 +188,7 @@ const routes={
   south:[{x:10,z:54},{x:22,z:54},{x:22,z:49},{x:10,z:49}],
   alley:[{x:21.6,z:44},{x:21.6,z:-31}]};
 
+A.realTex(asphalt,'aszfalt');A.realTex(ribTex,'bordaslemez');A.skyImage('eg_hajnal',0.75);
 A.ROOF=A.KIKOTO={rects:solids,walkable,clampRoof,CT,NRS,PASS,MAN,OFF,CRANE,stepCrane,craneTop,routes,FENCE_Z,GATE,
   EXIT:{x0:21,x1:26.6,z0:-59.5,z1:-56},
   actors:['guard','guard','guard','guard','guard','guard','guard','guard','guard','guard'],

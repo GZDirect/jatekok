@@ -265,6 +265,7 @@ function inTunnel(z){return TUN.on&&z<TUN.z0&&z>TUN.z0-TUN.len;}
   seats.forEach((q,i)=>{const m=A.buildPolice(40+i,{suit:true,civ:true});m.position.set(q[0],H(q[0],q[1]),q[1]);m.rotation.y=q[2];m.userData.anim(0,0,0,{st:'patrol',bp:0,sweep:0,shoot:0,fall:0,stagger:0});
     const R=m.userData.R;m.userData.seated=true;R.hips.position.y=0.55;R.legs.forEach(l=>{l.hp.rotation.x=1.45;l.kn.rotation.x=-1.45;});R.arms.forEach(a=>{a.sh.rotation.x=0.5;a.el.rotation.x=0.9;});R.lensGlow.visible=false;scene.add(m);});}
 
+A.realTex(woodFloor,'padlo',Math.PI/2);A.skyImage('eg_derult',0.85);
 A.ROOF=A.VONAT={SUNM,SCONG,rects,walkable,clampRoof,CARS,CASE,BRAKE,HOOKS,CTN,LIFE,TUN,stepLand,startTunnel,inTunnel,trainG,glassM,
   actors:['boss','guard','guard','conductor','guard','guard','guard','guard','driver','guard','guard','guard'],
   spots:{desk:{x:1.1,z:-38.9,ry:Math.PI},window:{x:-0.6,z:-26.2,ry:Math.PI/2},cab:{x:-1.0,z:-41.0,ry:Math.PI},safe:{x:-1.2,z:-39.5}}};

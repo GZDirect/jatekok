@@ -63,7 +63,7 @@ const moriInTea=()=>{const m=ALLCOPS[MORI];return T.ph%3===2&&m.x>F.TEA.x0&&m.x<
 const C0={bg:new THREE.Color(0xe8b890),fog:new THREE.Color(0xd8a88a),hor:new THREE.Color(0xf4b880),zen:new THREE.Color(0x6a80b8),sun:new THREE.Color(0xffb070)},
   C1={bg:new THREE.Color(0x2a3048),fog:new THREE.Color(0x2c3048),hor:new THREE.Color(0x6a5a78),zen:new THREE.Color(0x141c38),sun:new THREE.Color(0x8a7aa0)};
 const TC=new THREE.Color();
-function applyDusk(k){G.duskK=k;const sky=A.sky.material.uniforms;A.scene.background.copy(C0.bg).lerp(C1.bg,k);A.scene.fog.color.copy(C0.fog).lerp(C1.fog,k);A.scene.fog.density=0.006+0.004*k;
+function applyDusk(k){G.duskK=k;if(A.sky&&A.sky.material.uniforms.uSky.value)A.sky.material.uniforms.uSkyK.value=0.75*(1-k*0.85);const sky=A.sky.material.uniforms;A.scene.background.copy(C0.bg).lerp(C1.bg,k);A.scene.fog.color.copy(C0.fog).lerp(C1.fog,k);A.scene.fog.density=0.006+0.004*k;
   sky.uHor.value.copy(C0.hor).lerp(C1.hor,k);sky.uZen.value.copy(C0.zen).lerp(C1.zen,k);A.moonLight.color.copy(C0.sun).lerp(C1.sun,k);A.moonLight.intensity=1.25-0.85*k;A.hemi.intensity=0.85-0.4*k;
   A.MOON_DIR.set(-0.7,0.22-0.12*k,0.3).normalize();G.visMul=0.9-0.3*k;F.paperGlow.emissiveIntensity=0.15+1.1*k;F.LANTERNS.forEach(s=>s.material.opacity=0.15+0.6*k);if(F.TEA.paper)F.TEA.paper.emissiveIntensity=0.15+0.6*k;}
 G.setDaylight(true);{const sky=A.sky.material.uniforms;sky.uHor.value=new THREE.Color();sky.uZen.value=new THREE.Color();}A.hemi.color.setHex(0xd0d8f0);A.hemi.groundColor.setHex(0x5a4a3a);applyDusk(0.3);

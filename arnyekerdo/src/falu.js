@@ -245,5 +245,6 @@ function stepFalu(dt,t){KOI.forEach(k=>{k.ph+=dt*k.sp;const a=k.ph;k.m.position.
   if(SHISHI.last!=null&&SHISHI.last<SHISHI.period-0.25&&ph>=SHISHI.period-0.25)knock=true;SHISHI.last=ph;SHISHI.piv.rotation.x=ang;
   if(SHISHI.maskT>0)SHISHI.maskT-=dt;if(knock)SHISHI.maskT=1.6;return knock;}
 
+A.realTex(plankTex,'deszka',Math.PI/2);
 A.FALU={TREES2,KOI,GRAVEL,gravelAt,SHISHI,stepFalu,LIGHTS,shojiM,ROOMS,GATES,DUMMIES,master,students,stepGates,stepDummies,lampGlow,XF};
 })();
