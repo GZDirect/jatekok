@@ -8,6 +8,7 @@ Egyérintéses toronyépítő 30 világon át (korábbi neve: Égig érő). Magy
 
 ## Indítás
 - A játék a Mom's Couch Studios rövid (3,8 másodperces) animált intrójával indul: a kanapé beúszik és megreccsen, a telefon három koppintásra felvillan, közben kirajzolódik a „Mom's Couch Studios” felirat, a záróhangra fényvillanás fut végig. A főmenü csak az intró vége vagy átugrása után jelenik meg.
+- Teljes képernyő: a játék az első érintésre (vagy billentyűre) teljes képernyőre vált, és minden Játék gombnál újra, ha közben kiléptél. Telepített alkalmazásként eleve teljes képernyőn indul. iPhone-on a böngésző ezt nem engedi, ott a kezdőképernyőre telepítve fut a legnagyobb méretben.
 - Átugrás: koppintás bárhol, a Kihagyás gomb, vagy számítógépen Szóköz, Enter, Esc.
 - Az elsődleges videó WebM (VP9 + Opus), tartaléknak MP4 (H.264 + AAC) is van. Ha a böngésző nem engedi a hangos indítást, a videó némán fut; ha a játékban le van némítva a hang, az intró is néma.
 - Ha a videó nem tölthető be (például offline), a játék azonnal a főmenüre lép. Az intró nem ír a mentésbe, és a játékmenetet nem érinti.

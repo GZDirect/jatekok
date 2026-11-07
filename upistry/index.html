@@ -297,7 +297,7 @@ textarea{width:100%;box-sizing:border-box;min-height:70px;background:rgba(0,0,0,
       <div class="btns" style="justify-content:flex-start"><button class="btn ghost sm" id="bImport" type="button" data-i="import"></button></div>
       <p class="note" id="importMsg"></p>
     </div>
-    <p class="note" style="text-align:center">Upistry · v2.3.1 · © 2026 Fejes Géza</p>
+    <p class="note" style="text-align:center">Upistry · v2.3.2 · © 2026 Fejes Géza</p>
   </div>
 </div>
 
@@ -2383,6 +2383,12 @@ function playIntro(done){
   tWait=setTimeout(finish,4500);   // still not playing (slow network, blocked playback): straight to the menu
   const p=v.play();if(p&&p.catch)p.catch(()=>{if(over)return;v.muted=true;const q=v.play();if(q&&q.catch)q.catch(finish)});
 }
+// ---------- full screen: browsers allow it only after a touch, so it starts on the first touch or key, and again on every Play ----------
+function goFull(){const d=document,el=d.documentElement;if(d.fullscreenElement||d.webkitFullscreenElement||matchMedia('(display-mode: fullscreen)').matches)return;
+  const rq=el.requestFullscreen||el.webkitRequestFullscreen;if(!rq)return;
+  try{const p=rq.call(el,{navigationUI:'hide'});if(p&&p.then)p.then(()=>{try{if(matchMedia('(pointer:coarse)').matches&&screen.orientation&&screen.orientation.lock)screen.orientation.lock('portrait').catch(()=>{})}catch(e){}}).catch(()=>{})}catch(e){}}
+addEventListener('pointerdown',goFull,{capture:true,once:true});addEventListener('keydown',goFull,{capture:true,once:true});
+for(const id of['bStart','bAgain','bNext','bDailyGo','bCp'])$(id).addEventListener('click',goFull);
 
 addEventListener('resize',()=>{layout();calcFocus();if(phase==='menu')demoTower()});
 document.documentElement.classList.toggle('rm',RM());
