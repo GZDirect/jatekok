@@ -18,12 +18,20 @@ Egyérintéses toronyépítő 30 világon át (korábbi neve: Égig érő). Magy
 - Hangok és dinamikus zene Web Audio API-val, világonként eltérő anyaghangokkal. Rezgés a támogatott eszközökön. Külön hangerő, zene, rezgés és „kevesebb mozgás” beállítás.
 - Telepíthető alkalmazásként (PWA), offline is fut.
 
+## Grafika
+- Minden kép a játék saját kódjából rajzolódik, vektoros illusztrációként: nincs letöltött vagy külső kép. Így minden kijelzőn éles, és a játék egyetlen fájl marad.
+- Világonként három parallax háttérréteg (pl. kikötői daruk és konténerhajók, maja lépcsős piramis, japán pagodák, jéghegyek, neonváros, csillagkapu), saját talaj és talapzat.
+- Az építőelemek háromrészes csempék (bal vég, ismétlődő közép, jobb vég), soha nincsenek nyújtva. Minden 10. emelet arany változatot kap. Néhány stílus él: izzik a láva, villog a neon, járnak az órák és a műszerek mutatói.
+- A rajzok világváltáskor egyszer készülnek el gyorsítótárba, menet közben csak másolódnak, ezért a teljesítmény nem romlik.
+- Az alkalmazásikon is ezekből az elemekből készült.
+
 ## Irányítás
 Koppintás vagy kattintás, számítógépen szóköz. Szünet: bal felső gomb vagy Esc. A játék csak akkor áll meg, ha az alkalmazás a háttérbe kerül.
 
 ## Fejlesztőknek
 - Saját hangfájlok: a `SOUND_FILES` objektumban eseményenként megadható fájl (pl. `perfect`, `place`, `triple`, `grow`, `miss`, `complete`).
-- Saját grafika: világonként `art:{block:'fajl.webp',cap:24}` háromrészes (bal vég, közép, jobb vég) képpel.
+- Rajzolt grafika: háttérrétegek az `LP`, építőelemek a `TS`, talapzatok a `PEDS`, talajok a `GROUNDS` objektumban, világonkénti eltérések az `ARTMAP` táblában. Az `?art=0` paraméter a régi, egyszerű lapos stílust mutatja.
+- Saját képes grafika: világonként `art:{block:'fajl.webp',cap:24}` háromrészes (bal vég, közép, jobb vég) képpel, ez elsőbbséget kap a rajzolt elemekkel szemben.
 - MASTER-feltételek: `MASTER_RULES`, vagy világonként `master:{floors,perfects,streak}`.
 - Teljesítmények: az `ACH` lista adat alapú (`stat`, `min`).
 - Magassági zónák és események: `ZONES_DEFAULT`, `EVENTS_DEFAULT`, világonkénti eltérés a `JOURNEYS` objektumban; háttérobjektumok a `KINDS` táblában; saját sprite-ok a `SKY_SPRITES` objektumban.
