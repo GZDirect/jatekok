@@ -297,7 +297,7 @@ textarea{width:100%;box-sizing:border-box;min-height:70px;background:rgba(0,0,0,
       <div class="btns" style="justify-content:flex-start"><button class="btn ghost sm" id="bImport" type="button" data-i="import"></button></div>
       <p class="note" id="importMsg"></p>
     </div>
-    <p class="note" style="text-align:center">Upistry · v2.3 · © 2026 Fejes Géza</p>
+    <p class="note" style="text-align:center">Upistry · v2.3.1 · © 2026 Fejes Géza</p>
   </div>
 </div>
 
@@ -2360,7 +2360,7 @@ function draw(){
 //     A tap, the Skip button, Space, Enter or Esc skips it; any failure goes straight to the menu.
 //     It only reads the mute and volume settings and stores nothing. ?intro=0 leaves it out (development).
 // =====================================================================
-const INTRO_SRC=[['intro/moms_couch_intro.webm','video/webm; codecs="vp9, opus"'],['intro/moms_couch_intro.mp4','video/mp4; codecs="avc1.640028, mp4a.40.2"']];
+const INTRO_SRC=[['intro/moms_couch_intro.webm?v=2','video/webm; codecs="vp9, opus"'],['intro/moms_couch_intro.mp4?v=2','video/mp4; codecs="avc1.640028, mp4a.40.2"']];
 function playIntro(done){
   if(/[?&]intro=0\b/.test(location.search)){done();return}
   const others=[...document.body.children];for(const el of others)el.inert=true;$('menu').hidden=true;   // the menu stays hidden and unreachable until the intro is over

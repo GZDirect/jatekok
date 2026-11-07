@@ -7,7 +7,7 @@
 Egyérintéses toronyépítő 30 világon át (korábbi neve: Égig érő). Magyar böngészőben magyarul, minden más nyelvű böngészőben angolul indul. A nyelv a Beállításokban átállítható.
 
 ## Indítás
-- A játék a Mom's Couch Studios rövid (3,8 másodperces) intrójával indul. A főmenü csak az intró vége vagy átugrása után jelenik meg.
+- A játék a Mom's Couch Studios rövid (3,8 másodperces) animált intrójával indul: a kanapé beúszik és megreccsen, a telefon három koppintásra felvillan, közben kirajzolódik a „Mom's Couch Studios” felirat, a záróhangra fényvillanás fut végig. A főmenü csak az intró vége vagy átugrása után jelenik meg.
 - Átugrás: koppintás bárhol, a Kihagyás gomb, vagy számítógépen Szóköz, Enter, Esc.
 - Az elsődleges videó WebM (VP9 + Opus), tartaléknak MP4 (H.264 + AAC) is van. Ha a böngésző nem engedi a hangos indítást, a videó némán fut; ha a játékban le van némítva a hang, az intró is néma.
 - Ha a videó nem tölthető be (például offline), a játék azonnal a főmenüre lép. Az intró nem ír a mentésbe, és a játékmenetet nem érinti.
