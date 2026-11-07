@@ -1,8 +1,16 @@
 # Upistry
 
+![Upistry](nyitokep.jpg)
+
 **Játék / Play:** https://gzdirect.github.io/jatekok/upistry/
 
 Egyérintéses toronyépítő 30 világon át (korábbi neve: Égig érő). Magyar böngészőben magyarul, minden más nyelvű böngészőben angolul indul. A nyelv a Beállításokban átállítható.
+
+## Indítás
+- A játék a Mom's Couch Studios rövid (3,8 másodperces) intrójával indul. A főmenü csak az intró vége vagy átugrása után jelenik meg.
+- Átugrás: koppintás bárhol, a Kihagyás gomb, vagy számítógépen Szóköz, Enter, Esc.
+- Az elsődleges videó WebM (VP9 + Opus), tartaléknak MP4 (H.264 + AAC) is van. Ha a böngésző nem engedi a hangos indítást, a videó némán fut; ha a játékban le van némítva a hang, az intró is néma.
+- Ha a videó nem tölthető be (például offline), a játék azonnal a főmenüre lép. Az intró nem ír a mentésbe, és a játékmenetet nem érinti.
 
 ## Játék
 - Egy elem ide-oda csúszik a torony fölött, koppintásra leesik, ami lelóg, az leesik. A pontos illesztés nem fogyasztja a tornyot, három pontos után pedig nőni kezd.
@@ -30,6 +38,8 @@ Koppintás vagy kattintás, számítógépen szóköz. Szünet: bal felső gomb 
 
 ## Fejlesztőknek
 - Saját hangfájlok: a `SOUND_FILES` objektumban eseményenként megadható fájl (pl. `perfect`, `place`, `triple`, `grow`, `miss`, `complete`).
+- Intró: a fájlok az `intro/` mappában vannak, a `?intro=0` paraméter kihagyja (fejlesztéshez). A service worker a videót nem tárolja, a böngésző közvetlenül tölti.
+- Borítóképek: `nyitokep.jpg` (magyar, 1200×630), `nyitokep-kicsi.jpg` (800×420, a játéklistához), `social-preview.jpg` (angol, linkelőnézet).
 - Rajzolt grafika: háttérrétegek az `LP`, építőelemek a `TS`, talapzatok a `PEDS`, talajok a `GROUNDS` objektumban, világonkénti eltérések az `ARTMAP` táblában. Az `?art=0` paraméter a régi, egyszerű lapos stílust mutatja.
 - Saját képes grafika: világonként `art:{block:'fajl.webp',cap:24}` háromrészes (bal vég, közép, jobb vég) képpel, ez elsőbbséget kap a rajzolt elemekkel szemben.
 - MASTER-feltételek: `MASTER_RULES`, vagy világonként `master:{floors,perfects,streak}`.

@@ -12,6 +12,15 @@
 <meta name="apple-mobile-web-app-title" content="Upistry">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Upistry">
+<meta property="og:description" content="One-tap tower stacking through 30 worlds.">
+<meta property="og:url" content="https://gzdirect.github.io/jatekok/upistry/">
+<meta property="og:image" content="https://gzdirect.github.io/jatekok/upistry/social-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gzdirect.github.io/jatekok/upistry/social-preview.jpg">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.5 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Upistry</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -155,6 +164,9 @@ textarea{width:100%;box-sizing:border-box;min-height:70px;background:rgba(0,0,0,
 @media (max-height:520px){.floors{font-size:34px}.hud::before{height:110px}.goal{margin-top:3px}.meter{margin-top:5px}.streak,.mline{display:none}.screen{padding-top:16px;gap:10px}.title{font-size:40px}.final{font-size:54px}.bigstars{font-size:32px}}
 @media (prefers-reduced-motion:reduce){.tip{animation:none}}
 .rm .tip{animation:none}.rm .banner.go{animation-duration:2s}.rm .floors.bump{animation:none}
+#intro{position:fixed;inset:0;z-index:100;background:#000;overflow:hidden;touch-action:manipulation;transition:opacity .25s ease}#intro.out{opacity:0}.rm #intro{transition:none}
+#intro video{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(130vw,177.78vh);height:auto;pointer-events:none}
+#intro .introSkip{position:absolute;right:18px;bottom:max(20px,calc(env(safe-area-inset-bottom) + 12px));padding:10px 16px;background:#151515;color:#f6ba1e;border:1px solid #f6ba1e;border-radius:8px;font:700 14px Outfit,system-ui,sans-serif;letter-spacing:.04em;cursor:pointer}
 </style>
 </head>
 <body>
@@ -285,7 +297,7 @@ textarea{width:100%;box-sizing:border-box;min-height:70px;background:rgba(0,0,0,
       <div class="btns" style="justify-content:flex-start"><button class="btn ghost sm" id="bImport" type="button" data-i="import"></button></div>
       <p class="note" id="importMsg"></p>
     </div>
-    <p class="note" style="text-align:center">Upistry · v2.2 · © 2026 Fejes Géza</p>
+    <p class="note" style="text-align:center">Upistry · v2.3 · © 2026 Fejes Géza</p>
   </div>
 </div>
 
@@ -314,7 +326,7 @@ const ease=(k,dt)=>1-Math.exp(-k*dt);   // frame-rate independent smoothing
 // =====================================================================
 const STR={
  hu:{
-  play:'Játék',worlds:'Világok',daily:'Napi kihívás',profile:'Profil',settings:'Beállítások',back:'Vissza',start:'Indítás',close:'Bezárás',
+  play:'Játék',introSkip:'Kihagyás',worlds:'Világok',daily:'Napi kihívás',profile:'Profil',settings:'Beállítások',back:'Vissza',start:'Indítás',close:'Bezárás',
   worldOf:n=>`${n}. világ a 30-ból`,goalFloors:n=>`Cél: ${n} emelet`,best:'Rekord',bestN:n=>`Rekord: ${n}`,goalN:n=>`Cél ${n}`,
   overall:n=>`Összesített rekord: ${n} emelet`,starsN:(a,b)=>`Csillagok: ${a}/${b}`,
   tip:'Koppints, amikor az elem a torony fölé ér',perfStreak:'Tökéletes sorozat',growing:'Növekedés aktív',
@@ -346,7 +358,7 @@ const STR={
   stat_worldsDone:n=>n===1?'Teljesíts egy világot':`Teljesíts ${n} világot`,stat_starsTotal:n=>`Gyűjts ${n} csillagot`,stat_threeStar:n=>'Szerezz 3 csillagot egy világban',stat_masters:n=>n===1?'Teljesíts egy MASTER kihívást':`Teljesíts ${n} MASTER kihívást`,stat_dailies:n=>'Teljesíts egy napi kihívást',
  },
  en:{
-  play:'Play',worlds:'Worlds',daily:'Daily challenge',profile:'Profile',settings:'Settings',back:'Back',start:'Start',close:'Close',
+  play:'Play',introSkip:'Skip',worlds:'Worlds',daily:'Daily challenge',profile:'Profile',settings:'Settings',back:'Back',start:'Start',close:'Close',
   worldOf:n=>`World ${n} of 30`,goalFloors:n=>`Goal: ${n} floors`,best:'Best',bestN:n=>`Best: ${n}`,goalN:n=>`Goal ${n}`,
   overall:n=>`Overall best: ${n} floors`,starsN:(a,b)=>`Stars: ${a}/${b}`,
   tip:'Tap when the block is above the tower',perfStreak:'Perfect streak',growing:'Growing',
@@ -2343,9 +2355,38 @@ function draw(){
   if(flashA>0&&!rm){g.fillStyle=`rgba(255,250,235,${flashA})`;g.fillRect(0,0,W,H)}
 }
 
+// =====================================================================
+// 10. STUDIO INTRO — the Mom's Couch Studios clip plays before the main menu (WebM first, MP4 as fallback).
+//     A tap, the Skip button, Space, Enter or Esc skips it; any failure goes straight to the menu.
+//     It only reads the mute and volume settings and stores nothing. ?intro=0 leaves it out (development).
+// =====================================================================
+const INTRO_SRC=[['intro/moms_couch_intro.webm','video/webm; codecs="vp9, opus"'],['intro/moms_couch_intro.mp4','video/mp4; codecs="avc1.640028, mp4a.40.2"']];
+function playIntro(done){
+  if(/[?&]intro=0\b/.test(location.search)){done();return}
+  const others=[...document.body.children];for(const el of others)el.inert=true;$('menu').hidden=true;   // the menu stays hidden and unreachable until the intro is over
+  const ov=document.createElement('div');ov.id='intro';ov.setAttribute('role','dialog');ov.setAttribute('aria-label',"Mom's Couch Studios");
+  const v=document.createElement('video');v.muted=!!SET.muted;try{v.volume=clamp(SET.sfx??.8,0,1)}catch(e){}
+  v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.preload='auto';v.disablePictureInPicture=true;v.setAttribute('disableremoteplayback','');
+  for(const[src,type]of INTRO_SRC){const s=document.createElement('source');s.src=src;s.type=type;v.append(s)}
+  const sk=document.createElement('button');sk.type='button';sk.className='introSkip';sk.textContent=t('introSkip');
+  ov.append(v,sk);document.body.append(ov);
+  let over=false,tWait=0,tEnd=0;
+  const key=e=>{if(e.code==='Space'||e.code==='Enter'||e.code==='Escape'){e.preventDefault();e.stopImmediatePropagation();finish()}};
+  function finish(){if(over)return;over=true;clearTimeout(tWait);clearTimeout(tEnd);removeEventListener('keydown',key,true);try{v.pause()}catch(e){}
+    for(const el of others)el.inert=false;ov.classList.add('out');setTimeout(()=>{for(const s of [...v.children])s.remove();try{v.load()}catch(e){}ov.remove()},300);done()}
+  addEventListener('keydown',key,true);
+  sk.addEventListener('click',e=>{e.stopPropagation();finish()});
+  ov.addEventListener('pointerdown',e=>{if(e.target!==sk){e.preventDefault();finish()}});
+  v.addEventListener('ended',finish);v.addEventListener('error',finish);
+  v.lastElementChild.addEventListener('error',finish);   // the last source failed too: nothing playable
+  v.addEventListener('playing',()=>{clearTimeout(tWait);clearTimeout(tEnd);tEnd=setTimeout(finish,((isFinite(v.duration)?v.duration:3.8)+1.5)*1000)});
+  tWait=setTimeout(finish,4500);   // still not playing (slow network, blocked playback): straight to the menu
+  const p=v.play();if(p&&p.catch)p.catch(()=>{if(over)return;v.muted=true;const q=v.play();if(q&&q.catch)q.catch(finish)});
+}
+
 addEventListener('resize',()=>{layout();calcFocus();if(phase==='menu')demoTower()});
 document.documentElement.classList.toggle('rm',RM());
-applyI18n();layout();showMenu();
+applyI18n();layout();playIntro(showMenu);
 (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>{if(!$('worlds').hidden)openWorlds()});
 try{if('serviceWorker'in navigator&&/^https?:$/.test(location.protocol)&&window.top===window)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 requestAnimationFrame(frame);
