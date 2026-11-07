@@ -35,7 +35,7 @@ body{background:var(--night);color:var(--ink);font-family:var(--body);overflow:h
 .hud{position:fixed;left:0;right:0;top:0;z-index:2;pointer-events:none;text-align:center;display:flex;flex-direction:column;align-items:center;
   padding:calc(env(safe-area-inset-top,0px) + 12px) max(64px,env(safe-area-inset-right,0px)) 0 max(64px,env(safe-area-inset-left,0px))}
 .hud::before{content:"";position:absolute;left:50%;top:0;width:min(460px,120vw);height:calc(env(safe-area-inset-top,0px) + 160px);transform:translateX(-50%);background:radial-gradient(60% 70% at 50% 30%,rgba(23,15,51,.42),rgba(23,15,51,0));z-index:-1}
-.wname{font:700 12px/1.2 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);text-shadow:0 1px 6px rgba(0,0,0,.4);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wname{font:700 11px/1.2 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-shadow:0 1px 6px rgba(0,0,0,.4);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .floors{font:400 clamp(44px,13vw,74px)/1 var(--display);font-variant-numeric:tabular-nums;color:#fff;margin-top:4px;text-shadow:0 3px 0 rgba(23,15,51,.35),0 0 30px rgba(255,255,255,.35)}
 .floors.bump{animation:bump .22s ease-out}
 @keyframes bump{40%{transform:scale(1.12)}}
@@ -285,7 +285,7 @@ textarea{width:100%;box-sizing:border-box;min-height:70px;background:rgba(0,0,0,
       <div class="btns" style="justify-content:flex-start"><button class="btn ghost sm" id="bImport" type="button" data-i="import"></button></div>
       <p class="note" id="importMsg"></p>
     </div>
-    <p class="note" style="text-align:center">Upistry · v2.0 · © 2026 Fejes Géza</p>
+    <p class="note" style="text-align:center">Upistry · v2.1 · © 2026 Fejes Géza</p>
   </div>
 </div>
 
@@ -341,7 +341,7 @@ const STR={
   reduceMotion:'Kevesebb mozgás',reduceNote:'Kikapcsolja a remegést, villanást és a nagy effekteket.',auto:'Rendszer',on:'Be',off:'Ki',
   backup:'Mentés biztonsági másolata',backupNote:'A haladás ebben a böngészőben tárolódik. Másold ki a kódot, és egy másik eszközön töltsd be.',export:'Kód kimásolása',import:'Kód betöltése',
   copied:'Kimásolva.',copyFail:'Jelöld ki és másold ki kézzel.',importConfirm:'Biztosan felülírod a mostani haladást? Nyomd meg még egyszer.',importOk:'Betöltve.',importBad:'Ez a kód nem érvényes Upistry-mentés.',
-  soundOn:'HANG BE',soundOff:'HANG KI',
+  soundOn:'HANG BE',soundOff:'HANG KI',newZone:'ÚJ ZÓNA',zoneLbl:'Legmagasabb zóna',
   stat_runFloors:n=>`${n} emelet egy menetben`,stat_runStreak:n=>`×${n} tökéletes sorozat`,stat_lifeFloors:n=>`Összesen ${n} emelet`,stat_lifePerfects:n=>`Összesen ${n} tökéletes`,
   stat_worldsDone:n=>n===1?'Teljesíts egy világot':`Teljesíts ${n} világot`,stat_starsTotal:n=>`Gyűjts ${n} csillagot`,stat_threeStar:n=>'Szerezz 3 csillagot egy világban',stat_masters:n=>n===1?'Teljesíts egy MASTER kihívást':`Teljesíts ${n} MASTER kihívást`,stat_dailies:n=>'Teljesíts egy napi kihívást',
  },
@@ -373,7 +373,7 @@ const STR={
   reduceMotion:'Reduce motion',reduceNote:'Turns off shake, flashes and big effects.',auto:'System',on:'On',off:'Off',
   backup:'Save backup',backupNote:'Progress is stored in this browser. Copy the code and load it on another device.',export:'Copy code',import:'Load code',
   copied:'Copied.',copyFail:'Select the text and copy it by hand.',importConfirm:'This replaces your current progress. Press again to confirm.',importOk:'Loaded.',importBad:'This is not a valid Upistry save.',
-  soundOn:'SOUND ON',soundOff:'SOUND OFF',
+  soundOn:'SOUND ON',soundOff:'SOUND OFF',newZone:'NEW ZONE',zoneLbl:'Highest zone',
   stat_runFloors:n=>`${n} floors in one run`,stat_runStreak:n=>`Perfect streak of ${n}`,stat_lifeFloors:n=>`${n} floors in total`,stat_lifePerfects:n=>`${n} perfects in total`,
   stat_worldsDone:n=>n===1?'Complete a world':`Complete ${n} worlds`,stat_starsTotal:n=>`Collect ${n} stars`,stat_threeStar:n=>'Earn 3 stars in a world',stat_masters:n=>n===1?'Complete a MASTER challenge':`Complete ${n} MASTER challenges`,stat_dailies:n=>'Complete a daily challenge',
  }
@@ -485,7 +485,7 @@ const SAVE_KEY='egig-save';
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}};
 let STORE={load:()=>ls.get(SAVE_KEY),save:str=>ls.set(SAVE_KEY,str)};
 function defaultSave(){return{v:3,unlocked:1,sel:0,overall:0,migrated:false,
-  worlds:Array.from({length:NW},()=>({best:0,stars:0,done:false,master:false})),daily:{},
+  worlds:Array.from({length:NW},()=>({best:0,stars:0,done:false,master:false,zone:0})),daily:{},
   settings:{lang:null,sfx:.8,music:.35,muted:false,haptics:true,reduce:null},
   profile:{floors:0,perfects:0,runs:0,bestStreak:0},ach:{}}}
 const int=(v,a,b,d=0)=>{v=Math.floor(Number(v));return Number.isFinite(v)?clamp(v,a,b):d};
@@ -494,7 +494,7 @@ function sanitize(s){
   const d=defaultSave();
   if(s&&typeof s==='object'){
     d.unlocked=int(s.unlocked,1,NW,1);d.overall=int(s.overall,0,99999);d.migrated=s.migrated===true;
-    if(Array.isArray(s.worlds))s.worlds.slice(0,NW).forEach((w,i)=>{if(w&&typeof w==='object')d.worlds[i]={best:int(w.best,0,99999),stars:int(w.stars,0,3),done:w.done===true,master:w.master===true}});
+    if(Array.isArray(s.worlds))s.worlds.slice(0,NW).forEach((w,i)=>{if(w&&typeof w==='object')d.worlds[i]={best:int(w.best,0,99999),stars:int(w.stars,0,3),done:w.done===true,master:w.master===true,zone:int(w.zone,0,5)}});
     if(s.daily&&typeof s.daily==='object')for(const k of Object.keys(s.daily).sort().slice(-30)){const v=s.daily[k];if(/^\d{4}-\d\d-\d\d$/.test(k)&&v&&typeof v==='object')d.daily[k]={done:v.done===true,best:int(v.best,0,99999),perf:int(v.perf,0,99999)}}
     d.sel=int(s.sel,0,NW-1,0);
     const st=s.settings&&typeof s.settings==='object'?s.settings:{};
@@ -541,7 +541,7 @@ function layout(){
   BH0=Math.max(18,Math.min(30,H*.036));AREA=Math.min(W-32,440);MAXW=AREA*.62;G0=H*.8;baseY=G0;FOC=H*.42;
   applyWorld();
 }
-function calcFocus(){const r=$('hud').hidden?0:$('hud').getBoundingClientRect().bottom;FOC=Math.min(G0-BH*2,Math.max(H*.42,r+BH*2.4))}
+function calcFocus(){const r=$('hud').hidden?0:$('hud').getBoundingClientRect().bottom;SKYJ.hudBottom=r||safeT+110;FOC=Math.min(G0-BH*2,Math.max(H*.42,r+BH*2.4))}
 function applyWorld(){BH=BH0*WD.bh;buildLayers();buildAmb();makeSky()}
 function off(w,h){const c=document.createElement('canvas');c.width=Math.max(1,Math.round(w*DPR));c.height=Math.max(1,Math.round(h*DPR));const g=c.getContext('2d');g.scale(DPR,DPR);return[c,g]}
 
@@ -642,7 +642,8 @@ function shape(g,sh,x,y,r,rot,c,t){
 const AMB_R={bird:5,cloudlet:9,lantern:4,puff:5,holo:8,tumble:6,petal:3,leaf:3.4,snow:2.2,spark:1.6,star:2,bubble:2.4,dot:1.8,square:2};
 function drawAmb(g){
   const a=WD.amb;if(!a)return;const sh=a[1],R=AMB_R[sh]||2;
-  for(const p of amb){g.globalAlpha=a[0]==='twinkle'?.25+.75*Math.abs(Math.sin(clock*1.5+p.ph)):sh==='dot'&&a[0]==='rise'?.5+.5*Math.sin(clock*3+p.ph):.85;
+  const AF=a[0]==='twinkle'?1:SKYJ.ambFade();if(AF<.01)return;
+  for(const p of amb){g.globalAlpha=AF*(a[0]==='twinkle'?.25+.75*Math.abs(Math.sin(clock*1.5+p.ph)):sh==='dot'&&a[0]==='rise'?.5+.5*Math.sin(clock*3+p.ph):.85);
     shape(g,sh,p.x,p.y,R*p.s,a[0]==='rise'&&sh==='spark'?-Math.PI/2:p.rot,p.c,clock+p.ph)}
   g.globalAlpha=1;
 }
@@ -797,6 +798,174 @@ function drawClassicFront(g){
 }
 
 // =====================================================================
+// 4b. SKY JOURNEY — the sky follows the tower's height (placed floors), not the camera.
+//     Zones, background objects and rare events are all config; a world may override them in JOURNEYS.
+// =====================================================================
+const hexOut=c=>'#'+c.map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join('');
+const lerpHex=(a,b,t)=>{const A=hex(a),B=hex(b);return hexOut(A.map((v,i)=>v+(B[i]-v)*t))};
+const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x)};
+const SPACE_SKY={dusk:['#3a2c7a','#ff8a8c'],space:['#060818','#1c1640'],nebula:['#0b0420','#2c1048'],deep:['#000005','#0a0418']};
+const ZONE_NAMES={ground:['A föld közelében','Near the ground'],clouds:['Felhők között','Among the clouds'],above:['Felhők felett','Above the clouds'],space:['Világűr','Space'],
+  nebula:['Csillagködök','Nebulae'],deep:['Mélyűr','Deep space'],deepsea:['Mélytenger','Deep sea'],shallow:['Sekély víz','Shallow water'],surface:['A felszínen','At the surface'],
+  sky:['Égbolt','The sky'],lunar:['Holdfelszín','Lunar surface'],starry:['Csillagos űr','Starry space'],planets:['Távoli bolygók','Distant planets'],highatm:['Magas légkör','High atmosphere'],
+  stars:['A csillagok között','Among the stars'],galaxies:['Galaxisok','Galaxies'],alien:['Idegen dimenzió','Alien dimension'],cosmic:['Kozmikus háttér','Cosmic background']};
+// zone: {id, from (floors), sky:'low'|'high'|[top,bottom], tint (share of the world's own high sky), stars 0..1, objs:{kind: spawns per second}, water}
+const ZONES_DEFAULT=[
+  {id:'ground',from:0,sky:'low',stars:0,objs:{bird:.22,cloudLow:.12}},
+  {id:'clouds',from:20,sky:'high',stars:0,objs:{cloudHigh:.14,plane:.05,balloon:.03,bird:.05}},
+  {id:'above',from:50,sky:SPACE_SKY.dusk,tint:.3,stars:.45,objs:{cloudHigh:.05,plane:.04}},
+  {id:'space',from:80,sky:SPACE_SKY.space,tint:.15,stars:1,objs:{satellite:.08,station:.015,meteor:.04}},
+  {id:'nebula',from:120,sky:SPACE_SKY.nebula,tint:.1,stars:1,objs:{ufo:.03,nebula:.03,planet:.02,satellite:.03}},
+  {id:'deep',from:160,sky:SPACE_SKY.deep,tint:.05,stars:1,objs:{galaxy:.03,comet:.03,meteor:.03,nebula:.02}},
+];
+const EVENTS_DEFAULT={10:'flock',25:'balloon',40:'airliner',60:'meteor',85:'satellite',100:'station',125:'ufo',150:'starShower',175:'planet',200:'cosmic'};
+const ZS=(id,from)=>({...ZONES_DEFAULT.find(z=>z.id===id),from});
+const JOURNEYS={
+  21:{zones:[{id:'deepsea',from:0,sky:'low',stars:0,water:true,objs:{fish:.3}},{id:'shallow',from:20,sky:['#1a8aa8','#7fdce8'],stars:0,water:true,objs:{fish:.22,turtle:.03}},
+      {id:'surface',from:50,sky:['#6cc4ec','#e4f6ff'],stars:0,objs:{bird:.2,cloudLow:.1}},{id:'sky',from:80,sky:['#4a90e0','#cfe8ff'],stars:0,objs:{plane:.05,cloudHigh:.1,balloon:.02}},
+      ZS('space',120),ZS('deep',160)],
+     events:{10:'fishSchool',25:'whale',40:'fishSchool',60:'flock',85:'airliner',100:'balloon',125:'satellite',150:'station',175:'ufo',200:'cosmic'}},
+  25:{zones:[{id:'lunar',from:0,sky:'low',stars:1,objs:{satellite:.05}},{id:'starry',from:30,sky:['#02020a','#0c0c22'],stars:1,objs:{satellite:.06,meteor:.05,station:.02}},
+      {id:'planets',from:90,sky:['#05031a','#1a0c34'],stars:1,objs:{planet:.04,ufo:.02,nebula:.02}},ZS('deep',160)],
+     events:{10:'satellite',25:'meteor',40:'station',60:'starShower',85:'ufo',100:'planet',125:'comet',150:'starShower',175:'planet',200:'cosmic'}},
+  19:{zones:[{id:'clouds',from:0,sky:'low',stars:0,objs:{cloudLow:.15,bird:.1}},{id:'highatm',from:20,sky:'high',stars:0,objs:{cloudHigh:.12,plane:.04,balloon:.03}},
+      {id:'stars',from:50,sky:['#1c2a6a','#7a7ad0'],tint:.2,stars:.8,objs:{plane:.02,meteor:.02}},ZS('space',80),ZS('nebula',120),ZS('deep',160)]},
+  28:{zones:[{id:'space',from:0,sky:'low',stars:1,objs:{satellite:.05,meteor:.03}},{id:'galaxies',from:40,sky:['#04021a','#120a3a'],stars:1,objs:{galaxy:.04,nebula:.03,comet:.02}},
+      {id:'alien',from:100,sky:['#1a0030','#0a4a40'],stars:.8,objs:{ufo:.05,nebula:.04,portal:.02}}],
+     events:{10:'satellite',25:'meteor',40:'station',60:'starShower',85:'ufo',100:'cosmic',125:'ufo',150:'starShower',175:'planet',200:'cosmic'}},
+  29:{zones:[{id:'cosmic',from:0,sky:'low',stars:1,objs:{meteor:.03}},{id:'nebula',from:40,sky:['#160628','#4a1250'],stars:1,objs:{nebula:.05,comet:.02}},
+      {id:'galaxies',from:100,sky:['#03021a','#140838'],stars:1,objs:{galaxy:.05,ufo:.02}}],
+     events:{10:'meteor',25:'starShower',40:'comet',60:'planet',85:'ufo',100:'galaxy',125:'starShower',150:'cosmic',175:'planet',200:'cosmic'}},
+};
+const journeyOf=i=>JOURNEYS[i]||{};
+const zonesOf=i=>journeyOf(i).zones||ZONES_DEFAULT;
+const zoneName=(i,k)=>{const z=zonesOf(i)[clamp(k,0,zonesOf(i).length-1)];return(ZONE_NAMES[z.id]||[z.id,z.id])[LANG==='hu'?0:1]};
+// Optional sprite art: e.g. SKY_SPRITES.plane={src:'art/plane.webp'}; drawn facing right, flipped when moving left.
+const SKY_SPRITES={};
+for(const s of Object.values(SKY_SPRITES)){const im=new Image();im.src=s.src;s.img=im}
+// background objects: layer far (behind world scenery), env (clouds), move (in front of scenery, behind the tower)
+const KINDS={
+  bird:{layer:'move',make:o=>{o.s=4+Math.random()*3;o.vx=(30+Math.random()*25)*o.dir}},
+  flock:{layer:'move',make:o=>{o.s=5;o.vx=45*o.dir;o.n=11}},
+  cloudLow:{layer:'env',make:o=>{o.s=14+Math.random()*16;o.vx=(6+Math.random()*8)*o.dir;o.a=.75}},
+  cloudHigh:{layer:'env',make:o=>{o.s=18+Math.random()*22;o.vx=(4+Math.random()*6)*o.dir;o.a=.5;o.flat=1}},
+  plane:{layer:'move',make:o=>{o.s=9;o.vx=(60+Math.random()*30)*o.dir}},
+  airliner:{layer:'move',make:o=>{o.s=17;o.vx=70*o.dir}},
+  balloon:{layer:'move',make:o=>{o.s=13+Math.random()*5;o.vx=(8+Math.random()*6)*o.dir;o.hue=(Math.random()*360)|0}},
+  satellite:{layer:'move',make:o=>{o.s=8;o.vx=(22+Math.random()*12)*o.dir}},
+  station:{layer:'move',make:o=>{o.s=22;o.vx=12*o.dir}},
+  ufo:{layer:'move',make:o=>{o.s=14;o.vx=(36+Math.random()*20)*o.dir}},
+  planet:{layer:'far',make:o=>{o.s=22+Math.random()*34;o.vx=2.5*o.dir;o.hue=(Math.random()*360)|0;o.ring=Math.random()<.5}},
+  nebula:{layer:'far',make:o=>{o.s=110+Math.random()*90;o.vx=1.5*o.dir;o.hue=(Math.random()*360)|0}},
+  galaxy:{layer:'far',make:o=>{o.s=45+Math.random()*30;o.vx=1.5*o.dir;o.rot=Math.random()*6}},
+  portal:{layer:'far',make:o=>{o.s=40+Math.random()*20;o.vx=2*o.dir}},
+  comet:{layer:'far',make:o=>{o.s=5;o.vx=38*o.dir;o.vy=8}},
+  meteor:{layer:'move',make:o=>{o.s=2.5;o.vx=(320+Math.random()*120)*o.dir;o.vy=60+Math.random()*50;o.life=1.4;o.y=SKYJ.hudBottom+Math.random()*Math.max(20,SKYJ.activeRect().y0-SKYJ.hudBottom-120)}},
+  fish:{layer:'move',make:o=>{o.s=4+Math.random()*3;o.vx=(26+Math.random()*20)*o.dir;o.hue=[20,45,190,330][(Math.random()*4)|0]}},
+  fishSchool:{layer:'move',make:o=>{o.s=5;o.vx=42*o.dir;o.n=18}},
+  whale:{layer:'move',make:o=>{o.s=48;o.vx=16*o.dir}},
+  turtle:{layer:'move',make:o=>{o.s=11;o.vx=14*o.dir}},
+};
+const SKYJ={
+  h:0,hPrev:0,zone:0,fired:new Set(),objs:[],acc:{},fx:[],hudBottom:120,
+  reset(){this.fired.clear();this.zone=0;for(const o of this.objs)o.on=false;this.fx.length=0;this.h=this.hPrev=0},
+  zones(){return zonesOf(wi)},
+  zoneAt(f){const Z=this.zones();let k=0;while(k+1<Z.length&&f>=Z[k+1].from)k++;return k},
+  zcol(z){const s=WD.sky||['#3b2a6b','#ffb38a','#4f8fe0','#c4e8ff'];let c=z.sky==='low'?[s[0],s[1]]:z.sky==='high'?[s[2],s[3]]:z.sky;if(z.tint)c=[lerpHex(c[0],s[2],z.tint),lerpHex(c[1],s[3],z.tint)];return c},
+  // returns [topColour, bottomColour, starAlpha] for the smoothed height; zones blend over the last part of each band
+  sky(){const Z=this.zones(),h=this.h;const k=this.zoneAt(h);const z=Z[k],n=Z[k+1];let a=this.zcol(z),st=z.stars;
+    if(n){const B=Math.min(15,(n.from-z.from)*.6),tt=smooth((h-(n.from-B))/B);if(tt>0){const b=this.zcol(n);a=[lerpHex(a[0],b[0],tt),lerpHex(a[1],b[1],tt)];st=st+(n.stars-st)*tt}}
+    return[a[0],a[1],st]},
+  earthFade(){return 1-smooth((this.h-55)/30)},
+  ambFade(){return 1-smooth((this.h-45)/30)},
+  isWater(){const Z=this.zones();return!!Z[this.zoneAt(this.h)].water},
+  activeRect(){const top=sy(blocks.length*BH)-BH*zoom*2.6,bottom=sy(blocks.length*BH)+BH*zoom*1.6,hw=(MAXW*zoom)/2+28;return{x0:W/2-hw,x1:W/2+hw,y0:top,y1:bottom}},
+  lane(o){const r=this.activeRect();const topA=this.hudBottom+8,topB=Math.max(topA+20,r.y0-o.s*2),botA=r.y1+o.s*2,botB=H*.78;
+    return(Math.random()<.78||botB-botA<30)?topA+Math.random()*(topB-topA):botA+Math.random()*(botB-botA)},
+  spawn(kind,ev){const K=KINDS[kind];if(!K)return null;let o=this.objs.find(x=>!x.on);if(!o){if(this.objs.length>=40)return null;o={};this.objs.push(o)}
+    for(const k in o)delete o[k];o.on=true;o.k=kind;o.layer=K.layer;o.dir=Math.random()<.5?1:-1;o.vy=0;o.t=0;o.a=1;o.life=0;o.ev=!!ev;K.make(o);
+    const m=o.s*(o.k==='nebula'?1.2:3)+20;o.x=o.dir>0?-m:W+m;if(o.y===undefined)o.y=K.layer==='far'?H*(.08+Math.random()*.4):this.lane(o);
+    if(RM()){o.vx*=.6;o.vy*=.6}return o},
+  fire(ev){const rm=RM();
+    if(ev==='starShower'){for(let k=0;k<(rm?8:22);k++)this.fx.push({k:'delay',t:k*.11,kind:'meteor'});return}
+    if(ev==='cosmic'){this.fx.push({k:'nova',x:W*(.2+Math.random()*.6),y:H*(.12+Math.random()*.18),t:0,life:3.2});const o=this.spawn('nebula',true);if(o){o.x=W/2;o.vx*=.5}return}
+    const o=this.spawn(ev,true);if(o&&KINDS[ev].layer==='far'){o.x=o.dir>0?W*.05:W*.95}},
+  onFloor(f){
+    const k=this.zoneAt(f);if(k>this.zone){this.zone=k;onZone(k)}
+    const E=journeyOf(wi).events||EVENTS_DEFAULT;
+    for(const key of Object.keys(E)){const n=+key;if(f>=n&&f-n<3&&!this.fired.has(n)){this.fired.add(n);this.fire(E[key])}}
+  },
+  update(dt,target){
+    this.hPrev=this.h;this.h+=(target-this.h)*ease(3,dt);if(Math.abs(target-this.h)<.01)this.h=target;
+    const rise=(this.h-this.hPrev)*BH*zoom;   // objects drift down a little as the tower climbs (restrained parallax)
+    const z=this.zones()[this.zoneAt(this.h)];
+    if(phase!=='pause'){
+      const mult=(RM()?.4:1)*(lowFx?.6:1);
+      for(const[kind,rate]of Object.entries(z.objs||{}))if(Math.random()<rate*dt*mult)this.spawn(kind,false);
+    }
+    for(const o of this.objs){if(!o.on)continue;o.t+=dt;o.x+=o.vx*dt;o.y+=o.vy*dt+rise*(o.layer==='far'?.08:o.layer==='env'?.2:.04);
+      const m=o.s*(o.k==='nebula'?1.3:4)+40;
+      if((o.dir>0&&o.x>W+m)||(o.dir<0&&o.x<-m)||o.y>H+m||(o.life&&o.t>o.life))o.on=false}
+    for(const f of this.fx){f.t+=dt;if(f.k==='delay'&&f.t>=0&&!f.done){f.done=true;this.spawn(f.kind,true)}}
+    for(let i=this.fx.length-1;i>=0;i--){const f=this.fx[i];if(f.k==='delay'?f.done:f.t>f.life)this.fx.splice(i,1)}
+  },
+  draw(g,layer){
+    const r=this.activeRect(),rm=RM();
+    for(const o of this.objs){if(!o.on||o.layer!==layer)continue;
+      const R=o.s*(o.k==='nebula'?1:o.k==='flock'||o.k==='fishSchool'?6:2.2);
+      let a=o.a;if(layer==='move'&&o.x+R>r.x0&&o.x-R<r.x1&&o.y+R>r.y0&&o.y-R<r.y1)a*=.22;   // never cover the active block
+      g.globalAlpha=a;const sp=SKY_SPRITES[o.k];
+      if(sp&&sp.img&&sp.img.complete&&sp.img.naturalWidth){g.save();g.translate(o.x,o.y);if(o.dir<0)g.scale(-1,1);const w=o.s*4,hh=w*sp.img.naturalHeight/sp.img.naturalWidth;g.drawImage(sp.img,-w/2,-hh/2,w,hh);g.restore()}
+      else SKYDRAW[o.k](g,o,rm);
+    }
+    g.globalAlpha=1;
+    if(layer==='far')for(const f of this.fx)if(f.k==='nova'){const p=f.t/f.life,e=Math.sin(Math.min(1,p*3)*Math.PI/2)*(1-p);
+      const gr=g.createRadialGradient(f.x,f.y,0,f.x,f.y,60+p*220);gr.addColorStop(0,`rgba(255,250,235,${(rm?.3:.9)*e})`);gr.addColorStop(.3,`rgba(255,140,220,${.4*e})`);gr.addColorStop(1,'rgba(120,90,255,0)');
+      g.fillStyle=gr;g.fillRect(f.x-300,f.y-300,600,600);for(let k=0;k<3;k++){const rr=(p*260+k*40)%(300);g.strokeStyle=`rgba(200,170,255,${.5*(1-rr/300)*e})`;g.lineWidth=2;g.beginPath();g.arc(f.x,f.y,rr,0,7);g.stroke()}}
+  },
+  drawWater(g){if(!this.isWater())return;g.save();g.globalCompositeOperation='lighter';g.strokeStyle='rgba(180,240,255,.08)';g.lineWidth=2;
+    for(let k=0;k<5;k++){g.beginPath();for(let x=0;x<=W;x+=14)g.lineTo(x,40+k*36+Math.sin(x*.03+clock*(1+k*.2)+k)*8);g.stroke()}g.restore()}
+};
+const SKYDRAW={
+  bird:(g,o)=>shape(g,'bird',o.x,o.y,o.s,o.x*.05,'#2a2638',clock),
+  flock:(g,o)=>{for(let k=0;k<o.n;k++){const row=Math.ceil(k/2),side=k%2?1:-1;shape(g,'bird',o.x-o.dir*row*o.s*2.4,o.y+side*row*o.s*1.4+Math.sin(clock*2+k)*2,o.s*.9,k,'#2a2638',clock+k*.3)}},
+  cloudLow:(g,o)=>shape(g,'cloudlet',o.x,o.y,o.s,0,'#ffffff'),
+  cloudHigh:(g,o)=>{g.fillStyle='#ffffff';g.beginPath();g.ellipse(o.x,o.y,o.s*2.6,o.s*.45,0,0,7);g.ellipse(o.x+o.s,o.y-o.s*.2,o.s*1.4,o.s*.35,0,0,7);g.fill()},
+  plane:(g,o)=>drawPlane(g,o,false),airliner:(g,o)=>drawPlane(g,o,true),
+  balloon:(g,o)=>{const x=o.x,y=o.y+Math.sin(o.t*.8)*4,s=o.s;g.fillStyle=`hsl(${o.hue},75%,58%)`;g.beginPath();g.ellipse(x,y,s*.8,s,0,0,7);g.fill();g.fillStyle=`hsl(${(o.hue+40)%360},80%,70%)`;g.beginPath();g.ellipse(x,y,s*.28,s,0,0,7);g.fill();
+    g.strokeStyle='rgba(60,40,30,.8)';g.lineWidth=1;g.beginPath();g.moveTo(x-s*.5,y+s*.8);g.lineTo(x-s*.18,y+s*1.4);g.moveTo(x+s*.5,y+s*.8);g.lineTo(x+s*.18,y+s*1.4);g.stroke();g.fillStyle='#7a4a2a';g.fillRect(x-s*.2,y+s*1.4,s*.4,s*.3)},
+  satellite:(g,o)=>{const x=o.x,y=o.y,s=o.s;g.save();g.translate(x,y);g.rotate(Math.sin(o.t*.3)*.3);g.fillStyle='#c8ccd8';g.fillRect(-s*.4,-s*.4,s*.8,s*.8);g.fillStyle='#2a5aa8';g.fillRect(-s*2,-s*.3,s*1.4,s*.6);g.fillRect(s*.6,-s*.3,s*1.4,s*.6);
+    g.fillStyle=(o.t*2|0)%2?'#ff4a4a':'#4a1a1a';g.fillRect(-1,-s*.6,2,2);g.restore()},
+  station:(g,o)=>{const x=o.x,y=o.y,s=o.s;g.fillStyle='#b8bcc8';g.fillRect(x-s,y-1.5,s*2,3);for(const d of[-1,1]){g.fillStyle='#2a4a90';g.fillRect(x+d*s*.75-s*.18,y-s*.55,s*.36,s*.42);g.fillRect(x+d*s*.75-s*.18,y+s*.13,s*.36,s*.42)}
+    g.fillStyle='#e0e2ea';g.fillRect(x-s*.3,y-s*.12,s*.6,s*.24);g.fillRect(x-s*.08,y-s*.3,s*.16,s*.6)},
+  ufo:(g,o,rm)=>{const x=o.x,y=o.y+Math.sin(o.t*2.2)*6,s=o.s;if(!rm){const p=.25+.2*Math.sin(o.t*5);g.fillStyle=`rgba(160,255,200,${p})`;g.beginPath();g.moveTo(x-s*.4,y);g.lineTo(x+s*.4,y);g.lineTo(x+s*1.1,y+s*3);g.lineTo(x-s*1.1,y+s*3);g.fill()}
+    g.fillStyle='#9aa0b8';g.beginPath();g.ellipse(x,y,s*1.4,s*.38,0,0,7);g.fill();g.fillStyle='rgba(160,240,255,.85)';g.beginPath();g.ellipse(x,y-s*.25,s*.55,s*.45,0,Math.PI,0);g.fill();
+    for(let k=-2;k<=2;k++){g.fillStyle=(k+(o.t*6|0))%3===0?'#ffe08a':'#5a5f78';g.fillRect(x+k*s*.45-1.5,y-1.5,3,3)}},
+  planet:(g,o)=>{const r=o.s;const gr=g.createRadialGradient(o.x-r*.35,o.y-r*.35,r*.1,o.x,o.y,r);gr.addColorStop(0,`hsl(${o.hue},70%,72%)`);gr.addColorStop(.7,`hsl(${o.hue},55%,42%)`);gr.addColorStop(1,`hsl(${(o.hue+30)%360},50%,16%)`);
+    g.fillStyle=gr;g.beginPath();circ(g,o.x,o.y,r);g.fill();if(o.ring){g.strokeStyle=`hsla(${(o.hue+60)%360},60%,80%,.55)`;g.lineWidth=Math.max(2,r*.08);g.beginPath();g.ellipse(o.x,o.y,r*1.7,r*.38,-.35,0,7);g.stroke()}},
+  nebula:(g,o)=>{for(let k=0;k<3;k++){const x=o.x+(k-1)*o.s*.4,y=o.y+(k%2?-1:1)*o.s*.15,r=o.s*(.7+k*.15);const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,`hsla(${(o.hue+k*50)%360},85%,65%,.22)`);gr.addColorStop(1,`hsla(${(o.hue+k*50)%360},85%,55%,0)`);g.fillStyle=gr;g.fillRect(x-r,y-r,r*2,r*2)}},
+  galaxy:(g,o)=>{g.save();g.translate(o.x,o.y);g.scale(1,.45);g.rotate(o.rot+o.t*.05);for(let k=0;k<90;k++){const d=k/90,a=d*6+(k%2)*Math.PI;g.fillStyle=`rgba(230,220,255,${.7-d*.5})`;g.fillRect(Math.cos(a)*d*o.s,Math.sin(a)*d*o.s,1.6,1.6)}g.restore();
+    const gr=g.createRadialGradient(o.x,o.y,0,o.x,o.y,o.s*.35);gr.addColorStop(0,'rgba(255,240,220,.7)');gr.addColorStop(1,'rgba(255,240,220,0)');g.fillStyle=gr;g.fillRect(o.x-o.s,o.y-o.s,o.s*2,o.s*2)},
+  portal:(g,o)=>{g.save();g.translate(o.x,o.y);g.rotate(o.t*.4);g.strokeStyle='rgba(0,255,170,.6)';g.lineWidth=3;g.beginPath();g.ellipse(0,0,o.s,o.s*.9,0,0,7);g.stroke();g.strokeStyle='rgba(200,90,255,.5)';g.beginPath();g.ellipse(0,0,o.s*.7,o.s*.6,0,0,7);g.stroke();g.restore()},
+  comet:(g,o)=>{const L=o.s*26,dx=-o.dir;const gr=g.createLinearGradient(o.x,o.y,o.x+dx*L,o.y-L*.2);gr.addColorStop(0,'rgba(220,240,255,.9)');gr.addColorStop(1,'rgba(160,200,255,0)');g.strokeStyle=gr;g.lineWidth=o.s*1.4;g.lineCap='round';g.beginPath();g.moveTo(o.x,o.y);g.lineTo(o.x+dx*L,o.y-L*.2);g.stroke();g.fillStyle='#fff';g.beginPath();circ(g,o.x,o.y,o.s);g.fill()},
+  meteor:(g,o)=>{const L=46,n=Math.hypot(o.vx,o.vy),ux=o.vx/n,uy=o.vy/n;const gr=g.createLinearGradient(o.x,o.y,o.x-ux*L,o.y-uy*L);gr.addColorStop(0,'rgba(255,245,220,.95)');gr.addColorStop(1,'rgba(255,180,120,0)');g.strokeStyle=gr;g.lineWidth=o.s;g.lineCap='round';g.beginPath();g.moveTo(o.x,o.y);g.lineTo(o.x-ux*L,o.y-uy*L);g.stroke()},
+  fish:(g,o)=>drawFish(g,o.x,o.y,o.s,o.dir,`hsl(${o.hue},80%,60%)`,o.t),
+  fishSchool:(g,o)=>{for(let k=0;k<o.n;k++){const a=k*2.4,r=(k%5)*o.s*1.4;drawFish(g,o.x+Math.cos(a)*r*1.6-o.dir*(k%3)*o.s,o.y+Math.sin(a)*r*.6,o.s,o.dir,k%3?'#ffd06a':'#8ae0ff',o.t+k)}},
+  whale:(g,o)=>{const x=o.x,y=o.y+Math.sin(o.t*.6)*5,s=o.s;g.fillStyle='rgba(20,60,90,.75)';g.beginPath();g.ellipse(x,y,s,s*.32,0,0,7);g.fill();g.beginPath();g.moveTo(x-o.dir*s*.9,y);g.lineTo(x-o.dir*s*1.35,y-s*.3+Math.sin(o.t*2)*4);g.lineTo(x-o.dir*s*1.35,y+s*.25+Math.sin(o.t*2)*4);g.fill()},
+  turtle:(g,o)=>{const x=o.x,y=o.y,s=o.s;g.fillStyle='#4a8a5a';g.beginPath();g.ellipse(x,y,s,s*.6,0,0,7);g.fill();g.fillStyle='#6aaa6a';g.beginPath();circ(g,x+o.dir*s*1.1,y,s*.3);g.fill();const f=Math.sin(o.t*3)*s*.3;g.fillRect(x-s*.6,y-s*.7-f*.3,s*.4,s*.25);g.fillRect(x+s*.2,y+s*.5+f*.3,s*.4,s*.25)},
+};
+function drawPlane(g,o,big){const x=o.x,y=o.y,s=o.s,d=o.dir;
+  const gr=g.createLinearGradient(x,y,x-d*s*14,y);gr.addColorStop(0,'rgba(255,255,255,.55)');gr.addColorStop(1,'rgba(255,255,255,0)');g.strokeStyle=gr;g.lineWidth=big?2.5:1.6;g.beginPath();g.moveTo(x-d*s*.9,y);g.lineTo(x-d*s*14,y+1);g.stroke();
+  g.fillStyle=big?'#f4f6fa':'#dfe4ec';g.beginPath();g.ellipse(x,y,s,s*.16,0,0,7);g.fill();g.fillStyle='#9aa4b4';g.beginPath();g.moveTo(x-d*s*.1,y);g.lineTo(x-d*s*.5,y+s*.55);g.lineTo(x-d*s*.25,y);g.fill();g.beginPath();g.moveTo(x-d*s*.75,y);g.lineTo(x-d*s*.95,y-s*.4);g.lineTo(x-d*s*.85,y);g.fill();
+  if(big){g.fillStyle='rgba(60,90,140,.7)';for(let k=-3;k<=4;k++)g.fillRect(x+d*k*s*.16-1,y-s*.06,2,2);g.fillStyle=(o.t*1.5|0)%2?'#ff4a4a':'rgba(0,0,0,0)';g.fillRect(x-d*s*.95-1,y-s*.42,3,3)}}
+function drawFish(g,x,y,s,d,c,t){g.fillStyle=c;g.beginPath();g.ellipse(x,y,s,s*.5,0,0,7);g.fill();const w=Math.sin(t*8)*s*.2;g.beginPath();g.moveTo(x-d*s*.8,y);g.lineTo(x-d*s*1.5,y-s*.5+w);g.lineTo(x-d*s*1.5,y+s*.5+w);g.fill()}
+// zone reached in this run (only called when it goes up)
+function onZone(k){
+  if(mode!=='world')return;const w=SAVE.worlds[wi];
+  if(k>w.zone){w.zone=k;writeSave();if(k>0)banner(t('newZone'),zoneName(wi,k),'#8ae0ff')}
+}
+
+// =====================================================================
 // 6. EVENTS → SOUND, HAPTICS, MUSIC
 //    Gameplay only emits events (BUS.emit). Sound, vibration and music listen to them.
 // =====================================================================
@@ -887,7 +1056,7 @@ function newRun(){
   streak=0;bestStreak=0;perfects=0;camY=0;zoom=1;zoomT=1;overTimer=0;baseY=G0;
   runStartBest=mode==='world'?SAVE.worlds[wi].best:((SAVE.daily[today()]||{}).best||0);
   goalDone=false;runStars=0;cpSnap=null;cpUsed=false;assisted=false;recordBanner=false;dailyDone=false;runAch=[];runUnlocked=-1;
-  spawn();phase='play';lastDrop=performance.now();
+  SKYJ.reset();bq.length=0;spawn();phase='play';lastDrop=performance.now();
   show(null);closeSheets();$('hud').hidden=false;$('pauseBtn').hidden=false;$('tip').hidden=!firstTap;$('streak').textContent='';
   hud();calcFocus();MUSIC.start();
 }
@@ -941,7 +1110,7 @@ function place(po,perfect){
   const fl=$('floors');fl.classList.remove('bump');void fl.offsetWidth;fl.classList.add('bump');
 }
 function afterPlace(){
-  const f=floors();
+  const f=floors();SKYJ.onFloor(f);
   if(mode==='world'){
     if(!goalDone&&f>=WD.goal)completeLevel();
     else if(!goalDone&&f===WD.goal-5&&WD.goal>=20)banner(t('fiveMore'),wname(wi),'#7ef2d0');
@@ -1019,7 +1188,8 @@ function resumeCheckpoint(){
 
 // ---------- daily challenge (deterministic from the local date) ----------
 function makeDaily(dstr){
-  const r=mulberry(hashStr('egig-'+dstr));const w=Math.floor(r()*10);const ty=Math.floor(r()*3);
+  const r=mulberry(hashStr('egig-'+dstr));const r1=r();const locked=WORLDS.map((_,i)=>i).filter(i=>i>=SAVE.unlocked);
+  const w=locked.length?locked[Math.floor(r1*locked.length)]:Math.floor(r1*NW);const ty=Math.floor(r()*3);   // the setting is always one of the player's locked worlds
   if(ty===0)return{w,type:'floors',n:15+5*Math.floor(r()*4)};
   if(ty===1)return{w,type:'perf',p:4+Math.floor(r()*4)};
   return{w,type:'streak',n:12+3*Math.floor(r()*3),s:3};
@@ -1048,7 +1218,7 @@ function pumpQueues(now){
 function hud(){
   const f=floors();$('floors').textContent=f;
   if(mode==='world'){
-    $('hWorld').textContent=(wi+1)+'. '+wname(wi);
+    $('hWorld').textContent=wname(wi)+' · '+zoneName(wi,SKYJ.zone);
     if(goalDone){const b=Math.max(SAVE.worlds[wi].best,f);$('hGoal').textContent=t('bestN',b);$('hBar').style.width=Math.min(100,f/Math.max(1,b)*100)+'%'}
     else{$('hGoal').textContent=t('goalN',WD.goal);$('hBar').style.width=Math.min(100,f/WD.goal*100)+'%'}
     const ml=$('hMaster');if(SAVE.worlds[wi].done||goalDone){const ok=SAVE.worlds[wi].master;ml.textContent=ok?t('masterDone'):t('masterHud',masterText(masterOf(wi)));ml.classList.toggle('ok',ok)}else ml.textContent='';
@@ -1083,6 +1253,7 @@ function openWorlds(){
     b.insertAdjacentHTML('beforeend',`${s.master?'<span class="mst">MASTER</span>':''}<span class="num">${t('worldN',i+1)}</span><span class="nm">${wname(i)}</span>
       <span class="meta"><span>${t('goalShort',wd.goal)}</span>${starsHtml(s.stars)}</span>
       <span class="meta"><span>${t('recShort',s.best||'–')}</span></span>
+      <span class="meta"><span>${s.best?zoneName(i,s.zone):'–'}</span></span>
       <span class="st ${locked?'lock':s.done?'done':'open'}">${locked?t('locked'):s.done?t('done'):t('open')}</span>`);
     if(locked)b.disabled=true;else b.onclick=()=>{BUS.emit('ui');SAVE.sel=i;writeSave();closeSheets();mode='world';setWorld(i);audioInit();newRun()};
     box.appendChild(b);renderThumb(c,i,locked);
@@ -1212,7 +1383,7 @@ function update(dt){
   for(const f of floats){f.l-=dt*.9;f.y+=dt*BH*1.2}floats=floats.filter(f=>f.l>0);
   for(const p of fx2){if(p.delay>0){p.delay-=dt;continue}p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.exp(-.6*dt);p.rot+=p.vr*dt;p.l-=dt}fx2=fx2.filter(p=>p.l>0);
   if(WD.classic)for(const c of clouds){c.x+=c.v*dt;if(c.x>W)c.x=-W;if(c.x<-W)c.x=W}
-  updAmb(dt);
+  updAmb(dt);SKYJ.update(dt,floors());
   const top=blocks.length*BH,fallen=phase==='over'||phase==='fall'&&overTimer>.7;
   if(phase==='fall'){overTimer+=dt;if(overTimer>.7){const th=top+BH*4;zoomT=Math.min(1,FOC/th)}if(overTimer>1.5)gameOver()}
   camT=fallen?0:Math.max(0,top-(G0-FOC));
@@ -1226,20 +1397,21 @@ const sx=x=>W/2+x*zoom;
 const sy=y=>baseY-(y-camY)*zoom;
 function draw(){
   const g=ctx;g.setTransform(DPR,0,0,DPR,0,0);const rm=RM();
-  const fCam=Math.max(0,camY/BH+((G0-FOC)/BH)*.5);
-  if(WD.classic)drawClassicBg(g,fCam);
+  // 1 sky gradient (by tower height) · 2 far stars, planets, nebulae · 3 scenery and clouds · 4 moving objects · 5 tower · 6 effects · 7 HUD (DOM)
+  if(WD.classic){drawClassicBg(g,SKYJ.h);SKYJ.draw(g,'far')}
   else{
-    const tt=clamp(fCam/(WD.goal*1.1),0,1),q=clamp((fCam-WD.goal*1.2)/70,0,1);
-    const sg=g.createLinearGradient(0,0,0,H);sg.addColorStop(0,mix(WD.sky[0],WD.sky[2],tt));sg.addColorStop(1,mix(WD.sky[1],WD.sky[3],tt));g.fillStyle=sg;g.fillRect(0,0,W,H);
-    if(q>0){g.globalAlpha=q*.85;const s2=g.createLinearGradient(0,0,0,H);s2.addColorStop(0,'#04040e');s2.addColorStop(1,'#16102e');g.fillStyle=s2;g.fillRect(0,0,W,H);g.globalAlpha=1}
-    drawStars(g,Math.max(WD.night?.55+.45*tt:0,q));
-    drawExtra(g,camY*zoom*.04,1);
+    const[st,sb,sa]=SKYJ.sky();
+    const sg=g.createLinearGradient(0,0,0,H);sg.addColorStop(0,st);sg.addColorStop(1,sb);g.fillStyle=sg;g.fillRect(0,0,W,H);
+    drawStars(g,Math.max(WD.night?.6:0,sa));
+    SKYJ.draw(g,'far');
+    const ea=['sun','redsun','godrays','rainbow','lamps','lavaglow','blimp','cave'].includes(WD.extra)?SKYJ.earthFade():1;
+    if(ea>.01)drawExtra(g,camY*zoom*.04,ea);
     const gy=sy(-BH*1.2);
     layers.forEach((L,k)=>{if(!L||(lowFx&&k===2))return;const by=gy-(camY*zoom)*(1-LAYER_F[k])+4;if(by-L.h>H)return;g.drawImage(L.c,0,by-L.h,W,L.h)});
-    drawAmb(g);
   }
+  SKYJ.drawWater(g);SKYJ.draw(g,'env');drawAmb(g);SKYJ.draw(g,'move');
   g.save();if(!rm&&shake>0)g.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
-  if(WD.classic){drawAmb(g);drawClassicFront(g)}
+  if(WD.classic)drawClassicFront(g);
   else{const gy=sy(-BH*1.2);drawGround(g,gy);drawPed(g,sy(0),gy)}
   const h=BH*zoom;
   // previous record height, shown while it is still ahead

@@ -1,6 +1,6 @@
 // Upistry – offline support. Cache first, refreshed quietly in the background.
 // Raise CACHE with every release: the old cache is then removed.
-const CACHE = 'upistry-v2.0.0';
+const CACHE = 'upistry-v2.1.0';
 const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', 'favicon-32.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png'];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => Promise.all(PRECACHE.map((u) => c.add(new Request(u, { cache: 'reload' })).catch(() => {})))).then(() => self.skipWaiting()));

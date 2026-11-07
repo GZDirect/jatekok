@@ -10,6 +10,8 @@ Egyérintéses toronyépítő 30 világon át (korábbi neve: Égig érő). Magy
 - Csillagok: cél elérése, 3 tökéletes, 6 tökéletes illesztés.
 - MASTER kihívás minden világhoz (ugyanaz a pálya, nehezebb feltétel), 20 teljesítmény, játékosprofil építői ranggal.
 - Menet közben szaggatott vonal mutatja a korábbi rekord magasságát.
+- Sky Journey: a környezet a torony magasságával változik (föld közelében → felhők között → felhők felett → világűr → csillagködök → mélyűr), madarakkal, repülőkkel, hőlégballonokkal, műholdakkal, UFO-kkal és ritka eseményekkel 10, 25, 40, 60, 85, 100, 125, 150, 175 és 200 emeletnél. Atlantisz, a Holdbázis, a Felhőváros, a Csillagkapu és az Univerzum tornya saját zónasort kap. A világtérkép mutatja, melyik zónáig jutottál el az adott világban.
+- A napi kihívás mindig egy még lezárt világban játszódik.
 - Mentőpont a 9. világtól, csak a feloldáshoz, rekordot nem ír.
 - Napi kihívás a dátumból számolt feladattal.
 - Rekordkártya képként, megosztható.
@@ -24,6 +26,7 @@ Koppintás vagy kattintás, számítógépen szóköz. Szünet: bal felső gomb 
 - Saját grafika: világonként `art:{block:'fajl.webp',cap:24}` háromrészes (bal vég, közép, jobb vég) képpel.
 - MASTER-feltételek: `MASTER_RULES`, vagy világonként `master:{floors,perfects,streak}`.
 - Teljesítmények: az `ACH` lista adat alapú (`stat`, `min`).
+- Magassági zónák és események: `ZONES_DEFAULT`, `EVENTS_DEFAULT`, világonkénti eltérés a `JOURNEYS` objektumban; háttérobjektumok a `KINDS` táblában; saját sprite-ok a `SKY_SPRITES` objektumban.
 - Mentés: `egig-save` kulcs, 3-as verzió, a 2-es és az 1-es (régi rekord) mentést automatikusan átveszi. A tárolás a `STORE` adapteren megy át, ez később felhőmentésre cserélhető. A Beállításokban a mentés kódként kimásolható és visszatölthető.
 
 ## Betűtípusok
