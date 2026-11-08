@@ -2244,7 +2244,7 @@ function renderThumb(c,i,locked){
 // ---------- input & buttons ----------
 cv.addEventListener('pointerdown',e=>{if(phase==='play'&&e.isPrimary!==false){e.preventDefault();const ts=e.timeStamp&&e.timeStamp>1e3?e.timeStamp:performance.now();drop(Math.max(0,(ts-lastFrame)/1000))}});
 cv.addEventListener('dblclick',e=>e.preventDefault());
-addEventListener('keydown',e=>{if(e.code==='Space'&&phase==='play'&&!e.repeat){e.preventDefault();drop(Math.max(0,(performance.now()-lastFrame)/1000))}else if(e.code==='Escape'){if(phase==='play'||phase==='fall')pause();else if(phase==='pause')resume()}});
+addEventListener('keydown',e=>{if(e.code==='Space'&&!/^(INPUT|TEXTAREA|BUTTON|SELECT)$/.test((document.activeElement||{}).tagName||''))e.preventDefault();if(e.code==='Space'&&phase==='play'&&!e.repeat){e.preventDefault();drop(Math.max(0,(performance.now()-lastFrame)/1000))}else if(e.code==='Escape'){if(phase==='play'||phase==='fall')pause();else if(phase==='pause')resume()}});
 const go=fn=>()=>{audioInit();BUS.emit('ui');fn()};
 $('bStart').onclick=go(()=>{mode='world';setWorld(SAVE.sel);newRun()});
 $('bWorlds').onclick=go(openWorlds);$('bResWorlds').onclick=go(()=>{showMenu();openWorlds()});$('bWClose').onclick=go(()=>{closeSheets();showMenu()});
