@@ -1,0 +1,19 @@
+{
+  "studio": "Mom's Couch Studios",
+  "itch_user": "moms-couch-studios",
+  "goatcounter": "https://momscouchstudio.goatcounter.com",
+  "games": [
+    {
+      "slug": "upistry",
+      "name": "Upistry",
+      "itch_id": 5322082,
+      "itch_url": "https://moms-couch-studios.itch.io/upistry",
+      "github_url": "https://gzdirect.github.io/jatekok/upistry/",
+      "goatcounter_prefix": {"github": "ev/gh/", "itch": "ev/itch/"},
+      "published": "2026-11-08",
+      "pitch": "One-tap stacking game: land each block perfectly, misses slice the tower thinner. 30 hand-drawn worlds from the seaside to outer space, daily challenge, plays in the browser on phone and desktop.",
+      "assets": "upistry/itch/ (cover-630x500.png, upistry-1..5.jpg, upistry-gameplay.gif)",
+      "languages": ["en", "hu"]
+    }
+  ]
+}
