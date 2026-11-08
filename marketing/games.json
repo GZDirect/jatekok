@@ -11,6 +11,7 @@
       "github_url": "https://gzdirect.github.io/jatekok/upistry/",
       "goatcounter_prefix": {"github": "ev/gh/", "itch": "ev/itch/"},
       "published": "2026-11-08",
+      "itch_summary": "https://itch.io/game/summary/5322082",
       "pitch": "One-tap stacking game: land each block perfectly, misses slice the tower thinner. 30 hand-drawn worlds from the seaside to outer space, daily challenge, plays in the browser on phone and desktop.",
       "assets": "upistry/itch/ (cover-630x500.png, upistry-1..5.jpg, upistry-gameplay.gif)",
       "languages": ["en", "hu"]

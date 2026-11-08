@@ -11,7 +11,7 @@ Ezt a fájlt a napi ütemezett feladat olvassa be minden futáskor. Géza (Mom's
 ## Adatforrások (Géza Chrome-ja, Claude in Chrome bővítményen át)
 1. itch.io (be van lépve): 
    - Értesítések: https://itch.io/notifications – új komment, értékelés, adomány, követés.
-   - Minden játéknál: a játék oldala (games.json itch_url) – a komment-szekció; a dashboard analitika: https://itch.io/game/analytics/<itch_id> (megtekintések, letöltések/böngészős indítások, forgalmi források/referrerek).
+   - Minden játéknál: a játék oldala (games.json itch_url) – a komment-szekció; a dashboard analitika: https://itch.io/game/summary/<itch_id> (megtekintések, letöltések/böngészős indítások, forgalmi források/referrerek).
    - Bevétel: https://itch.io/dashboard/earnings (csak olvasd).
    - Új projekt felismerése: https://itch.io/dashboard – ha olyan nyilvános játék van, ami nincs a games.json-ban, vedd fel (a pitch-et az oldal leírásából írd), és jelezd a jelentésben.
 2. GoatCounter: https://momscouchstudio.goatcounter.com – az utolsó 24 óra és 7 nap. A játékon belüli események útvonalai: `ev/gh/...` (GitHub Pages) és `ev/itch/...` (itch.io). Upistry események: `start/w<N>`, `first-perfect`, `end/w<N>/<eredmény>`, napi kihívás stb. Számold: indítások, első tökéletes, világonkénti végek → hol esnek ki a játékosok.
