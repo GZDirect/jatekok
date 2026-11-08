@@ -164,6 +164,7 @@ textarea{width:100%;box-sizing:border-box;min-height:70px;background:rgba(0,0,0,
 @media (max-height:520px){.floors{font-size:34px}.hud::before{height:110px}.goal{margin-top:3px}.meter{margin-top:5px}.streak,.mline{display:none}.screen{padding-top:16px;gap:10px}.title{font-size:40px}.final{font-size:54px}.bigstars{font-size:32px}}
 @media (prefers-reduced-motion:reduce){.tip{animation:none}}
 .rm .tip{animation:none}.rm .banner.go{animation-duration:2s}.rm .floors.bump{animation:none}
+html,body{overscroll-behavior:none;-webkit-touch-callout:none}
 #intro{position:fixed;inset:0;z-index:100;background:#000;overflow:hidden;touch-action:manipulation;transition:opacity .25s ease}#intro.out{opacity:0}.rm #intro{transition:none}
 #intro video{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(130vw,177.78vh);height:auto;pointer-events:none}
 #intro .introSkip{position:absolute;right:18px;bottom:max(20px,calc(env(safe-area-inset-bottom) + 12px));padding:10px 16px;background:#151515;color:#f6ba1e;border:1px solid #f6ba1e;border-radius:8px;font:700 14px Outfit,system-ui,sans-serif;letter-spacing:.04em;cursor:pointer}
@@ -291,13 +292,13 @@ textarea{width:100%;box-sizing:border-box;min-height:70px;background:rgba(0,0,0,
     <div class="box">
       <h3 data-i="backup"></h3>
       <p class="note" data-i="backupNote"></p>
-      <div class="btns" style="justify-content:flex-start"><button class="btn ghost sm" id="bExport" type="button" data-i="export"></button></div>
+      <div class="btns" style="justify-content:flex-start"><button class="btn ghost sm" id="bExport" type="button" data-i="export"></button><button class="btn ghost sm" id="bSupport" type="button" data-i="support" hidden></button></div>
       <textarea id="exportTxt" readonly hidden aria-label="export"></textarea>
       <textarea id="importTxt" aria-label="import"></textarea>
       <div class="btns" style="justify-content:flex-start"><button class="btn ghost sm" id="bImport" type="button" data-i="import"></button></div>
       <p class="note" id="importMsg"></p>
     </div>
-    <p class="note" style="text-align:center">Upistry · v2.3.2 · © 2026 Fejes Géza</p>
+    <p class="note" style="text-align:center">Upistry · v2.4 · © 2026 Fejes Géza</p>
   </div>
 </div>
 
@@ -326,7 +327,7 @@ const ease=(k,dt)=>1-Math.exp(-k*dt);   // frame-rate independent smoothing
 // =====================================================================
 const STR={
  hu:{
-  play:'Játék',introSkip:'Kihagyás',worlds:'Világok',daily:'Napi kihívás',profile:'Profil',settings:'Beállítások',back:'Vissza',start:'Indítás',close:'Bezárás',
+  play:'Játék',introSkip:'Kihagyás',support:'Támogasd a fejlesztőt ☕',worlds:'Világok',daily:'Napi kihívás',profile:'Profil',settings:'Beállítások',back:'Vissza',start:'Indítás',close:'Bezárás',
   worldOf:n=>`${n}. világ a 30-ból`,goalFloors:n=>`Cél: ${n} emelet`,best:'Rekord',bestN:n=>`Rekord: ${n}`,goalN:n=>`Cél ${n}`,
   overall:n=>`Összesített rekord: ${n} emelet`,starsN:(a,b)=>`Csillagok: ${a}/${b}`,
   tip:'Koppints, amikor az elem a torony fölé ér',perfStreak:'Tökéletes sorozat',growing:'Növekedés aktív',
@@ -358,7 +359,7 @@ const STR={
   stat_worldsDone:n=>n===1?'Teljesíts egy világot':`Teljesíts ${n} világot`,stat_starsTotal:n=>`Gyűjts ${n} csillagot`,stat_threeStar:n=>'Szerezz 3 csillagot egy világban',stat_masters:n=>n===1?'Teljesíts egy MASTER kihívást':`Teljesíts ${n} MASTER kihívást`,stat_dailies:n=>'Teljesíts egy napi kihívást',
  },
  en:{
-  play:'Play',introSkip:'Skip',worlds:'Worlds',daily:'Daily challenge',profile:'Profile',settings:'Settings',back:'Back',start:'Start',close:'Close',
+  play:'Play',introSkip:'Skip',support:'Support the developer ☕',worlds:'Worlds',daily:'Daily challenge',profile:'Profile',settings:'Settings',back:'Back',start:'Start',close:'Close',
   worldOf:n=>`World ${n} of 30`,goalFloors:n=>`Goal: ${n} floors`,best:'Best',bestN:n=>`Best: ${n}`,goalN:n=>`Goal ${n}`,
   overall:n=>`Overall best: ${n} floors`,starsN:(a,b)=>`Stars: ${a}/${b}`,
   tip:'Tap when the block is above the tower',perfStreak:'Perfect streak',growing:'Growing',
@@ -1955,6 +1956,7 @@ let dailyTask=null,dailyDone=false,pausedFrom='play';
 const floors=()=>blocks.length-1;
 function setWorld(i){wi=clamp(i,0,NW-1);WD=WORLDS[wi];galaxy=null;loadArt(WD);applyWorld()}
 function newRun(){
+  STAT('start/w'+WD.id);
   blocks=[{c:0,w:MAXW,land:0,gold:false,base:true,i:0,po:-MAXW/2,flash:0}];pieces=[];parts=[];rings=[];floats=[];fx2=[];
   streak=0;bestStreak=0;perfects=0;camY=0;zoom=1;zoomT=1;overTimer=0;baseY=G0;
   runStartBest=mode==='world'?SAVE.worlds[wi].best:((SAVE.daily[today()]||{}).best||0);
@@ -2057,7 +2059,7 @@ function rankOf(){const p=SAVE.profile,w=SAVE.worlds;const xp=p.floors+p.perfect
 
 // ---------- end of run ----------
 function gameOver(){
-  phase='over';const f=floors();let prev=0,isRec=false;
+  phase='over';const f=floors();STAT('end/w'+WD.id+'/'+fBucket(f));let prev=0,isRec=false;
   if(mode==='world'){const w=SAVE.worlds[wi];prev=runStartBest;if(!assisted){isRec=f>w.best;w.best=Math.max(w.best,f);SAVE.overall=Math.max(SAVE.overall,f)}}
   else{const d=SAVE.daily[today()]||(SAVE.daily[today()]={done:false,best:0,perf:0});prev=runStartBest;isRec=f>d.best;d.best=Math.max(d.best,f);d.perf=Math.max(d.perf,perfects)}
   SAVE.profile.runs++;SAVE.profile.bestStreak=Math.max(SAVE.profile.bestStreak,bestStreak);writeSave();checkAch();
@@ -2091,8 +2093,8 @@ function resumeCheckpoint(){
 
 // ---------- daily challenge (deterministic from the local date) ----------
 function makeDaily(dstr){
-  const r=mulberry(hashStr('egig-'+dstr));const r1=r();const locked=WORLDS.map((_,i)=>i).filter(i=>i>=SAVE.unlocked);
-  const w=locked.length?locked[Math.floor(r1*locked.length)]:Math.floor(r1*NW);const ty=Math.floor(r()*3);   // the setting is always one of the player's locked worlds
+  const r=mulberry(hashStr('egig-'+dstr));const r1=r();const locked=WORLDS.map((_,i)=>i).filter(i=>i>=SAVE.unlocked).slice(0,3);
+  const w=locked.length?locked[Math.floor(r1*locked.length)]:Math.floor(r1*NW);const ty=Math.floor(r()*3);   // the setting is one of the player's next three locked worlds
   if(ty===0)return{w,type:'floors',n:15+5*Math.floor(r()*4)};
   if(ty===1)return{w,type:'perf',p:4+Math.floor(r()*4)};
   return{w,type:'streak',n:12+3*Math.floor(r()*3),s:3};
@@ -2144,7 +2146,7 @@ function showMenu(){
   demoTower();MUSIC.inten=0;
 }
 function demoTower(){blocks=[{c:0,w:MAXW,land:0,base:true,i:0,po:-MAXW/2,flash:0}];const r=mulberry(wi+1);for(let k=1;k<9;k++){const w=MAXW*(1-k*.04),c=(r()-.5)*MAXW*.12;blocks.push({c,w,land:0,gold:k%10===0,i:k,po:c-w/2,flash:0})}cur=null;pieces=[];parts=[];rings=[];floats=[];zoom=1;zoomT=1;camY=0;baseY=G0}
-function openWorlds(){
+function openWorlds(){STAT('map');
   $('worlds').hidden=false;$('worlds').scrollTop=0;
   const W2=SAVE.worlds;$('wSum').textContent=t('wSum',totalStars(),W2.filter(w=>w.master).length,W2.filter(w=>w.done).length);
   const box=$('cards');box.innerHTML='';
@@ -2181,7 +2183,7 @@ function openSettings(){
   $('exportTxt').hidden=true;$('importTxt').value='';$('importMsg').textContent='';importArm=0;
   applyI18n();
 }
-function openDaily(){
+function openDaily(){STAT('daily-open');
   const d=today();dailyTask=makeDaily(d);const rec=SAVE.daily[d];
   $('dDate').textContent=t('dailyDate',d.replace(/-/g,'. ')+'.');$('dTask').textContent=dailyText(dailyTask);
   $('dWorld').textContent=t('dailyWhere',wname(dailyTask.w));
@@ -2206,7 +2208,7 @@ function makeCard(f,isWorld){
   g.font='500 30px Outfit, system-ui, sans-serif';g.fillStyle='rgba(255,250,242,.6)';g.fillText(today().replace(/-/g,'.')+' · gzdirect.github.io/jatekok/upistry',540,1305);
   return c;
 }
-function openCard(){
+function openCard(){STAT('card');
   const isWorld=mode==='world';const c=makeCard(floors(),isWorld);const url=c.toDataURL('image/png');
   $('cardImg').src=url;$('bCardSave').href=url;$('cardNote').textContent=t('cardNote');$('bCardShare').hidden=true;$('cardView').hidden=false;
   c.toBlob(b=>{if(!b)return;try{const file=new File([b],'upistry.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){$('bCardShare').hidden=false;$('bCardShare').onclick=()=>navigator.share({files:[file],title:'Upistry',text:'Upistry · '+floors()}).catch(()=>{})}}catch(e){}},'image/png');
@@ -2358,11 +2360,12 @@ function draw(){
 // =====================================================================
 // 10. STUDIO INTRO — the Mom's Couch Studios clip plays before the main menu (WebM first, MP4 as fallback).
 //     A tap, the Skip button, Space, Enter or Esc skips it; any failure goes straight to the menu.
-//     It only reads the mute and volume settings and stores nothing. ?intro=0 leaves it out (development).
+//     It plays only on the first start on a device (own 'upistry-intro' key, the game save is untouched). ?intro=0 leaves it out.
 // =====================================================================
 const INTRO_SRC=[['intro/moms_couch_intro.webm?v=2','video/webm; codecs="vp9, opus"'],['intro/moms_couch_intro.mp4?v=2','video/mp4; codecs="avc1.640028, mp4a.40.2"']];
 function playIntro(done){
-  if(/[?&]intro=0\b/.test(location.search)){done();return}
+  let seen=false;try{seen=localStorage.getItem('upistry-intro')==='1'}catch(e){}
+  if(seen||/[?&]intro=0\b/.test(location.search)){done();return}   // only on the very first start on this device
   const others=[...document.body.children];for(const el of others)el.inert=true;$('menu').hidden=true;   // the menu stays hidden and unreachable until the intro is over
   const ov=document.createElement('div');ov.id='intro';ov.setAttribute('role','dialog');ov.setAttribute('aria-label',"Mom's Couch Studios");
   const v=document.createElement('video');v.muted=!!SET.muted;try{v.volume=clamp(SET.sfx??.8,0,1)}catch(e){}
@@ -2373,6 +2376,7 @@ function playIntro(done){
   let over=false,tWait=0,tEnd=0;
   const key=e=>{if(e.code==='Space'||e.code==='Enter'||e.code==='Escape'){e.preventDefault();e.stopImmediatePropagation();finish()}};
   function finish(){if(over)return;over=true;clearTimeout(tWait);clearTimeout(tEnd);removeEventListener('keydown',key,true);try{v.pause()}catch(e){}
+    try{localStorage.setItem('upistry-intro','1')}catch(e){}
     for(const el of others)el.inert=false;ov.classList.add('out');setTimeout(()=>{for(const s of [...v.children])s.remove();try{v.load()}catch(e){}ov.remove()},300);done()}
   addEventListener('keydown',key,true);
   sk.addEventListener('click',e=>{e.stopPropagation();finish()});
@@ -2389,6 +2393,22 @@ function goFull(){const d=document,el=d.documentElement;if(d.fullscreenElement||
   try{const p=rq.call(el,{navigationUI:'hide'});if(p&&p.then)p.then(()=>{try{if(matchMedia('(pointer:coarse)').matches&&screen.orientation&&screen.orientation.lock)screen.orientation.lock('portrait').catch(()=>{})}catch(e){}}).catch(()=>{})}catch(e){}}
 addEventListener('pointerdown',goFull,{capture:true,once:true});addEventListener('keydown',goFull,{capture:true,once:true});
 for(const id of['bStart','bAgain','bNext','bDailyGo','bCp'])$(id).addEventListener('click',goFull);
+
+// ---------- mobile: no pull-to-refresh, no long-press menu (text fields keep theirs) ----------
+addEventListener('contextmenu',e=>{if(!(e.target.closest&&e.target.closest('textarea,input')))e.preventDefault()});
+// ---------- anonymous play statistics (GoatCounter, cookie-free). Off until STATS_URL is set; only counts on the public site ----------
+const STATS_URL='';   // e.g. 'https://upistry.goatcounter.com/count'
+const STATQ=[];let statOn=false;
+function STAT(path){if(!statOn)return;const go=()=>{try{window.goatcounter.count({path:'ev/'+path,title:path,event:true})}catch(e){}};if(window.goatcounter&&window.goatcounter.count)go();else if(STATQ.length<50)STATQ.push(go)}
+if(STATS_URL&&/\.github\.io$/.test(location.hostname)){statOn=true;const sc=document.createElement('script');sc.async=true;sc.src='https://gc.zgo.at/count.js';sc.dataset.goatcounter=STATS_URL;sc.onload=()=>{const f=()=>{if(window.goatcounter&&window.goatcounter.count){STATQ.splice(0).forEach(g=>g())}else setTimeout(f,300)};f()};document.head.append(sc)}
+const fBucket=f=>f<5?'0-4':f<10?'5-9':f<20?'10-19':f<30?'20-29':f<50?'30-49':'50+';
+let statPerf=false;
+BUS.on('complete',()=>STAT('complete/w'+WD.id));BUS.on('daily',()=>STAT('daily-done'));BUS.on('unlock',()=>STAT('unlock'));
+BUS.on('perfect',()=>{if(!statPerf){statPerf=true;STAT('first-perfect')}});
+addEventListener('appinstalled',()=>STAT('pwa-install'));
+// ---------- support the developer (shown only when SUPPORT_URL is set) ----------
+const SUPPORT_URL='';   // e.g. 'https://ko-fi.com/...'
+if(SUPPORT_URL){$('bSupport').hidden=false;$('bSupport').onclick=()=>{STAT('support');window.open(SUPPORT_URL,'_blank','noopener')}}
 
 addEventListener('resize',()=>{layout();calcFocus();if(phase==='menu')demoTower()});
 document.documentElement.classList.toggle('rm',RM());

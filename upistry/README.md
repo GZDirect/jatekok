@@ -7,11 +7,13 @@
 Egyérintéses toronyépítő 30 világon át (korábbi neve: Égig érő). Magyar böngészőben magyarul, minden más nyelvű böngészőben angolul indul. A nyelv a Beállításokban átállítható.
 
 ## Indítás
-- A játék a Mom's Couch Studios rövid (3,8 másodperces) animált intrójával indul: a kanapé beúszik és megreccsen, a telefon három koppintásra felvillan, közben kirajzolódik a „Mom's Couch Studios” felirat, a záróhangra fényvillanás fut végig. A főmenü csak az intró vége vagy átugrása után jelenik meg.
+- Az első indításkor a Mom's Couch Studios rövid (3,8 másodperces) animált intrója fut (később már nem; ezt egy külön `upistry-intro` kulcs jegyzi meg, a mentést nem érinti): a kanapé beúszik és megreccsen, a telefon három koppintásra felvillan, közben kirajzolódik a „Mom's Couch Studios” felirat, a záróhangra fényvillanás fut végig. A főmenü csak az intró vége vagy átugrása után jelenik meg.
 - Teljes képernyő: a játék az első érintésre (vagy billentyűre) teljes képernyőre vált, és minden Játék gombnál újra, ha közben kiléptél. Telepített alkalmazásként eleve teljes képernyőn indul. iPhone-on a böngésző ezt nem engedi, ott a kezdőképernyőre telepítve fut a legnagyobb méretben.
 - Átugrás: koppintás bárhol, a Kihagyás gomb, vagy számítógépen Szóköz, Enter, Esc.
 - Az elsődleges videó WebM (VP9 + Opus), tartaléknak MP4 (H.264 + AAC) is van. Ha a böngésző nem engedi a hangos indítást, a videó némán fut; ha a játékban le van némítva a hang, az intró is néma.
-- Ha a videó nem tölthető be (például offline), a játék azonnal a főmenüre lép. Az intró nem ír a mentésbe, és a játékmenetet nem érinti.
+- Ha a videó nem tölthető be (például offline), a játék azonnal a főmenüre lép. A játékmenetet és a mentést nem érinti.
+- Telefonon le van tiltva a lefelé húzásos újratöltés és a hosszan nyomásos menü, hogy egy rossz mozdulat ne szakítsa meg a menetet.
+- A napi kihívás a játékos következő három zárolt világának egyikében van.
 
 ## Játék
 - Egy elem ide-oda csúszik a torony fölött, koppintásra leesik, ami lelóg, az leesik. A pontos illesztés nem fogyasztja a tornyot, három pontos után pedig nőni kezd.
@@ -39,6 +41,8 @@ Koppintás vagy kattintás, számítógépen szóköz. Szünet: bal felső gomb 
 
 ## Fejlesztőknek
 - Saját hangfájlok: a `SOUND_FILES` objektumban eseményenként megadható fájl (pl. `perfect`, `place`, `triple`, `grow`, `miss`, `complete`).
+- Statisztika: névtelen, süti nélküli GoatCounter-számláló (menetkezdés, menetvég emeletsávval, világ teljesítése, első tökéletes ejtés, napi kihívás, térkép, rekordkártya, telepítés). Kikapcsolt, amíg a kódban a `STATS_URL` üres; csak a nyilvános github.io oldalon számol.
+- Támogatás gomb: a beállításokban jelenik meg, ha a kódban a `SUPPORT_URL` ki van töltve (Ko-fi vagy GitHub Sponsors link).
 - Intró: a fájlok az `intro/` mappában vannak, a `?intro=0` paraméter kihagyja (fejlesztéshez). A service worker a videót nem tárolja, a böngésző közvetlenül tölti.
 - Borítóképek: `nyitokep.jpg` (magyar, 1200×630), `nyitokep-kicsi.jpg` (800×420, a játéklistához), `social-preview.jpg` (angol, linkelőnézet).
 - Rajzolt grafika: háttérrétegek az `LP`, építőelemek a `TS`, talapzatok a `PEDS`, talajok a `GROUNDS` objektumban, világonkénti eltérések az `ARTMAP` táblában. Az `?art=0` paraméter a régi, egyszerű lapos stílust mutatja.
