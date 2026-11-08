@@ -2404,11 +2404,11 @@ for(const id of['bStart','bAgain','bNext','bDailyGo','bCp'])$(id).addEventListen
 
 // ---------- mobile: no pull-to-refresh, no long-press menu (text fields keep theirs) ----------
 addEventListener('contextmenu',e=>{if(!(e.target.closest&&e.target.closest('textarea,input')))e.preventDefault()});
-// ---------- anonymous play statistics (GoatCounter, cookie-free). Off until STATS_URL is set; only counts on the public site ----------
-const STATS_URL='';   // e.g. 'https://upistry.goatcounter.com/count'
-const STATQ=[];let statOn=false;
-function STAT(path){if(!statOn)return;const go=()=>{try{window.goatcounter.count({path:'ev/'+path,title:path,event:true})}catch(e){}};if(window.goatcounter&&window.goatcounter.count)go();else if(STATQ.length<50)STATQ.push(go)}
-if(STATS_URL&&/\.github\.io$/.test(location.hostname)){statOn=true;const sc=document.createElement('script');sc.async=true;sc.src='https://gc.zgo.at/count.js';sc.dataset.goatcounter=STATS_URL;sc.onload=()=>{const f=()=>{if(window.goatcounter&&window.goatcounter.count){STATQ.splice(0).forEach(g=>g())}else setTimeout(f,300)};f()};document.head.append(sc)}
+// ---------- anonymous play statistics (GoatCounter, cookie-free). Off until STATS_URL is set; counts only on the public site and on itch.io, events tagged gh/ or itch/ ----------
+const STATS_URL='https://momscouchstudio.goatcounter.com/count';   // e.g. 'https://upistry.goatcounter.com/count'
+const STATQ=[],STAT_SRC=/itch\.(zone|io)$/.test(location.hostname)?'itch':'gh';let statOn=false;
+function STAT(path){if(!statOn)return;const go=()=>{try{window.goatcounter.count({path:'ev/'+STAT_SRC+'/'+path,title:STAT_SRC+' '+path,event:true})}catch(e){}};if(window.goatcounter&&window.goatcounter.count)go();else if(STATQ.length<50)STATQ.push(go)}
+if(STATS_URL&&/(\.github\.io|itch\.zone|\.itch\.io)$/.test(location.hostname)){statOn=true;const sc=document.createElement('script');sc.async=true;sc.src='https://gc.zgo.at/count.js';sc.dataset.goatcounter=STATS_URL;sc.onload=()=>{const f=()=>{if(window.goatcounter&&window.goatcounter.count){STATQ.splice(0).forEach(g=>g())}else setTimeout(f,300)};f()};document.head.append(sc)}
 const fBucket=f=>f<5?'0-4':f<10?'5-9':f<20?'10-19':f<30?'20-29':f<50?'30-49':'50+';
 let statPerf=false;
 BUS.on('complete',()=>STAT('complete/w'+WD.id));BUS.on('daily',()=>STAT('daily-done'));BUS.on('unlock',()=>STAT('unlock'));
@@ -2416,7 +2416,7 @@ BUS.on('perfect',()=>{if(!statPerf){statPerf=true;STAT('first-perfect')}});
 addEventListener('appinstalled',()=>STAT('pwa-install'));
 // ---------- support the developer (shown only when SUPPORT_URL is set) ----------
 const SUPPORT_URL='';   // e.g. 'https://ko-fi.com/...'
-if(SUPPORT_URL){$('bSupport').hidden=false;$('bSupport').onclick=()=>{STAT('support');window.open(SUPPORT_URL,'_blank','noopener')}}
+if(SUPPORT_URL&&STAT_SRC!=='itch'){$('bSupport').hidden=false;$('bSupport').onclick=()=>{STAT('support');window.open(SUPPORT_URL,'_blank','noopener')}}
 
 addEventListener('resize',()=>{layout();calcFocus();if(phase==='menu')demoTower()});
 document.documentElement.classList.toggle('rm',RM());
