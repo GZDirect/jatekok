@@ -15,6 +15,7 @@ Ezt a fájlt a napi ütemezett feladat olvassa be minden futáskor. Géza (Mom's
    - Bevétel: https://itch.io/dashboard/earnings (csak olvasd).
    - Új projekt felismerése: https://itch.io/dashboard – ha olyan nyilvános játék van, ami nincs a games.json-ban, vedd fel (a pitch-et az oldal leírásából írd), és jelezd a jelentésben.
 2. GoatCounter: https://momscouchstudio.goatcounter.com – az utolsó 24 óra és 7 nap. A játékon belüli események útvonalai: `ev/gh/...` (GitHub Pages) és `ev/itch/...` (itch.io). Upistry események: `start/w<N>`, `first-perfect`, `end/w<N>/<eredmény>`, napi kihívás stb. Számold: indítások, első tökéletes, világonkénti végek → hol esnek ki a játékosok.
+   - HIBÁK: az `ev/gh/err/...` és `ev/itch/err/...` események a játékosoknál fellépő JavaScript-hibák (rövidített üzenet). Ha van ilyen, a levél tetején „HIBA” címkével sorold fel (üzenet, darabszám, forrás), mert ezeket Géza javíttatni fogja.
    - Ha a GoatCounter nincs belépve, jelezd a jelentésben, és ne próbálj belépni.
 - Olvasásra a get_page_text / read_page / javascript_tool (csak olvasó kód) a jó; ne kattints semmi visszavonhatatlanra.
 
