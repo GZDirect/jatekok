@@ -6,6 +6,8 @@
 
 Asztali gépen és telefonon is játszható. A mentés az adott böngészőben tárolódik.
 
+**Telefonon:** fordítsd fekvőbe, és koppints a „Teljes képernyős játék” gombra (Androidon). iPhone-on a Safari nem enged teljes képernyőt, ezért ott: **Megosztás → Főképernyőhöz adás**. Az így telepített ikonról a játék teljes képernyőn, fekvő módban indul. A Menüben is van „Teljes képernyő” gomb.
+
 ## Állapot (2026. november 8.)
 
 - A fő történet és a tíz mellékküldetés teljesen játszható.
@@ -18,6 +20,7 @@ Asztali gépen és telefonon is játszható. A mentés az adott böngészőben t
 |---|---|
 | `index.html` | a játék |
 | `assets/` | a játék képei (WebP) |
+| `manifest.webmanifest`, `icon-*.png` | telepíthető webapp: teljes képernyő, fekvő mód, ikon |
 | `nyitokep-kicsi.jpg` | a játékválasztó kártyájának képe |
 | `LICENSE` | felhasználási feltételek |
 
