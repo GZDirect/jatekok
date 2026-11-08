@@ -22,6 +22,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://gzdirect.github.io/jatekok/upistry/social-preview.jpg">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.5 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Upistry","description":"One-tap stacking game: land each block perfectly and climb from the seaside to outer space through 30 hand-drawn worlds.","url":"https://gzdirect.github.io/jatekok/upistry/","image":"https://gzdirect.github.io/jatekok/upistry/social-preview.jpg","genre":["Arcade","Casual"],"gamePlatform":["Web browser","Mobile","Desktop"],"playMode":"SinglePlayer","inLanguage":["en","hu"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"Mom's Couch Studios"},"sameAs":["https://moms-couch-studios.itch.io/upistry"]}</script>
 <title>Upistry</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -300,6 +301,12 @@ html,body{overscroll-behavior:none;-webkit-touch-callout:none}
       <div class="btns" style="justify-content:flex-start"><button class="btn ghost sm" id="bImport" type="button" data-i="import"></button></div>
       <p class="note" id="importMsg"></p>
     </div>
+    <div class="box">
+      <h3 data-i="privacy"></h3>
+      <p class="note" data-i="privacyNote"></p>
+      <div class="btns" style="justify-content:flex-start"><button class="btn ghost sm" id="bWipe" type="button" data-i="wipe"></button></div>
+      <p class="note" id="wipeMsg"></p>
+    </div>
     <p class="note" style="text-align:center">Upistry · v2.5 · © 2026 Mom's Couch Studios</p>
   </div>
 </div>
@@ -355,7 +362,7 @@ const STR={
   language:'Nyelv',sfxVol:'Effektek hangereje',musicVol:'Zene',haptics:'Rezgés',hapNA:'Ezen az eszközön a böngésző nem támogatja.',hapOk:'Lerakáskor és tökéletes illesztéskor.',
   reduceMotion:'Kevesebb mozgás',reduceNote:'Kikapcsolja a remegést, villanást és a nagy effekteket.',auto:'Rendszer',on:'Be',off:'Ki',
   backup:'Mentés biztonsági másolata',backupNote:'A haladás ebben a böngészőben tárolódik. Másold ki a kódot, és egy másik eszközön töltsd be.',export:'Kód kimásolása',import:'Kód betöltése',
-  copied:'Kimásolva.',copyFail:'Jelöld ki és másold ki kézzel.',importConfirm:'Biztosan felülírod a mostani haladást? Nyomd meg még egyszer.',importOk:'Betöltve.',importBad:'Ez a kód nem érvényes Upistry-mentés.',
+  copied:'Kimásolva.',copyFail:'Jelöld ki és másold ki kézzel.',importConfirm:'Biztosan felülírod a mostani haladást? Nyomd meg még egyszer.',importOk:'Betöltve.',importBad:'Ez a kód nem érvényes Upistry-mentés.',privacy:'Adatvédelem',privacyNote:'Nincs fiók, nincs süti, nincs reklám. A haladásod csak ebben a böngészőben tárolódik. Névtelen, sütimentes látogatásszámlálót használunk (GoatCounter), személyes adatot nem gyűjtünk.',wipe:'Adataim törlése',wipeConfirm:'Ez végleg törli a teljes haladásodat ezen az eszközön. Nyomd meg még egyszer.',
   soundOn:'HANG BE',soundOff:'HANG KI',newZone:'ÚJ ZÓNA',zoneLbl:'Legmagasabb zóna',
   stat_runFloors:n=>`${n} emelet egy menetben`,stat_runStreak:n=>`×${n} tökéletes sorozat`,stat_lifeFloors:n=>`Összesen ${n} emelet`,stat_lifePerfects:n=>`Összesen ${n} tökéletes`,
   stat_worldsDone:n=>n===1?'Teljesíts egy világot':`Teljesíts ${n} világot`,stat_starsTotal:n=>`Gyűjts ${n} csillagot`,stat_threeStar:n=>'Szerezz 3 csillagot egy világban',stat_masters:n=>n===1?'Teljesíts egy MASTER kihívást':`Teljesíts ${n} MASTER kihívást`,stat_dailies:n=>'Teljesíts egy napi kihívást',
@@ -387,7 +394,7 @@ const STR={
   language:'Language',sfxVol:'Effects volume',musicVol:'Music',haptics:'Vibration',hapNA:'Not supported by this browser.',hapOk:'On landing and on perfect drops.',
   reduceMotion:'Reduce motion',reduceNote:'Turns off shake, flashes and big effects.',auto:'System',on:'On',off:'Off',
   backup:'Save backup',backupNote:'Progress is stored in this browser. Copy the code and load it on another device.',export:'Copy code',import:'Load code',
-  copied:'Copied.',copyFail:'Select the text and copy it by hand.',importConfirm:'This replaces your current progress. Press again to confirm.',importOk:'Loaded.',importBad:'This is not a valid Upistry save.',
+  copied:'Copied.',copyFail:'Select the text and copy it by hand.',importConfirm:'This replaces your current progress. Press again to confirm.',importOk:'Loaded.',importBad:'This is not a valid Upistry save.',privacy:'Privacy',privacyNote:'No account, no cookies, no ads. Your progress is stored only in this browser. We use an anonymous, cookie-free visit counter (GoatCounter) and collect no personal data.',wipe:'Delete my data',wipeConfirm:'This permanently deletes all your progress on this device. Press again to confirm.',
   soundOn:'SOUND ON',soundOff:'SOUND OFF',newZone:'NEW ZONE',zoneLbl:'Highest zone',
   stat_runFloors:n=>`${n} floors in one run`,stat_runStreak:n=>`Perfect streak of ${n}`,stat_lifeFloors:n=>`${n} floors in total`,stat_lifePerfects:n=>`${n} perfects in total`,
   stat_worldsDone:n=>n===1?'Complete a world':`Complete ${n} worlds`,stat_starsTotal:n=>`Collect ${n} stars`,stat_threeStar:n=>'Earn 3 stars in a world',stat_masters:n=>n===1?'Complete a MASTER challenge':`Complete ${n} MASTER challenges`,stat_dailies:n=>'Complete a daily challenge',
@@ -497,7 +504,7 @@ const RANKS={xp:[0,100,300,700,1500,3000,6000,10000,16000,25000],
 //    STORE is the storage adapter: swap it for a cloud adapter with the same {load, save} shape later.
 // =====================================================================
 const SAVE_KEY='egig-save';
-const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}};
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){if(window.__wiped)return false;try{localStorage.setItem(k,v);return true}catch(e){return false}}};
 let STORE={load:()=>ls.get(SAVE_KEY),save:str=>ls.set(SAVE_KEY,str)};
 function defaultSave(){return{v:3,unlocked:1,sel:0,overall:0,migrated:false,
   worlds:Array.from({length:NW},()=>({best:0,stars:0,done:false,master:false,zone:0})),daily:{},
@@ -2267,7 +2274,11 @@ $('sRm').onclick=e=>{const b=e.target.closest('button');if(!b)return;SET.reduce=
 $('bExport').onclick=()=>{const ta=$('exportTxt');ta.value=exportSave();ta.hidden=false;ta.select();
   const ok=()=>{$('importMsg').textContent=t('copied')},bad=()=>{$('importMsg').textContent=t('copyFail')};
   try{navigator.clipboard.writeText(ta.value).then(ok,bad)}catch(e){bad()}};
-let importArm=0;
+let wipeArm=-1e9;
+$('bWipe').onclick=()=>{if(performance.now()-wipeArm>5000){wipeArm=performance.now();$('wipeMsg').textContent=t('wipeConfirm');return}
+  window.__wiped=true;try{Object.keys(localStorage).filter(k=>/^(egig|upistry)/.test(k)).forEach(k=>localStorage.removeItem(k))}catch(e){}
+  location.reload()};
+let importArm=-1e9;
 $('bImport').onclick=()=>{const v=$('importTxt').value.trim();if(!v)return;
   if(performance.now()-importArm>5000){importArm=performance.now();$('importMsg').textContent=t('importConfirm');return}
   importArm=0;if(importSave(v)){LANG=SET.lang||detectLang();applyI18n();applyVolumes();document.documentElement.classList.toggle('rm',RM());$('importMsg').textContent=t('importOk');setTimeout(()=>{closeSheets();showMenu()},600)}else $('importMsg').textContent=t('importBad')};
@@ -2408,6 +2419,10 @@ addEventListener('contextmenu',e=>{if(!(e.target.closest&&e.target.closest('text
 const STATS_URL='https://momscouchstudio.goatcounter.com/count';   // e.g. 'https://upistry.goatcounter.com/count'
 const STATQ=[],STAT_SRC=/itch\.(zone|io)$/.test(location.hostname)?'itch':'gh';let statOn=false;
 function STAT(path){if(!statOn)return;const go=()=>{try{window.goatcounter.count({path:'ev/'+STAT_SRC+'/'+path,title:STAT_SRC+' '+path,event:true})}catch(e){}};if(window.goatcounter&&window.goatcounter.count)go();else if(STATQ.length<50)STATQ.push(go)}
+// anonymous error reporting: at most 3 per page load, message shortened, no personal data
+let errN=0;const ERR=m=>{if(errN++>=3)return;STAT('err/'+String(m||'unknown').replace(/https?:\/\/\S+/g,'').replace(/[^\w .:-]/g,'').trim().slice(0,60).replace(/ +/g,'-'))};
+addEventListener('error',e=>{if(e&&e.message)ERR(e.message)});
+addEventListener('unhandledrejection',e=>{ERR('promise '+((e&&e.reason&&e.reason.message)||e.reason||''))});
 if(STATS_URL&&/(\.github\.io|itch\.zone|\.itch\.io)$/.test(location.hostname)){statOn=true;const sc=document.createElement('script');sc.async=true;sc.src='https://gc.zgo.at/count.js';sc.dataset.goatcounter=STATS_URL;sc.onload=()=>{const f=()=>{if(window.goatcounter&&window.goatcounter.count){STATQ.splice(0).forEach(g=>g())}else setTimeout(f,300)};f()};document.head.append(sc)}
 const fBucket=f=>f<5?'0-4':f<10?'5-9':f<20?'10-19':f<30?'20-29':f<50?'30-49':'50+';
 let statPerf=false;
