@@ -11,13 +11,14 @@ Saját szórakozásra készült böngészős játékok. Mind telepítés nélkü
 | [Shinobi (Árnyékerdő)](https://gzdirect.github.io/jatekok/arnyekerdo/) | Design előtti teszt. Tenchu-stílusú lopakodó küldetés egy éjszakai japán hegyi erdőben, hat rendőrrel. | [`arnyekerdo/`](arnyekerdo/) |
 | [Pillangó-hatás](https://gzdirect.github.io/jatekok/pillango-hatas/) | Forgatható 3D diorámák, ahol csak a környezetet irányítod, az emberek maguk döntenek. Három pálya: téglaház, bankrablás, börtönlázadás; kétjátékos Angyal–Démon mód (prototípus). | [`pillango-hatas/`](pillango-hatas/) |
 | [Cincin nagy kalandja](https://gzdirect.github.io/jatekok/cincin/) | Ügyességi játék egy kisegérről, aki egy régi ház tíz helyiségén át jut el a padlástól a kertig. Telefonon is játszható. | [`cincin/`](cincin/) |
+| [The Last Blank](https://gzdirect.github.io/jatekok/the-last-blank/) | Demo. Point-and-click kalandjáték Jules Verne stílusában (1908): felfedezés, fejtörők, egy eltűnt apa nyomai a tenger alatt. | [`the-last-blank/`](the-last-blank/) |
 | [Upistry](https://gzdirect.github.io/jatekok/upistry/) | Egyérintéses toronyépítő 30 világgal (korábban: Égig érő). Csillagok, MASTER kihívások, teljesítmények, napi kihívás. Magyarul és angolul, PWA. | [`upistry/`](upistry/) |
 | [Forgóelemes játék](https://gzdirect.github.io/jatekok/forgoelemes/) | Kétszemélyes logikai táblajáték a gép ellen, forgatható rudakkal. | [`forgoelemes/`](forgoelemes/) |
 | [Szócsere](https://gzdirect.github.io/jatekok/szocsere/) | Magyar szójáték: két szó végét kell megcserélni. | [`szocsere/`](szocsere/) |
 | [Térbeli amőba](https://gzdirect.github.io/jatekok/terbeli-amoba/) | Ötöt egy sorba egy kocka felszínén, a gép ellen. | [`terbeli-amoba/`](terbeli-amoba/) |
 
-Minden játék a saját mappájában van, egyetlen `index.html` fájlként.
+Minden játék a saját mappájában van.
 
 ---
 
-© 2026 Fejes Géza. Minden jog fenntartva. A játékok engedély nélkül nem másolhatók, nem terjeszthetők és nem értékesíthetők. Minden játék mappájában külön licenc található: [Pihe](pihe/LICENSE), [Pip](pip-terrarium/LICENSE), [Árnyékerdő](arnyekerdo/LICENSE), [Pillangó-hatás](pillango-hatas/LICENSE), [Cincin](cincin/LICENSE), [Upistry](upistry/LICENSE), [Forgóelemes játék](forgoelemes/LICENSE), [Szócsere](szocsere/LICENSE), [Térbeli amőba](terbeli-amoba/LICENSE).
+© 2026 Fejes Géza. Minden jog fenntartva. A játékok engedély nélkül nem másolhatók, nem terjeszthetők és nem értékesíthetők. Minden játék mappájában külön licenc található: [Pihe](pihe/LICENSE), [Pip](pip-terrarium/LICENSE), [Árnyékerdő](arnyekerdo/LICENSE), [Pillangó-hatás](pillango-hatas/LICENSE), [Cincin](cincin/LICENSE), [The Last Blank](the-last-blank/LICENSE), [Upistry](upistry/LICENSE), [Forgóelemes játék](forgoelemes/LICENSE), [Szócsere](szocsere/LICENSE), [Térbeli amőba](terbeli-amoba/LICENSE).
