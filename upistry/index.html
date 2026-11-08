@@ -43,17 +43,19 @@ body{background:var(--night);color:var(--ink);font-family:var(--body);overflow:h
 #probe{position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .hud{position:fixed;left:0;right:0;top:0;z-index:2;pointer-events:none;text-align:center;display:flex;flex-direction:column;align-items:center;
   padding:calc(env(safe-area-inset-top,0px) + 12px) max(64px,env(safe-area-inset-right,0px)) 0 max(64px,env(safe-area-inset-left,0px))}
-.hud::before{content:"";position:absolute;left:50%;top:0;width:min(460px,120vw);height:calc(env(safe-area-inset-top,0px) + 160px);transform:translateX(-50%);background:radial-gradient(60% 70% at 50% 30%,rgba(23,15,51,.42),rgba(23,15,51,0));z-index:-1}
-.wname{font:700 11px/1.2 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-shadow:0 1px 6px rgba(0,0,0,.4);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hud::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(env(safe-area-inset-top,0px) + 170px);background:linear-gradient(rgba(14,9,34,.6),rgba(14,9,34,.32) 55%,rgba(14,9,34,0));z-index:-1}
+.hud .wname{white-space:pre-line;max-width:calc(100vw - 210px)}
+.wname{font:700 12px/1.25 var(--body);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.88);text-shadow:0 1px 6px rgba(0,0,0,.4);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .floors{font:400 clamp(44px,13vw,74px)/1 var(--display);font-variant-numeric:tabular-nums;color:#fff;margin-top:4px;text-shadow:0 3px 0 rgba(23,15,51,.35),0 0 30px rgba(255,255,255,.35)}
 .floors.bump{animation:bump .22s ease-out}
 @keyframes bump{40%{transform:scale(1.12)}}
-.goal{display:flex;align-items:center;gap:8px;margin-top:6px;font:700 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.45)}
+.goal{display:flex;align-items:center;gap:8px;margin-top:6px;font:700 15px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.45)}
 .bar{width:min(150px,36vw);height:6px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--gold);border-radius:99px;transition:width .25s}
 .meter{display:flex;align-items:center;gap:6px;margin-top:9px}
 .pip{width:22px;height:8px;border-radius:3px;background:rgba(255,255,255,.2);transition:background .15s,box-shadow .15s}
 .pip.on{background:var(--gold);box-shadow:0 0 8px rgba(255,207,74,.8)}
+.meter{transition:opacity .2s}.meter.idle{opacity:.4}
 .meter.hot .pip{background:#fff;box-shadow:0 0 12px #fff,0 0 4px var(--gold)}
 .mlbl{font:700 10px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-left:4px;text-shadow:0 1px 6px rgba(0,0,0,.45)}
 .meter.hot .mlbl{color:#fff}
@@ -64,9 +66,9 @@ body{background:var(--night);color:var(--ink);font-family:var(--body);overflow:h
   background:rgba(23,15,51,.3);border:1px solid rgba(255,250,242,.4);color:var(--ink);font:700 10px/1 var(--body);letter-spacing:.14em;padding:8px 10px;border-radius:99px;cursor:pointer}
 .mute{right:max(12px,env(safe-area-inset-right,0px))}
 .pause{left:max(12px,env(safe-area-inset-left,0px));font-size:13px;padding:7px 12px}
-.tip{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);z-index:2;text-align:center;pointer-events:none;
-  font:700 13px/1.3 var(--body);letter-spacing:.14em;text-transform:uppercase;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.5);animation:breathe 2s ease-in-out infinite;padding-inline:16px}
-@keyframes breathe{50%{opacity:.4}}
+.tip{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 22px);z-index:2;text-align:center;pointer-events:none;width:max-content;max-width:min(300px,84vw);text-wrap:balance;
+  font:700 15px/1.35 var(--body);letter-spacing:.02em;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.45);background:rgba(16,10,38,.62);border-radius:14px;padding:9px 16px;animation:breathe 2s ease-in-out infinite}
+@keyframes breathe{50%{opacity:.62}}
 .banner{position:fixed;left:0;right:0;top:31%;z-index:3;text-align:center;pointer-events:none;opacity:0;padding-inline:16px}
 .banner .big{display:block;font:400 clamp(26px,8.5vw,48px)/1.05 var(--display);color:#fff;text-shadow:0 4px 0 rgba(23,15,51,.35),0 0 26px rgba(255,207,74,.6)}
 .banner .sub{display:block;margin-top:8px;font:700 13px/1.2 var(--body);letter-spacing:.16em;text-transform:uppercase;text-shadow:0 1px 8px rgba(0,0,0,.5)}
@@ -298,7 +300,7 @@ html,body{overscroll-behavior:none;-webkit-touch-callout:none}
       <div class="btns" style="justify-content:flex-start"><button class="btn ghost sm" id="bImport" type="button" data-i="import"></button></div>
       <p class="note" id="importMsg"></p>
     </div>
-    <p class="note" style="text-align:center">Upistry · v2.4 · © 2026 Fejes Géza</p>
+    <p class="note" style="text-align:center">Upistry · v2.5 · © 2026 Fejes Géza</p>
   </div>
 </div>
 
@@ -330,7 +332,7 @@ const STR={
   play:'Játék',introSkip:'Kihagyás',support:'Támogasd a fejlesztőt ☕',worlds:'Világok',daily:'Napi kihívás',profile:'Profil',settings:'Beállítások',back:'Vissza',start:'Indítás',close:'Bezárás',
   worldOf:n=>`${n}. világ a 30-ból`,goalFloors:n=>`Cél: ${n} emelet`,best:'Rekord',bestN:n=>`Rekord: ${n}`,goalN:n=>`Cél ${n}`,
   overall:n=>`Összesített rekord: ${n} emelet`,starsN:(a,b)=>`Csillagok: ${a}/${b}`,
-  tip:'Koppints, amikor az elem a torony fölé ér',perfStreak:'Tökéletes sorozat',growing:'Növekedés aktív',
+  tip:'Koppints, amikor a szélek egyvonalban vannak!',perfStreak:'Tökéletes sorozat',growing:'Növekedés aktív',
   perfect:'TÖKÉLETES',perfectSm:'Tökéletes',triple:'TRIPLA!',streakX:n=>`SOROZAT ×${n}`,widthUp:n=>`+${n}% SZÉLESSÉG`,streakHud:n=>n>1?`Tökéletes ×${n}`:'Tökéletes',
   levelDone:'PÁLYA TELJESÍTVE!',unlocked:s=>`Feloldva: ${s}`,keepGoing:'csak így tovább',fiveMore:'MÉG 5 EMELET!',
   checkpoint:'MENTŐPONT',cpSub:'ha leesel, innen folytathatod',cpResumed:'ebben a menetben rekord nem számít',
@@ -362,7 +364,7 @@ const STR={
   play:'Play',introSkip:'Skip',support:'Support the developer ☕',worlds:'Worlds',daily:'Daily challenge',profile:'Profile',settings:'Settings',back:'Back',start:'Start',close:'Close',
   worldOf:n=>`World ${n} of 30`,goalFloors:n=>`Goal: ${n} floors`,best:'Best',bestN:n=>`Best: ${n}`,goalN:n=>`Goal ${n}`,
   overall:n=>`Overall best: ${n} floors`,starsN:(a,b)=>`Stars: ${a}/${b}`,
-  tip:'Tap when the block is above the tower',perfStreak:'Perfect streak',growing:'Growing',
+  tip:'Tap when the edges line up!',perfStreak:'Perfect streak',growing:'Growing',
   perfect:'PERFECT',perfectSm:'Perfect',triple:'TRIPLE!',streakX:n=>`STREAK ×${n}`,widthUp:n=>`+${n}% WIDTH`,streakHud:n=>n>1?`Perfect ×${n}`:'Perfect',
   levelDone:'LEVEL COMPLETE!',unlocked:s=>`Unlocked: ${s}`,keepGoing:'keep going',fiveMore:'5 MORE FLOORS!',
   checkpoint:'CHECKPOINT',cpSub:'if you fall, continue from here',cpResumed:'records do not count this run',
@@ -1950,7 +1952,7 @@ const MUSIC={on:false,next:0,step:0,inten:0,
 // 7. GAME STATE & RULES (original stacking rules kept; nothing here pauses the run)
 // =====================================================================
 let blocks=[],cur=null,pieces=[],parts=[],rings=[],floats=[],fx2=[],phase='menu',camY=0,zoom=1,zoomT=1,camT=0,clock=0,shake=0,flashA=0,sweepT=0;
-let baseY=600,streak=0,bestStreak=0,perfects=0,firstTap=true,overTimer=0,lastDrop=0,lastFrame=performance.now();
+let baseY=600,streak=0,bestStreak=0,perfects=0,firstTap=true,tipN=0,overTimer=0,lastDrop=0,lastFrame=performance.now();
 let mode='world',goalDone=false,runStars=0,cpSnap=null,cpUsed=false,assisted=false,recordBanner=false,runStartBest=0,runAch=[],runUnlocked=-1;
 let dailyTask=null,dailyDone=false,pausedFrom='play';
 const floors=()=>blocks.length-1;
@@ -1978,7 +1980,7 @@ function drop(lat=0){
   if(phase!=='play')return;
   const now=performance.now();if(now-lastDrop<150)return;lastDrop=now;     // no accidental double taps
   if(lat>0)advanceCur(Math.min(lat,.05));                                     // where the block really was when the finger landed
-  firstTap=false;$('tip').hidden=true;
+  if(firstTap&&++tipN>=3){firstTap=false;$('tip').hidden=true}
   const prev=blocks[blocks.length-1],dx=cur.c-prev.c;
   const yb=blocks.length*BH,rm=RM();
   if(Math.abs(dx)<=tolerance()){
@@ -2123,13 +2125,13 @@ function pumpQueues(now){
 function hud(){
   const f=floors();$('floors').textContent=f;
   if(mode==='world'){
-    $('hWorld').textContent=wname(wi)+' · '+zoneName(wi,SKYJ.zone);
+    $('hWorld').textContent=wname(wi)+'\n'+zoneName(wi,SKYJ.zone);
     if(goalDone){const b=Math.max(SAVE.worlds[wi].best,f);$('hGoal').textContent=t('bestN',b);$('hBar').style.width=Math.min(100,f/Math.max(1,b)*100)+'%'}
     else{$('hGoal').textContent=t('goalN',WD.goal);$('hBar').style.width=Math.min(100,f/WD.goal*100)+'%'}
     const ml=$('hMaster');if(SAVE.worlds[wi].done||goalDone){const ok=SAVE.worlds[wi].master;ml.textContent=ok?t('masterDone'):t('masterHud',masterText(masterOf(wi)));ml.classList.toggle('ok',ok)}else ml.textContent='';
   }else{const[a,b]=dailyProgress();$('hWorld').textContent=t('daily')+' · '+dailyShort(dailyTask);$('hGoal').textContent=dailyDone?'✓':a+' / '+b;$('hBar').style.width=Math.min(100,a/b*100)+'%';$('hMaster').textContent=''}
   const m=$('meter'),pips=m.querySelectorAll('.pip');pips.forEach((p,k)=>p.classList.toggle('on',k<Math.min(streak,3)));
-  m.classList.toggle('hot',streak>=3);$('mLbl').textContent=streak>=3?t('growing'):t('perfStreak');
+  m.classList.toggle('hot',streak>=3);m.classList.toggle('idle',streak===0);$('mLbl').textContent=streak>=3?t('growing'):t('perfStreak');
   MUSIC.inten=phase==='play'?(streak>=3?1:0)+((goalDone||(mode==='world'&&f>=WD.goal*.8))?1:0):0;
 }
 function applyI18n(){
@@ -2340,8 +2342,14 @@ function draw(){
     b.ox=sx(b.po);paintBlock(g,WD,xx,y-hh,www,hh,b);
     if(b.flash>0&&!rm){g.globalCompositeOperation='lighter';g.fillStyle=`rgba(255,240,200,${b.flash*.5})`;g.fillRect(xx,y-hh-2,www,3);g.globalCompositeOperation='source-over'}}
   if(sweepT>0&&!rm){const n=Math.min(blocks.length-1,7);for(let k=0;k<n;k++){const idx=blocks.length-1-k,b=blocks[idx];const a=clamp(sweepT*1.6-k*.18,0,1)*.5;if(a<=0)continue;g.fillStyle=`rgba(255,240,200,${a})`;g.fillRect(sx(b.c-b.w/2),sy(idx*BH)-h,b.w*zoom,h)}}
-  if(cur&&(phase==='play'||phase==='pause')){const x=sx(cur.c-cur.w/2);cur.ox=x;paintBlock(g,WD,x,sy(blocks.length*BH)-h,cur.w*zoom,h,cur);
-    const prev=blocks[blocks.length-1];g.fillStyle='rgba(255,255,255,.18)';g.fillRect(sx(prev.c-prev.w/2),sy(blocks.length*BH)-2,prev.w*zoom,2)}
+  if(cur&&(phase==='play'||phase==='pause')){const x=sx(cur.c-cur.w/2),yb=sy(blocks.length*BH),cw=cur.w*zoom;cur.ox=x;
+    const prev=blocks[blocks.length-1],pl=sx(prev.c-prev.w/2),pw=prev.w*zoom;
+    const sg=g.createLinearGradient(0,yb,0,yb+h*.45);sg.addColorStop(0,'rgba(12,6,30,.42)');sg.addColorStop(1,'rgba(12,6,30,0)');g.fillStyle=sg;g.fillRect(x+2,yb,cw-4,h*.45);
+    paintBlock(g,WD,x,yb-h,cw,h,cur);
+    g.strokeStyle='rgba(255,255,255,.85)';g.lineWidth=1.5;g.strokeRect(x+.75,yb-h+.75,cw-1.5,h-1.5);
+    g.fillStyle='rgba(255,255,255,.18)';g.fillRect(pl,yb-2,pw,2);
+    const near=Math.abs(x-pl)<Math.max(3,pw*.02),a=near?1:.7,mk=Math.max(5,h*.24);g.fillStyle=near?'#ffffff':'rgba(255,207,74,'+a+')';
+    g.beginPath();g.moveTo(pl,yb);g.lineTo(pl-mk,yb);g.lineTo(pl,yb-mk);g.closePath();g.moveTo(pl+pw,yb);g.lineTo(pl+pw+mk,yb);g.lineTo(pl+pw,yb-mk);g.closePath();g.fill()}
   for(const p of pieces){g.save();g.translate(sx(p.x),sy(p.y)-h/2);g.rotate(p.rot);const w=p.w*zoom;p.ox=-w/2+p.pox*zoom;paintBlock(g,WD,-w/2,-h/2,w,h,p);g.restore()}
   g.globalCompositeOperation='lighter';
   for(const r of rings){if(r.grow){const x0=sx(r.c-r.w0/2),x1=sx(r.c-r.w/2),x2=sx(r.c+r.w0/2),x3=sx(r.c+r.w/2),y=sy(r.y)-h/2,e=(1-r.l/1.2)*16;
