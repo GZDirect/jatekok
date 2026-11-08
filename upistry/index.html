@@ -2415,7 +2415,7 @@ BUS.on('complete',()=>STAT('complete/w'+WD.id));BUS.on('daily',()=>STAT('daily-d
 BUS.on('perfect',()=>{if(!statPerf){statPerf=true;STAT('first-perfect')}});
 addEventListener('appinstalled',()=>STAT('pwa-install'));
 // ---------- support the developer (shown only when SUPPORT_URL is set) ----------
-const SUPPORT_URL='';   // e.g. 'https://ko-fi.com/...'
+const SUPPORT_URL='https://moms-couch-studios.itch.io/upistry';   // e.g. 'https://ko-fi.com/...'
 if(SUPPORT_URL&&STAT_SRC!=='itch'){$('bSupport').hidden=false;$('bSupport').onclick=()=>{STAT('support');window.open(SUPPORT_URL,'_blank','noopener')}}
 
 addEventListener('resize',()=>{layout();calcFocus();if(phase==='menu')demoTower()});
