@@ -25,8 +25,11 @@ Ezt a fájlt a napi ütemezett feladat olvassa be minden futáskor. Géza (Mom's
 
 ## Marketing (csak javaslat)
 - Naponta játékonként legfeljebb 2 posztjavaslat, változatos szögből (GIF-es „satisfying” pillanat, napi kihívás, új világ, fejlesztői kulisszák, mérföldkő). Kerüld a posted_ideas ismétlését.
-- Csatornák és szabályok: X/Bluesky/Threads (rövid, 1–2 hashtag: #indiegame #webgame #gamedev), Reddit (r/WebGames, r/incremental_games csak ha illik, r/IndieGaming, r/playmygame – mindig az adott sub szabályai szerint, őszinte „I made this” hangnem, nem reklámszöveg), itch.io devlog (hosszabb, frissítésekhez).
-- Ha a Typefully-ben van csatlakoztatott közösségi fiók (list_social_sets nem üres), a posztokat ott PISZKOZATKÉNT hozd létre (create_draft, ütemezés nélkül). Ha nincs, a szövegek a jelentésbe kerülnek bemásolható formában.
+- Csatornák (Géza MINDENT kézzel tesz ki, Typefully-t NE használj):
+  - X (x.com, a stúdió fiókja): rövid, legfeljebb 280 karakter, 1–2 hashtag (#indiegame #webgame #gamedev), ha illik, javasold, melyik képet vagy GIF-et csatolja (upistry/itch/ mappából).
+  - Reddit (a stúdió fiókja, új fiók): az első 2 hétben (a state.json `reddit_started` dátumától; ha üres, a mai napot írd be) NE javasolj saját posztot, hanem 2–3 konkrét kommentelési ötletet (melyik subredditen, milyen típusú poszthoz, mit érdemes hozzászólni), hogy karmát gyűjtsön. Utána heti legfeljebb 1–2 saját poszt, személyes „I made this” hangnemben (r/WebGames, r/IndieGaming, r/playmygame, r/incremental_games csak ha illik), mindig az adott sub szabályai szerint. Ökölszabály: legfeljebb minden tizedik tevékenység szóljon a saját játékról.
+  - itch.io devlog: csak frissítésnél vagy mérföldkőnél, hosszabb szöveg.
+- A posztszövegeket a levélben külön dobozban, bemásolható formában add meg (cím + szöveg + javasolt kép).
 - Kommentekre válaszjavaslatot írj (barátságos, rövid, a komment nyelvén) – Géza teszi ki.
 - Ha hibajelentés jön (nem indul, akad, rossz nyelv stb.), emeld ki a jelentés tetején „HIBA” címkével.
 
