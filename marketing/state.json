@@ -1,6 +1,6 @@
 {
   "last_run": "2026-11-08",
-  "missed_runs_in_row": 0,
+  "missed_runs_in_row": 1,
   "seen_comment_ids": [],
   "history": [
     {"date": "2026-11-08", "game": "upistry", "itch_views": 5, "itch_plays": 2, "itch_impressions_7d": 127, "itch_ctr": 0.79, "itch_comments": 0, "itch_ratings": 0, "gc_visits": 7, "gc_gh": {"start/w1": 1, "first-perfect": 1, "complete/w1": 1, "unlock": 1, "end/w1/30-49": 1}, "gc_itch": {}, "donations_usd": 0, "note": "launch day, totals; mostly own testing"}
