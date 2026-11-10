@@ -9,12 +9,40 @@
       "itch_id": 5322082,
       "itch_url": "https://moms-couch-studios.itch.io/upistry",
       "github_url": "https://gzdirect.github.io/jatekok/upistry/",
-      "goatcounter_prefix": {"github": "ev/gh/", "itch": "ev/itch/"},
+      "goatcounter_prefix": {
+        "github": "ev/gh/",
+        "itch": "ev/itch/"
+      },
       "published": "2026-11-08",
       "itch_summary": "https://itch.io/game/summary/5322082",
       "pitch": "One-tap stacking game: land each block perfectly, misses slice the tower thinner. 30 hand-drawn worlds from the seaside to outer space, daily challenge, plays in the browser on phone and desktop.",
       "assets": "upistry/itch/ (cover-630x500.png, upistry-1..5.jpg, upistry-gameplay.gif)",
-      "languages": ["en", "hu"]
+      "languages": [
+        "en",
+        "hu"
+      ]
+    },
+    {
+      "slug": "puffs-burrow",
+      "name": "Puff's Burrow",
+      "hu_name": "Pihe odúja",
+      "itch_id": null,
+      "itch_url": null,
+      "github_url": "https://gzdirect.github.io/jatekok/pihe/",
+      "goatcounter_prefix": {
+        "github": "ev/gh/pihe/",
+        "itch": "ev/itch/pihe/"
+      },
+      "published": null,
+      "itch_summary": null,
+      "pitch": "A cozy little pet that lives in a rotatable 3D diorama on real time: four homes (autumn forest, snowy lake, jungle, island), four residents, daily wishes, tricks, fishing, hide-and-seek, garden, Advent surprises in December. Plays in the browser on phone and desktop.",
+      "events": "new/<place>/<character>/<lang> = new creature; open/<lang>/d<age bucket> = returning player by creature age in days; err/... = JavaScript errors",
+      "assets": "pihe/itch/ (cover-630x500.png, puffs-burrow-1..5.jpg, social-preview-en.jpg)",
+      "languages": [
+        "en",
+        "hu"
+      ],
+      "note": "Not yet on itch.io; GitHub Pages version only until itch_id is filled in."
     }
   ]
 }

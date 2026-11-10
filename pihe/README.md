@@ -8,6 +8,7 @@ Telefonon a böngésző menüjében a **Hozzáadás a kezdőképernyőhöz** par
 
 ## Újdonságok
 
+- **Angolul is:** angol nyelvű böngészőben magától angolul indul *Puff’s Burrow* néven (a karakterek: Puff, Mossy, Bigears, Little Dragon). A nyelv a Beállításokban váltható, vagy a címben: `?lang=en` / `?lang=hu`.
 - **Napi kívánság:** minden reggel kér valamit (bogyót, horgászást, bújócskát, simogatást, fotót…). Ha teljesíted, magot vagy kincset kapsz.
 - **Trükkök:** néha magától pörög, táncol, meghajol vagy nagyot ugrik. Ha ilyenkor beírsz egy szót, és háromszor megismétled, szóra is megcsinálja. A tanult szavakat ő is „kimondja” egy buborékban.
 - **Ajándék:** ha nagyon bízik benned, időnként hoz neked valamit.
