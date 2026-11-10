@@ -8,6 +8,7 @@ Telefonon a böngésző menüjében a **Hozzáadás a kezdőképernyőhöz** par
 
 ## Újdonságok
 
+- **Szebb látvány:** „Szép” minőségben lágy mélységélesség, ragyogás és környezeti árnyék; a nap a valódi óra szerint jár az égen, napkeltekor és naplementekor arany fénnyel. Hullámzó, csillogó víz, szélben ringó fák, hulló őszi levelek, hócsillámok, fénypászmák a fák között, hajnali pára a tó fölött, éjjel csillagos háttér. Gyenge eszközön a játék magától az egyszerűbb képre vált.
 - **Angolul is:** angol nyelvű böngészőben magától angolul indul *Puff’s Burrow* néven (a karakterek: Puff, Mossy, Bigears, Little Dragon). A nyelv a Beállításokban váltható, vagy a címben: `?lang=en` / `?lang=hu`.
 - **Napi kívánság:** minden reggel kér valamit (bogyót, horgászást, bújócskát, simogatást, fotót…). Ha teljesíted, magot vagy kincset kapsz.
 - **Trükkök:** néha magától pörög, táncol, meghajol vagy nagyot ugrik. Ha ilyenkor beírsz egy szót, és háromszor megismétled, szóra is megcsinálja. A tanult szavakat ő is „kimondja” egy buborékban.
