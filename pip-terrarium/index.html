@@ -32,7 +32,14 @@ const HAND_GEO="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK0AAADmCAIAAAAoUp
       if (uH > 0.0) {
         float len = mix(0.3, 1.0, n) * cush;
         if (uH > len) discard;
-        if (length(f) > 0.5 * (1.0 - uH / len) + 0.04) discard;
+        if (uMode == 3) {
+          // moss: thin fronds that lean and curl a little, so the shells read as fibres instead of stacked discs
+          vec2 jit = (vec2(hash(cell + 5.3), hash(cell + 9.1)) - 0.5) * 0.62;      // every frond sits somewhere else in its cell: no rows
+          vec2 lean = jit + (vec2(hash(cell + 3.1), hash(cell + 7.7)) - 0.5) * (0.5 + 0.8 * uH) * uH;
+          if (hash(cell + 21.7) < 0.22 && uH > 0.25) discard;                       // gaps: some fronds stay short
+          float t = uH / len;
+          if (length(f - lean) > (0.2 + 0.2 * n2) * pow(1.0 - t, 0.7) + 0.03) discard;
+        } else if (length(f) > 0.5 * (1.0 - uH / len) + 0.04) discard;
       }
       vec3 W = uFurW, O = vec3(0.89, 0.53, 0.18), D = uFurD, F = vec3(0.25, 0.33, 0.43);
       vec3 c = W;
@@ -51,12 +58,12 @@ const HAND_GEO="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK0AAADmCAIAAAAoUp
       } else if (uMode == 3) {
         float tone = fbm(vW.xz * 0.9 + 31.0);
         vec3 deep = vec3(0.17, 0.34, 0.09), mid = vec3(0.36, 0.58, 0.16), lime = vec3(0.62, 0.78, 0.26), dry = vec3(0.58, 0.54, 0.24);
-        c = mix(deep, mid, n2);
+        c = mix(deep, mid, n2 * (0.35 + 0.65 * uH));                                // roots share one dark tone, tips vary
         c = mix(c, lime, smoothstep(0.45, 0.75, tone) * (0.35 + 0.65 * uH));       // sunnier, fresher cushions
         c = mix(c, dry, smoothstep(0.62, 0.8, fbm(vW.xz * 2.3 + 5.0)) * 0.55);     // a few dry, yellowing spots
-        c *= 0.85 + 0.4 * uH;                                                       // lighter tips
+        c *= 0.72 + 0.78 * uH;                                                      // dark in the depths, light tips
         vec3 soilC = mix(vec3(0.17, 0.11, 0.065), vec3(0.30, 0.21, 0.13), vnoise(vW.xz * 38.0)) * (0.75 + 0.5 * vnoise(vW.xz * 7.0));
-        if (uH == 0.0) c = mix(soilC, c * 0.7, cover);
+        if (uH == 0.0) c = mix(soilC, vec3(0.07, 0.13, 0.04) * (0.8 + 0.4 * vnoise(vW.xz * 21.0)), cover);
         float d = length(vW.xz - uShadowPos);
         c *= mix(1.0 - 0.5 * uShadowStr, 1.0, smoothstep(0.02, 0.2, d));
       }
@@ -64,7 +71,7 @@ const HAND_GEO="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK0AAADmCAIAAAAoUp
       float dif = max(dot(N, normalize(uLight)), 0.0);
       vec3 V = normalize(cameraPosition - vW);
       float rim = pow(1.0 - max(dot(N, V), 0.0), 3.0);
-      float ao = (uMode == 3) ? mix(0.55, 1.0, uH) : mix(0.7, 1.0, uH);
+      float ao = (uMode == 3) ? mix(0.5, 1.0, uH) : mix(0.7, 1.0, uH);
       float lit = (uMode == 3) ? (0.36 + 0.74 * dif) : (0.5 + 0.42 * dif + 0.16 * smoothstep(-0.6, 0.9, N.y));
       if (uMode != 3) ao *= mix(0.62, 1.0, smoothstep(-0.9, 0.1, N.y));
       vec3 col = min(c * lit * ao + rim * ((uMode == 3) ? 0.22 : 0.3) * ao * vec3(1.0, 0.96, 0.88), vec3(1.0)) * uBright * uTint;
