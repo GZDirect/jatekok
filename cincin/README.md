@@ -2,7 +2,7 @@
 
 ![Cincin a padláson](cover.jpg)
 
-> ⚠️ **Design előtti verzió – v0.13.7 (2026. november 10.)**
+> ⚠️ **Design előtti verzió – v0.13.8 (2026. november 12.)**
 > A játékmenet és mind a tíz pálya végigjátszható, és már mind a tíz helyiség festett grafikát kapott. Minden helyiségnek saját zenéje van, és mindegyikben elrejtettünk egy titkos egérjáratot. Magyarul és angolul is játszható.
 
 Cincin, a kis sálas egér egy hatalmas, régi házban lakik. A padlástól a kertig tíz helyiségen kell átjutnia, és mindegyik végén egy furfangos ellenfél vár rá: az alvó macska, a felhúzható óriásrobot, a bagoly, a szakács, a kutya, a patkány… Gyűjtsd a magokat, keresd meg minden szobában a rejtett sajtot, kússz be a bútorok alá, és találd ki, hogyan jutsz túl a szoba urán.
@@ -49,6 +49,7 @@ A tesztelők ezt a címet kapják: `…/cincin/?teszt` – így a szünet menüb
 
 ## Változások
 
+- **v0.13.8** – Cincin nem marad „toló” pózban, ha a játék ideje visszaugrik; keskeny párkány szélén a lába a párkányon látszik, nem a levegőben; a kutya ugatása festett képregény-felirat (angolul WOOF!, magyarul VAU!); a nappali állóórájának számlapja alul lágyan beleolvad a szerkezetbe, nincs éles vágás.
 - **v0.13.7** – Teljes átvizsgálás után: három beragadási hely megszűnt (a nappaliban a gramofon és a szekrény, illetve a kandalló és a szekrény között; a gyerekszobában a komód és az ablakülés között kockalépcső vezet vissza); a felső szövegszalag és a pálya végi cím már nem lóg ki a tekercsből; a kandalló forró levegője szikrákként látszik; festett deszka és gerenda került a gyerekszoba falára, a padlás kúszótere alá és a kamraajtó mellé; a mély víz alja egyenletes.
 - **v0.13.6** – Kilépés a főmenübe gomb a szünetmenüben. Próbajáték utáni javítások: festett cseréptető a babaházon, deszkafal a babaház padlásán; a játékalagút szürke oszlopai, a polcfal piros trapéza és a többi régi rajzolt részlet helyére festett elemek kerültek (tintafolt, gödrök a padlóban, lámpahúzó, gyűrűk lécei, mosdótál fala); a kád előtt megszűnt egy csapdaszerű rés; a fürdőszobai buborékok jobban látszanak, a szappanok falitartón ülnek; a víz illesztési vonalai eltűntek.
 - **v0.13.5** – Keskeny ablakban a bal felső eredménysáv a szélességhez igazodva összemegy, így nem csúszik a szünet- és teljes képernyő gomb alá.
