@@ -1,48 +1,71 @@
 # Puff's Burrow – itch.io oldal
 
-## Feltöltési beállítások (Géza, kézzel)
-- **Title:** Puff's Burrow
-- **Project URL:** moms-couch-studios.itch.io/puffs-burrow
-- **Short description / tagline:** A cozy little pet that lives in a 3D diorama, on real time.
-- **Classification:** Games · **Kind of project:** HTML
-- **Upload:** `puffs-burrow-itch.zip` → pipa: *This file will be played in the browser*
-- **Embed options:** Viewport 1280 × 800 · Mobile friendly: ON (orientation: Default) · Fullscreen button: ON · Automatically start on page load: ON
-- **Pricing:** No payments / or Pay what you want (mint az Upistry)
-- **Genre:** Simulation · **Tags:** cozy, virtual-pet, tamagotchi, diorama, low-poly, 3d, relaxing, cute, christmas, mobile
-- **Cover:** `cover-630x500.png` · **Screenshots:** `puffs-burrow-1…5.jpg`
-- **Languages:** English, Hungarian
-- **Inputs:** Mouse, Touchscreen, Keyboard
-- **Accessibility:** —
-- **Release status:** Released · **Visibility:** Public
+## Beállítások (Géza, kézzel: itch.io → Dashboard → Create new project)
 
-## Leírás (a Description mezőbe)
+| Mező | Érték |
+|---|---|
+| Title | Puff's Burrow |
+| Project URL | moms-couch-studios.itch.io/puffs-burrow |
+| Short description or tagline | A cozy virtual pet that lives on real time: day, night, seasons and Advent follow your clock. |
+| Classification | Games |
+| Kind of project | HTML |
+| Release status | Released |
+| Pricing | **Pay what you want** (minimum $0, a javasolt ár mező maradhat üresen, mint az Upistrynél) |
+| Uploads | `puffs-burrow-itch.zip` → pipa: *This file will be played in the browser* |
+| Embed options | Viewport 1280 × 800 · Mobile friendly: ON (Orientation: Default) · Fullscreen button: ON · Automatically start on page load: ON |
+| Genre | **Simulation** |
+| Tags | **virtual-pet, tamagotchi, cozy, 3d, relaxing, mobile** |
+| App store links | – |
+| Custom noun | – |
+| Community | Comments |
+| Visibility | Public (vagy először Draft, ha előbb meg akarod nézni) |
 
-**A tiny creature moves into a little world you can hold in your hand – and it keeps living there, on real time.**
+Képek:
+- **Cover image:** `cover-630x500.png`
+- **Screenshots:** `puffs-burrow-1-autumn-forest.jpg` … `puffs-burrow-5-choose.jpg`
+- **Trailer:** a YouTube-ra feltöltött fekvő trailer linkje (itch csak YouTube/Vimeo linket fogad el)
+- **Theme editor → Banner:** `banner-960.png` (átlátszó hátterű logó), háttérszín: `#f3eee2`, szövegszín: `#3b2a26`, linkszín: `#c45476`
 
-Pick a home and a resident, then watch them settle in. Your little friend eats, naps, explores and makes friends on their own. You can feed them, play, fish together, play hide-and-seek, decorate their garden and teach them words.
+Metadata (a lap alján, „Metadata” rész):
+- Platforms: HTML5 (magától), Made with: three.js
+- Inputs: Mouse, Touchscreen, Keyboard
+- Languages: English, Hungarian
+- Average session: A few minutes
+- AI generation disclosure: ezt neked kell eldöntened; a kód és a logó mesterséges intelligenciával készült, ezért „Yes” a pontos válasz
 
-**Four rotatable 3D dioramas**
-- 🍂 **Autumn forest** – an underground burrow that grows new rooms, a pond, mushrooms
-- ❄️ **Snowy lake** – ice floes, an igloo, northern lights and an arctic fox at night
+## Description (ezt másold a Description mezőbe)
+
+**🕰️ It lives on real time.** Day and night, the moon, the weather and the four seasons all follow your own clock. Visit in the morning and the sun is rising over the pond; come back at night and your little friend is asleep under the stars. **From 1 to 24 December, a new Advent surprise appears next to their home every day.**
+
+**A tiny creature moves into a little world you can hold in your hand – and keeps living there while you're away.**
+
+Pick a home and a resident, then watch them settle in. They eat, nap, explore and make friends on their own. Come back later and find out what happened while you were gone.
+
+### Four rotatable 3D dioramas
+- 🍂 **Autumn forest** – an underground burrow that grows new rooms, a pond, mushrooms and falling leaves
+- ❄️ **Snowy lake** – ice floes, an igloo, a snowman and northern lights at night
 - 🌿 **Jungle** – a waterfall, a tree hollow, tropical showers and glowing mushrooms
 - 🏝️ **Island** – a cave, coral reefs, fish shoals, a sandcastle and messages in bottles
 
-**Four residents:** Puff the fluffball, Mossy the forest spirit, Bigears the night creature, and a grumpy-but-loyal Little Dragon.
+### Four little residents
+Puff the fluffball, Mossy the forest spirit, Bigears the night creature, and a grumpy-but-loyal Little Dragon.
 
-**It follows real time.** Day and night, the moon phase and the seasons match your clock. Come back tomorrow and see what happened while you were away.
+### Things to do
+- 🍓 Feed them, pet them and keep them happy
+- 🌱 Grow a garden and decorate their home
+- 🎣 Go fishing from the little pier
+- 🙈 Play hide-and-seek
+- 💬 Teach them words and tricks – type a word while they spin or dance, three times, and they'll learn it
+- ⭐ Grant the daily wish, collect treasures, catch shooting stars at night
+- 📷 Take framed photos to share
 
-**Things to discover**
-- A daily wish – grant it for seeds and treasures
-- Tricks: when they spin or dance, type a word three times and they'll learn it
-- A diary, a treasure album, gifts when they trust you
-- Shooting stars at night (tap one and make a wish)
-- **Advent:** from 1 to 24 December, a surprise next to their home every day
-- Take framed photos to share
-
-Plays in your browser on phone, tablet and desktop. No account, no ads. Your creature lives in your browser (you can export a save file in Settings).
+### Good to know
+- Plays in your browser on **phone, tablet and desktop** – no download, no account, no ads.
+- Your creature lives in your browser. You can export a save file in Settings.
+- English and Hungarian (switch in Settings).
 
 *Made by Mom's Couch Studios · © 2026 Fejes Géza*
 
 ## Teendők feltöltés után
-- A `marketing/games.json`-ban a `puffs-burrow` bejegyzésbe írd be az `itch_id`-t és az `itch_url`-t, a `published` mezőbe a dátumot.
+- Írd meg nekem a játék itch-azonosítóját és címét, és beírom a `marketing/games.json`-ba (`itch_id`, `itch_url`, `published`), hogy a napi jelentés figyelje.
 - Indítsd el egyszer itch-en, és nézd meg a GoatCounterben, hogy megjön-e az `ev/itch/pihe/...` esemény.

@@ -2,7 +2,7 @@
 // Ha a three.js, a betűk vagy az ikonok változnak, emeld a CACHE számát: a régi tár ilyenkor törlődik.
 // Az oldal mindig a netről töltődik, ha van net (így mindig a legújabb változat jön), egyébként a tárból.
 // A többi fájl (three.js, betűk, képek, hangok) a tárból jön, és a háttérben frissül.
-const CACHE = 'pihe-v1';
+const CACHE = 'pihe-v2';
 const PRE = ["./", "index.html", "three.min.js", "manifest.webmanifest", "favicon-32.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "icon-512-maskable.png", "fonts/fredoka-latin-500-normal.woff2", "fonts/fredoka-latin-600-normal.woff2", "fonts/fredoka-latin-700-normal.woff2", "fonts/fredoka-latin-ext-500-normal.woff2", "fonts/fredoka-latin-ext-600-normal.woff2", "fonts/fredoka-latin-ext-700-normal.woff2", "fonts/nunito-latin-500-normal.woff2", "fonts/nunito-latin-700-normal.woff2", "fonts/nunito-latin-800-normal.woff2", "fonts/nunito-latin-ext-500-normal.woff2", "fonts/nunito-latin-ext-700-normal.woff2", "fonts/nunito-latin-ext-800-normal.woff2"];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => Promise.all(PRE.map((u) => c.add(new Request(u, { cache: 'reload' })).catch(() => {})))).then(() => self.skipWaiting()));
