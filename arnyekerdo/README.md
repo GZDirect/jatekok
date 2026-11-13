@@ -29,4 +29,4 @@ Fejlesztéshez: [FEJLESZTES.md](FEJLESZTES.md). A forrás az `src/` mappában va
 
 ---
 
-© 2026 Fejes Géza. Minden jog fenntartva. A játék engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető. Részletek: [LICENSE](LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. A játék engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető. Részletek: [LICENSE](LICENSE).

@@ -1,6 +1,6 @@
 # Shinobi – angol szótár a build.py --en számára (magyar szöveg -> angol).
 # A kulcs pontosan a forrásban álló szöveg (JS-szövegliterál vagy HTML-szövegcsomópont).
-# © 2026 Fejes Géza. Minden jog fenntartva.
+# © 2026 Mom’s Couch Studios. Minden jog fenntartva.
 D = {
 # --- tárgyak, gombok, állapotok ---
 "Tantó": "Tanto", "Tekko": "Tekko", "Kampó": "Grapnel", "Karmok": "Claws", "Kavics": "Pebble", "Tüskék": "Caltrops",
@@ -358,7 +358,7 @@ D = {
 "Rendőrök: 6": "Police: 6", "Élet": "Health", "Erő": "Stamina", "Zaj": "Noise", "Rejtve": "Hidden", "Fényben!": "In the light!",
 "Kihagyom": "Skip", "Mozgás": "Move", "▴ eszköz": "▴ tool", "Árnyékok Mestere": "Master of Shadows", "Kezdés": "Start",
 "Mentés 1 · új játék": "Save 1 · new game", "Mentések": "Saves", "Telepítés": "Install", "alkalmazásként, mindig teljes képernyőn": "as an app, always full screen",
-"© 2026 Fejes Géza. Minden jog fenntartva.": "© 2026 Fejes Géza. All rights reserved.",
+"© 2026 Mom’s Couch Studios. Minden jog fenntartva.": "© 2026 Mom’s Couch Studios. All rights reserved.",
 "A korábbi, négypályás változat mentései ide nem jutnak át: a nyolc pályához új rangrendszer tartozik, ezért a történetet az elejéről kezded.": "Saves from the earlier four-level version don't carry over: the eight levels use a new rank system, so the story starts from the beginning.",
 "Vissza": "Back", "‹ Főmenü": "‹ Main menu", "1. fejezet · Lopakodó küldetés": "Chapter 1 · Stealth mission",
 "Éjszaka van a japán hegyekben. Egy hamis körözés miatt a rendőrség körbezárta a völgyet, ahol bujkálsz:": "Night in the Japanese mountains. Because of a false warrant, the police have sealed off the valley where you are hiding:",

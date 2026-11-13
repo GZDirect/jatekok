@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 5. pálya: Acélárnyak (a küldetés menete).
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Két tárgy kell: a belépési papírok a rókamaszkos ünnepségre (Naruse konténerében, NRSU 409217)
    és a rakományjegyzék (az irodakonténerben, a kerítés mögött). Utána ki a vízparti kerítésnél, északkeleten.
    Három út a kerítésen át: a daru terhén (fent), a kapun (az őr időnként megfordul), vagy oszlopról az iroda tetejére kampózva. */

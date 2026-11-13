@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 8. pálya: Az utolsó pecsét (a küldetés menete).
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    1. A papírfolyosón át a szobákba: a megvilágított szakaszon a sziluetted a szoba felőli papírfalra vetül (a bent álló őr gyanút fog).
    2. A titkos archívum: két kapcsoló („A hold után kel a nap”): előbb a holdas tekercs (1. szoba), aztán a napos lámpás (4. szoba). Rossz sorrend: kattanás, zaj.
    3. Az archívumban az eredeti birtokokmányok; a főcsarnok oltárán a régi pecsétes tekercs (nem kötelező).

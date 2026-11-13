@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Shinobi – a szereplők magyar hangjának legenerálása (Piper TTS, offline).
-© 2026 Fejes Géza. Minden jog fenntartva.
+© 2026 Mom’s Couch Studios. Minden jog fenntartva.
 
 Használat:  python3 hangok.py /mappa/a/hangmodellekkel
 A mappában kell lennie: hu_HU-imre-medium.onnx(.json) és hu_HU-anna-medium.onnx(.json)

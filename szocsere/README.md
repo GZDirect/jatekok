@@ -22,4 +22,4 @@ Az ötlet egy lejárt magyar szabadalmi bejelentésből indult (P0301084, „Elj
 ## Betűtípusok
 A betűk a fájlba ágyazva töltődnek be: Poppins (SIL Open Font License 1.1), DejaVu Sans Mono (Bitstream Vera / DejaVu szabad licenc).
 
-© 2026 Fejes Géza. Minden jog fenntartva. Részletek: [LICENSE](LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. Részletek: [LICENSE](LICENSE).

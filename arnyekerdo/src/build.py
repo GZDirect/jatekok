@@ -3,7 +3,7 @@
 
 Futtatás: python3 arnyekerdo/src/build.py   (bárhonnan)
 Csak a src/ mappában dolgozz, az index.html generált fájl.
-© 2026 Fejes Géza. Minden jog fenntartva.
+© 2026 Mom’s Couch Studios. Minden jog fenntartva.
 """
 import os
 D = os.path.dirname(os.path.abspath(__file__))
@@ -18,7 +18,7 @@ def minify(js):
         with _t.NamedTemporaryFile('w', suffix='.js', delete=False, encoding='utf-8') as f: f.write(js); src = f.name
         r = subprocess.run(['npx', '-y', 'terser@5.31.0', src, '-c', 'passes=1', '-m', '--comments', '/©/'], capture_output=True, timeout=300)
         if r.returncode == 0 and len(r.stdout) > 1000:
-            return '/* Shinobi · © 2026 Fejes Géza. Minden jog fenntartva. */\n' + r.stdout.decode('utf-8') + '\n'
+            return '/* Shinobi · © 2026 Mom’s Couch Studios. Minden jog fenntartva. */\n' + r.stdout.decode('utf-8') + '\n'
         print('terser hiba, tömörítés nélkül:', r.stderr.decode('utf-8')[:300])
     except Exception as e: print('tömörítés kihagyva:', e)
     return js
@@ -29,8 +29,8 @@ page = shell.replace('/*@@JATEK@@*/', js)
 # GitHub Pages-hez kell egy teljes HTML-váz (a claude.ai artifact ezt magától adja hozzá).
 wrap_head = ('<!doctype html>\n<html lang="hu">\n<head>\n<meta charset="utf-8">\n'
   '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
-  '<meta name="author" content="Fejes Géza">\n'
-  '<meta name="copyright" content="© 2026 Fejes Géza. Minden jog fenntartva.">\n'
+  '<meta name="author" content="Mom’s Couch Studios">\n'
+  '<meta name="copyright" content="© 2026 Mom’s Couch Studios. Minden jog fenntartva.">\n'
   '<meta name="theme-color" content="#0a0f13">\n'
   '<meta name="mobile-web-app-capable" content="yes">\n'
   '<meta name="apple-mobile-web-app-capable" content="yes">\n'

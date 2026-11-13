@@ -19,4 +19,4 @@ Az ötlet egy lejárt magyar szabadalmi bejelentésből indult (P0201051, kocka 
 ## Betűtípusok
 A betűk a fájlba ágyazva töltődnek be: Poppins (SIL Open Font License 1.1).
 
-© 2026 Fejes Géza. Minden jog fenntartva. Részletek: [LICENSE](LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. Részletek: [LICENSE](LICENSE).

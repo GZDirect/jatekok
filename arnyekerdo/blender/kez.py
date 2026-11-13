@@ -1,4 +1,4 @@
-# Shinobi – a játékos saját keze (első személyű nézet). © 2026 Fejes Géza. Minden jog fenntartva.
+# Shinobi – a játékos saját keze (első személyű nézet). © 2026 Mom’s Couch Studios. Minden jog fenntartva.
 # A gyar.py betöltése után: build_kez()  →  kez.glb (kez_jobb, kez_bal: ököl + alkar a ruhaujjal, csuklópólyával)
 # A játék koordinátáiban: az ököl közepe az origó, az alkar a kamera felé (+z) és kissé lefelé fut, a kézhát felfelé néz.
 

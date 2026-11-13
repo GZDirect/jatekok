@@ -80,4 +80,4 @@ Egyfájlos HTML5 canvas prototípus. A végleges változat Godot 4-ben (GDScript
 
 ---
 
-© 2026 Fejes Géza. Minden jog fenntartva. Lásd: [LICENSE](LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. Lásd: [LICENSE](LICENSE).

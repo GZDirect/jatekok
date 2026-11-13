@@ -1,4 +1,4 @@
-// Pihe odúja – offline mód. © 2026 Fejes Géza. Minden jog fenntartva.
+// Pihe odúja – offline mód. © 2026 Mom’s Couch Studios. Minden jog fenntartva.
 // Ha a three.js, a betűk vagy az ikonok változnak, emeld a CACHE számát: a régi tár ilyenkor törlődik.
 // Az oldal mindig a netről töltődik, ha van net (így mindig a legújabb változat jön), egyébként a tárból.
 // A többi fájl (three.js, betűk, képek, hangok) a tárból jön, és a háttérben frissül.

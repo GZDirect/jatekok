@@ -21,4 +21,4 @@ Minden játék a saját mappájában van.
 
 ---
 
-© 2026 Fejes Géza. Minden jog fenntartva. A játékok engedély nélkül nem másolhatók, nem terjeszthetők és nem értékesíthetők. Minden játék mappájában külön licenc található: [Pihe](pihe/LICENSE), [Pip](pip-terrarium/LICENSE), [Árnyékerdő](arnyekerdo/LICENSE), [Pillangó-hatás](pillango-hatas/LICENSE), [Cincin](cincin/LICENSE), [The Last Blank](the-last-blank/LICENSE), [Upistry](upistry/LICENSE), [Forgóelemes játék](forgoelemes/LICENSE), [Szócsere](szocsere/LICENSE), [Térbeli amőba](terbeli-amoba/LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. A játékok engedély nélkül nem másolhatók, nem terjeszthetők és nem értékesíthetők. Minden játék mappájában külön licenc található: [Pihe](pihe/LICENSE), [Pip](pip-terrarium/LICENSE), [Árnyékerdő](arnyekerdo/LICENSE), [Pillangó-hatás](pillango-hatas/LICENSE), [Cincin](cincin/LICENSE), [The Last Blank](the-last-blank/LICENSE), [Upistry](upistry/LICENSE), [Forgóelemes játék](forgoelemes/LICENSE), [Szócsere](szocsere/LICENSE), [Térbeli amőba](terbeli-amoba/LICENSE).

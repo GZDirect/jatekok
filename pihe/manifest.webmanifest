@@ -2,7 +2,7 @@
  "name": "Pihe odúja",
  "short_name": "Pihe odúja",
  "id": "./",
- "description": "Hangulatos 3D gondozós játék: egy apró lény a saját odújában, négy forgatható diorámában. Etesd, tanítsd beszélni, rendezd be a kertjét – a napszak és az évszak a valódi időt követi. © 2026 Fejes Géza.",
+ "description": "Hangulatos 3D gondozós játék: egy apró lény a saját odújában, négy forgatható diorámában. Etesd, tanítsd beszélni, rendezd be a kertjét – a napszak és az évszak a valódi időt követi. © 2026 Mom’s Couch Studios.",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",

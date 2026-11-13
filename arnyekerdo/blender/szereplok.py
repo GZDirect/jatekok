@@ -1,4 +1,4 @@
-# Shinobi – szereplők receptjei a gyar.py-hoz. © 2026 Fejes Géza. Minden jog fenntartva.
+# Shinobi – szereplők receptjei a gyar.py-hoz. © 2026 Mom’s Couch Studios. Minden jog fenntartva.
 # Használat Blenderben (a gyar.py betöltése után): exec(open(r"...\szereplok.py",encoding="utf-8").read()); build("testor")
 BOOTS="toigo_ankle_boots_male"
 def base(P,mac,skin,hair,clothes,hairmode=('keep',)):

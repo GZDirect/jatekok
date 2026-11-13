@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 6. pálya: A rókák éjszakája. Késő őszi lampionos ünnep egy kastély parkjában, alkonyattól sötétedésig.
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Dél: bambuszliget (rajt). Közép: lampionos fesztiváludvar bódésorokkal és színpaddal, nyugaton a koi-tó hidacskával.
    Északkelet: a privát teaház. Észak: szentélykert toriikkal, a hátsó kapu a kijárat (északnyugat).
    Három rókamaszkos díszvendég (az egyik Mori). Sík terep (H=0). Csak a ?palya=fesztival címmel fut. */

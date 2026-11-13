@@ -1,5 +1,5 @@
 (function(){
-/* Árnyékerdő – játékmenet. © 2026 Fejes Géza. Minden jog fenntartva.
+/* Árnyékerdő – játékmenet. © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Küldetés: a völgy déli végéről (rajt) eljutni az északi útig (kijárat). Hat rendőr keres lámpával és pisztollyal.
    A játékos dönti el, hogy lopakodik vagy harcol. Eszközök: tantó, tekko, kötélkampó, mászókarmok, füstgránát. */
 const A=window.AE,{$,clamp,H,scene,camera,renderer,grid,bgrid,near,moonLight,MOON_DIR,giants,XW,ZS,ZN,EXIT,FLU,NFL}=A;

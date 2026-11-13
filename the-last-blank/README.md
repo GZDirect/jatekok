@@ -26,4 +26,4 @@ Asztali gépen és telefonon is játszható. A mentés az adott böngészőben t
 
 ---
 
-© 2026 Fejes Géza. Minden jog fenntartva. Lásd: [LICENSE](LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. Lásd: [LICENSE](LICENSE).

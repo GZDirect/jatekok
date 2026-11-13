@@ -1,4 +1,4 @@
-# Shinobi – a játékos kézben tartott eszközei (első személyű nézet). © 2026 Fejes Géza. Minden jog fenntartva.
+# Shinobi – a játékos kézben tartott eszközei (első személyű nézet). © 2026 Mom’s Couch Studios. Minden jog fenntartva.
 # A gyar.py betöltése után: build_fegyverek() → fegyverek.glb (tanto, tekko, kampo, kampo_bal, shuriken, fukiya, fust)
 # Koordináták: Blenderben készül, a glTF-ben a játék kézkeretébe kerül: origó = az ököl közepe,
 # előre (a penge iránya) = Blender +Y (three −Z), fel = Blender +Z (three +Y).

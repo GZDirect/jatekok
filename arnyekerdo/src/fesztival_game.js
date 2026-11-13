@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 6. pálya: A rókák éjszakája (a küldetés menete).
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Három rókamaszkos díszvendég sétál az udvaron; az egyik Mori. Mori sántít (a vonat óta) ÉS balkezes (a bal kezében a legyező).
    Az egyik csaló csak balkezes, a másik csak sántít: mindkét jelet meg kell figyelni. Ki-ki minden körben máshol áll.
    Moritól hátulról, észrevétlenül ki kell lopni a templom archívumának kulcsát (és egy gyufásdobozt a hegyi fogadóból), aztán ki a hátsó kapun.

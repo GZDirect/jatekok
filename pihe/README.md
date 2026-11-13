@@ -22,4 +22,4 @@ Telefonon a böngésző menüjében a **Hozzáadás a kezdőképernyőhöz** par
 
 ---
 
-© 2026 Fejes Géza. Minden jog fenntartva. A játék engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető. Részletek: [LICENSE](LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. A játék engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető. Részletek: [LICENSE](LICENSE).

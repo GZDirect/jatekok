@@ -64,7 +64,7 @@ Puff the fluffball, Mossy the forest spirit, Bigears the night creature, and a g
 - Your creature lives in your browser. You can export a save file in Settings.
 - English and Hungarian (switch in Settings).
 
-*Made by Mom's Couch Studios · © 2026 Fejes Géza*
+*Made by Mom's Couch Studios · © 2026 Mom’s Couch Studios*
 
 ## Teendők feltöltés után
 - Írd meg nekem a játék itch-azonosítóját és címét, és beírom a `marketing/games.json`-ba (`itch_id`, `itch_url`, `published`), hogy a napi jelentés figyelje.

@@ -1,5 +1,5 @@
 /* ================= PARKOLT: a régi ellenfelek (szörny, nindzsa, szellem) =================
-   Árnyékerdő. © 2026 Fejes Géza. Minden jog fenntartva.
+   Árnyékerdő. © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    A rendőrös küldetés miatt most nincsenek a játékban, de később visszajönnek.
    A modellek az actors.js-ben vannak (buildEnemy), itt a beállításaik és a viselkedésük áll,
    pontosan úgy, ahogy a 2026. október 25-i változatban működtek. A game.js most nem hívja ezeket.

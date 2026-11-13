@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 7. pálya: Fehér csend. Hegyi termálfogadó friss hóban, derült délelőtt.
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Dél: havas hegyi ösvény (rajt). Nyugaton a gőzölgő szabadtéri medencék. Középen és északon a fogadó faépülete
    fedett verandával (engawa), keleten a könyvelő irodája (külön szárny). Észak: hátsó hegyi kijárat.
    A hóban lábnyom marad (a fapallón, a kövön és a verandán nem). Sík terep (H=0). Csak a ?palya=fogado címmel fut. */

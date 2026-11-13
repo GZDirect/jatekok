@@ -45,4 +45,4 @@ Az épületek (az 1. pálya háza, a bank, a börtön cellaépülete, kerítőfa
 
 Forgatás a jobb oldali nyilakkal, húzással vagy Q/E billentyűvel · a „Kívül” gombbal a falak nem süllyednek le, így kívülről látod az épületet · nagyítás görgővel vagy csípéssel · alul az ikonsor kapcsolói (kék) és eseményei (rózsaszín) · a felső sávra koppintva megnyílik a napló · hang az első koppintásra indul.
 
-© 2026 Fejes Géza. Minden jog fenntartva. Lásd: [LICENSE](LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. Lásd: [LICENSE](LICENSE).

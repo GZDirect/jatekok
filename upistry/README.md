@@ -55,4 +55,4 @@ Koppintás vagy kattintás, számítógépen szóköz. Szünet: bal felső gomb 
 ## Betűtípusok
 Bungee és Outfit (SIL Open Font License 1.1), Google Fonts.
 
-© 2026 Fejes Géza. Minden jog fenntartva. Részletek: [LICENSE](LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. Részletek: [LICENSE](LICENSE).

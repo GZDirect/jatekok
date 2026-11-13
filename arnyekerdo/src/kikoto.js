@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 5. pálya: Acélárnyak. Konténerkikötő kora reggel, napkeltekor.
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Sík terep (H=0). Dél: rakparti bejárat (rajt). Közép: konténerlabirintus, keleten a víz. A z=-34 vonalon kerítés kapuval,
    mögötte az adminisztrációs udvar az irodakonténerrel. A nagy rakodódaru (x=8) ide-oda viszi a konténert a kerítés fölött.
    Járható: a kikötő területe a tömör konténerek nélkül (walkable/clampRoof). Csak a ?palya=kikoto címmel fut. */

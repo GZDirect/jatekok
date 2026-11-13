@@ -1,6 +1,6 @@
 (function(){
 /* Árnyékerdő – 2. pálya: kiképzés a mester falujában (a próbák menete).
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Minden udvar egy próba. A mester magyarul szól (felirattal és felolvasással), a feladat a felső panelen áll.
    Ha elrontod, a mester megszólal, és az udvar elejéről kezded újra. */
 const A=window.AE;if(A.LV!=='falu')return;

@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 3. pálya: Üvegtorony (a küldetés menete).
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Kuroda a szomszéd torony penthouse-ában dolgozik, két személyi testőrrel; a tetőn járőrök és kamerák.
    Át kell jutni a darun és a víztornyon, elvinni az íróasztaláról a Mori vonatáról szóló iratokat, aztán a terasz sarkában lévő kábelen lecsúszni.
    Kurodát nem kell bántani: ha életben hagyod, a történet szerint Naruse emberei végeznek vele (ez nem számít bele a statisztikádba). */

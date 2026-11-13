@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – közös grafikai réteg a sík pályákhoz (kikötő, fesztivál, fogadó, templom).
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Mit ad: nagy léptékű foltosság a talajon, sötét sáv az épületek és falak tövében (talajárnyék),
    pályánkénti színezett képszél, élő díszletek (sirályok, párafátyol, égő lámpások, falevelek, füstölő),
    és az őrök pályához illő ruhája. Minden olcsó: egy-egy átlátszó sík vagy pár sprite, telefonon is fut. */

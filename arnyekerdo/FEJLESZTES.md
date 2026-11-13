@@ -210,7 +210,7 @@ chromium args: --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshade
 
 ## 6. Szabályok
 
-- **Szerzői jog:** minden fájlban maradjon meg a „© 2026 Fejes Géza. Minden jog fenntartva.” jelölés: a HTML-kommentben, a kezdő és a záró képernyőn, és a LICENSE fájlban. A kisvakond repóhoz ne nyúlj.
+- **Szerzői jog:** minden fájlban maradjon meg a „© 2026 Mom’s Couch Studios. Minden jog fenntartva.” jelölés: a HTML-kommentben, a kezdő és a záró képernyőn, és a LICENSE fájlban. A kisvakond repóhoz ne nyúlj.
 - **Commit szerzője:** Fejes Géza (az e-mail címet Géza adja meg, a repóban ne szerepeljen). Csak akkor commitolj és pusholj, ha Géza kéri.
 - **Nyelv:** a felület magyar. Ha angol is kell, a Pihe odúja (`pihe/`) szótáras fordítását érdemes átvenni (`EN_X`, `tr()`, MutationObserver).
 - **Hangulat:**
@@ -231,7 +231,7 @@ Ezek csak ötletek, Géza még nem döntötte el őket.
 
 ---
 
-© 2026 Fejes Géza. Minden jog fenntartva. A játék és a leírás engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető.
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. A játék és a leírás engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető.
 
 
 ## 2g. Csomagolás és offline mód

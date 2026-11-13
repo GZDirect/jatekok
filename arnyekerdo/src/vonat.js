@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 4. pálya: Hegyi expressz. Mori magánvonata délben robog a hegyek között.
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    A vonat áll a világ közepén, a táj mozog alatta (V m/s, a menetirány a −z).
    Kocsik hátulról előre: kilátókocsi (rajt) · tehervagon (a tetején kell átmenni) · fülkés személykocsi · konténeres pőrekocsi ·
    étkezőkocsi · szalonkocsi (Mori) · mozdony (vészfék). A padló magassága kocsinként más (AE.H). Csak a ?palya=vonat címmel fut. */

@@ -2,7 +2,7 @@
 A JS szövegliteráljait és a shell.html szövegeit az en_szotar.py alapján cseréli.
 Ami nincs a szótárban, az változatlan marad (ezért új magyar szöveg esetén a szótárat is bővíteni kell:
 python3 angol.py --hianyzik kiírja, mi hiányzik).
-© 2026 Fejes Géza. Minden jog fenntartva.
+© 2026 Mom’s Couch Studios. Minden jog fenntartva.
 """
 import re, os
 from en_szotar import D, CODE, CSS
@@ -72,7 +72,7 @@ def head(h):
     return (h.replace('<html lang="hu">', '<html lang="en">').replace(DESC_HU, DESC_EN)
              .replace('og:locale" content="hu_HU"', 'og:locale" content="en_US"')
              .replace('arnyekerdo/">', 'arnyekerdo/en.html">')
-             .replace('© 2026 Fejes Géza. Minden jog fenntartva.', '© 2026 Fejes Géza. All rights reserved.'))
+             .replace('© 2026 Mom’s Couch Studios. Minden jog fenntartva.', '© 2026 Mom’s Couch Studios. All rights reserved.'))
 
 if __name__ == '__main__':
     import sys

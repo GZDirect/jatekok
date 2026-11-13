@@ -1,6 +1,6 @@
 (function(){
 /* Árnyékerdő – 2. pálya: a mester rejtett hegyi faluja (díszlet és a próbák elrendezése).
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    A falu délről északra tíz udvarra oszlik; mindegyik udvar egy próba. Az udvarokat bambuszkerítés választja el, kapukkal.
    Csak a ?palya=falu címmel fut, az erdei pályán semmit sem csinál. */
 const A=window.AE;if(A.LV!=='falu')return;

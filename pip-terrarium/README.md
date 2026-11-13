@@ -8,4 +8,4 @@ Ugrópókos, tamagocsi-szerű 3D játék. Örökbe fogadsz egy egészen pici ugr
 
 ---
 
-© 2026 Fejes Géza. Minden jog fenntartva. A játék engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető. Részletek: [LICENSE](LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. A játék engedély nélkül nem másolható, nem terjeszthető és nem értékesíthető. Részletek: [LICENSE](LICENSE).

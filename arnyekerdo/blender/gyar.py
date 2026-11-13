@@ -1,4 +1,4 @@
-# Shinobi – szereplőgyár Blenderhez (MPFB 2 bővítménnyel). © 2026 Fejes Géza. Minden jog fenntartva.
+# Shinobi – szereplőgyár Blenderhez (MPFB 2 bővítménnyel). © 2026 Mom’s Couch Studios. Minden jog fenntartva.
 # Betöltés Blenderben: exec(open(r"...\gyar.py",encoding="utf-8").read()) ; utána a lenti függvények hívhatók.
 # A szereplők receptjei a szereplok.py-ban vannak.
 import bpy,os,glob,importlib,bmesh,math

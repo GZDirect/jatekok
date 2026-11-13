@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 7. pálya: Fehér csend (a küldetés menete).
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    A cég könyvelője (megfélemlített tanú, nem ellenség) a fogadó keleti szárnyában, az irodában bujkál.
    Ha észrevétlenül odaérsz, beszél veled, és önként átadja a pénzügyi iratokat; ha az őrök épp riadóznak, megijed, ilyenkor a ládából kell elvenni.
    A friss hóban lábnyomot hagysz: az őrök észreveszik és követik (a fán, kövön, verandán nem marad nyom). A gőzben guggolva nehezen látnak. */

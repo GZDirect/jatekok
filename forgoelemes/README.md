@@ -24,4 +24,4 @@ Az ötlet egy lejárt magyar szabadalomból indult (HU 227005, „Logikai tábla
 ## Betűtípusok
 A betűk a fájlba ágyazva töltődnek be: Poppins (SIL Open Font License 1.1), TeX Gyre Adventor (GUST Font License).
 
-© 2026 Fejes Géza. Minden jog fenntartva. Részletek: [LICENSE](LICENSE).
+© 2026 Mom’s Couch Studios. Minden jog fenntartva. Részletek: [LICENSE](LICENSE).

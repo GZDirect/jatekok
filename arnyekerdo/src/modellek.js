@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – Blenderben készült, csontvázas szereplők (glTF) a régi, kódból rakott figurák helyett.
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Működés: a régi figura „csontváza” (hips, chest, neck, arms, legs pivotok) marad, és továbbra is a régi
    anim() mozgatja; mi ennek a forgatásait másoljuk át minden képkockában a modell csontjaira.
    Így a zseblámpa iránya, a célzás, a lövés, az elesés és az ütéstől megtántorodás változatlanul működik,

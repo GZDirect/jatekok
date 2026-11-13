@@ -1,4 +1,4 @@
-// Shinobi – offline mód. © 2026 Fejes Géza. Minden jog fenntartva.
+// Shinobi – offline mód. © 2026 Mom’s Couch Studios. Minden jog fenntartva.
 // Generált fájl (build), a CACHE neve minden kiadásnál változik, ilyenkor a régi tár törlődik.
 // Az oldal mindig a netről töltődik, ha van net (így mindig a legújabb változat jön), egyébként a tárból.
 // A többi fájl (three.js, betűk, képek, hangok) a tárból jön, és a háttérben frissül.

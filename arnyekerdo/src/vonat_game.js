@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 4. pálya: Hegyi expressz (a küldetés menete).
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Mori, Kuroda jobbkeze, a cég iratait a magánvonatán viszi északra. A hátsó kilátókocsiról indulsz,
    át kell jutni a vonaton a szalonkocsiig, el kell venni az aktatáskát, aztán a mozdonyban meghúzni a vészféket.
    Alagutak: a tehervagon tetején guggolni kell, különben lesodor; az alagútban sötét van, rosszabbul látnak. */

@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – mozdulatlan pályaelemek összevonása (kevesebb rajzolási hívás → hűvösebb telefon).
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Indulás után megfigyeljük a tárgyakat; amelyik nem mozdult, nem tűnt el és nem változott, azokat azonos szülő és
    anyag szerint egyetlen hálóba vonjuk össze. Az eredetik a helyükön maradnak (csak nem rajzolódnak ki), és fél
    másodpercenként ellenőrizzük őket: ha a játék bármelyiket mozgatja, elrejti vagy kiveszi, az érintett csoport

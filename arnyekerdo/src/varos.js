@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 3. pálya: Üvegtorony. Két felhőkarcoló teteje nappal, a város a mélyben.
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    A tetők síkja y=0 (H=0). Járható területek: téglalapok (VAROS.rects); ami nincs bennük, az a mélység.
    Csak a ?palya=varos címmel fut. */
 const A=window.AE;if(A.LV!=='varos')return;

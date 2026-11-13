@@ -1,6 +1,6 @@
 (function(){
 /* Shinobi – 8. pálya: Az utolsó pecsét. Ősi hegyi templom, világos reggel.
-   © 2026 Fejes Géza. Minden jog fenntartva.
+   © 2026 Mom’s Couch Studios. Minden jog fenntartva.
    Dél: erdei ösvény és a külső szentélykert (rajt). Középen a templom: papírfolyosó (z -14..-10), mögötte négy szoba (z -24..-14),
    belső udvar (z -28..-24), a főcsarnok (z -40..-28), és a titkos archívum (z -48..-40) egy elhúzható falpanel mögött.
    A papírfolyosó egyes szakaszain a lámpás a hátad mögött van: ott a sziluetted kirajzolódik a szoba felőli papírfalon.
